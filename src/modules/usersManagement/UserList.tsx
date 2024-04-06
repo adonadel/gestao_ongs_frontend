@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Person {
   id: number;
@@ -19,6 +20,8 @@ interface PaginatedUserResponse {
 }
 
 function UserList() {
+  const navigate = useNavigate();
+  
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +33,7 @@ function UserList() {
           throw new Error('No token found');
         }
 
-        const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>('http://localhost/api/user', {
+        const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>('http://localhost/api/users', {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -40,7 +43,7 @@ function UserList() {
       } catch (error) {
         console.error('Error fetching users:', error);
         setLoading(false);
-        // Handle error (e.g., redirect to login)
+        navigate('/')
       }
     };
 
