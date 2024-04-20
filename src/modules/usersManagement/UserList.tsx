@@ -1,9 +1,17 @@
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Box, Typography, Container } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface Person {
   id: number;
+  name: string;
+  email: string;
+}
+
+interface Role {
   name: string;
 }
 
@@ -13,6 +21,7 @@ interface User {
   people_id: number;
   created_at: string;
   person: Person;
+  role: Role;
 }
 
 interface PaginatedUserResponse {
@@ -21,7 +30,7 @@ interface PaginatedUserResponse {
 
 function UserList() {
   const navigate = useNavigate();
-  
+
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,21 +59,42 @@ function UserList() {
     fetchUsers();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div>
-      <h2>User List</h2>
-      <ul>
-        {users.map(user => (
-          <li key={user.id}>
-            {user.person.name}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Container maxWidth="lg">
+      <Box>
+        <Typography variant="h3">Usuários</Typography>
+      </Box>
+
+      {loading ?
+        <p>Carregando...</p>
+        :
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Cargo</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((row) => (
+                <TableRow key={row.id}>
+                  <TableCell>{row.id}</TableCell>
+                  <TableCell>{row.role.name}</TableCell>
+                  <TableCell>{row.person.email}</TableCell>
+                  <TableCell>
+                    <IconButton><EditIcon color="warning" /></IconButton>
+                    <IconButton><DeleteIcon color="error" /></IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      }
+    </Container>
   )
 }
 
