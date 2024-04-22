@@ -2,10 +2,10 @@ import { Person } from '@mui/icons-material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Avatar, Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
+import Checkbox from '@mui/material/Checkbox';
 import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import Checkbox from '@mui/material/Checkbox';
 
 interface LoginResponse {
   data: {
@@ -15,7 +15,8 @@ interface LoginResponse {
 
 function Login() {
   const navigate = useNavigate();
-  
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +34,7 @@ function Login() {
     setLoading(true);
     try {
       const response: AxiosResponse<LoginResponse> = await axios.post<LoginResponse>(
-        'http://localhost/api/users/login/',
+        `${apiUrl}/api/auth/login`,
         { email, password }
       );
       const token = response.data.data.token;
@@ -60,7 +61,7 @@ function Login() {
             <FormControl fullWidth margin="normal">
               <TextField
                 variant="outlined"
-                color= "primary"
+                color="primary"
                 required
                 fullWidth
                 id="email"

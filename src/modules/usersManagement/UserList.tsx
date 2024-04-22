@@ -1,9 +1,9 @@
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Box, Typography, Container } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Link, useNavigate } from "react-router-dom";
 
 interface Person {
   id: number;
@@ -30,6 +30,7 @@ interface PaginatedUserResponse {
 
 function UserList() {
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +43,7 @@ function UserList() {
           throw new Error('No token found');
         }
 
-        const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>('http://localhost/api/users', {
+        const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>(`${apiUrl}/api/users`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -52,7 +53,7 @@ function UserList() {
       } catch (error) {
         console.error('Error fetching users:', error);
         setLoading(false);
-        navigate('/')
+        navigate('/login')
       }
     };
 
@@ -60,10 +61,18 @@ function UserList() {
   }, []);
 
   return (
-    <Container maxWidth="lg">
-      <Box>
-        <Typography variant="h3">Usuários</Typography>
-      </Box>
+    <Container maxWidth="lg" sx={{ paddingY: '10px' }}>
+      <Grid container justifyContent="space-between" alignItems="center">
+        <Grid item>
+          <Typography variant="h3">Usuários</Typography>
+        </Grid>
+        <Grid item>
+          <Button variant='contained' color='primary' component={Link} to="new">
+            <Typography>Adicionar Usuário</Typography>
+          </Button>
+        </Grid>
+
+      </Grid>
 
       {loading ?
         <p>Carregando...</p>
