@@ -15,6 +15,12 @@ interface Role {
   name: string;
 }
 
+enum UserStatus {
+  ENABLED = 'ENABLED',
+  DISABLED = 'DISABLED'
+
+}
+
 interface User {
   id: number;
   role_id: number;
@@ -22,6 +28,7 @@ interface User {
   created_at: string;
   person: Person;
   role: Role;
+  status: UserStatus;
 }
 
 interface PaginatedUserResponse {
@@ -35,30 +42,65 @@ function UserList() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No token found');
-        }
-
-        const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>(`${apiUrl}/api/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        setUsers(response.data.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        setLoading(false);
-        navigate('/login')
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
       }
-    };
 
+      const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>(`${apiUrl}/api/users`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      setUsers(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setLoading(false);
+      navigate('/login')
+    }
+  };
+
+  useEffect(() => {
     fetchUsers();
   }, []);
+
+  const disableUser = async (id: number, token: string) => {
+    await axios.patch(`${apiUrl}/api/users/${id}/disable`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+
+  const enableUser = async (id: number, token: string) => {
+    await axios.patch(`${apiUrl}/api/users/${id}/enable`, null, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+
+  const changeStatus = async (id: number) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    const user = users.find(user => user.id === id);
+    if (!user) {
+      return;
+    }
+    if (user.status === UserStatus.ENABLED) {
+      await disableUser(id, token);
+    } else {
+      await enableUser(id, token);
+    }
+    fetchUsers();
+  }
 
   return (
     <Container maxWidth="lg" sx={{ paddingY: '10px' }}>
@@ -82,20 +124,26 @@ function UserList() {
             <TableHead>
               <TableRow>
                 <TableCell>ID</TableCell>
+                <TableCell>Nome</TableCell>
                 <TableCell>Cargo</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
-              {users.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.role.name}</TableCell>
-                  <TableCell>{row.person.email}</TableCell>
+              {users.map((user) => (
+                <TableRow key={user.id}
+                  sx={{
+                    filter: user.status === UserStatus.DISABLED ? 'grayscale(1)' : 'none'
+                  }}
+                >
+                  <TableCell>{user.id}</TableCell>
+                  <TableCell>{user.person.name}</TableCell>
+                  <TableCell>{user.role.name}</TableCell>
+                  <TableCell>{user.person.email}</TableCell>
                   <TableCell>
-                    <IconButton><EditIcon color="warning" /></IconButton>
-                    <IconButton><DeleteIcon color="error" /></IconButton>
+                    <IconButton component={Link} to={`${user.id}`}><EditIcon color="warning" /></IconButton>
+                    <IconButton onClick={() => changeStatus(user.id)}><DeleteIcon color="error" /></IconButton>
                   </TableCell>
                 </TableRow>
               ))}
