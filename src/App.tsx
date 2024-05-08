@@ -15,6 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/users/new" element={<UserUpdate />} />
+        <Route path="/users/:id" element={<UserUpdate />} />
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="*" element={<Error />} />
