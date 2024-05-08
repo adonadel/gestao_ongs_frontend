@@ -1,4 +1,4 @@
-import { VisibilityOff, Visibility } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Button, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -159,6 +159,7 @@ const UserUpdate: React.FC = () => {
                         type="hidden"
                         {...register('person.id')}
                         defaultValue={isEditMode ? user?.person.id : ''}
+                        sx={{ display: 'none' }}
                     />
                     <TextField
                         label="Email"
