@@ -39,7 +39,7 @@ function Login() {
       );
       const token = response.data.data.token;
       localStorage.setItem('token', token);
-      navigate('/users');
+      navigate('/dashboard');
     } catch (error) {
       setError("Invalid email or password");
       console.error("Login failed: ", error);
