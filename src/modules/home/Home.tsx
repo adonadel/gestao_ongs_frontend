@@ -1,4 +1,5 @@
 import React from 'react';
+import Checkout from '../payment/checkout';
 
 const Home: React.FC = () => {
     return (
@@ -7,6 +8,7 @@ const Home: React.FC = () => {
             <p>Explore our services and learn more about what we do.</p>
             <img src="/path/to/image1.jpg" alt="Image 1" />
             <img src="/path/to/image2.jpg" alt="Image 2" />
+            <Checkout />
         </div>
     );
 };
