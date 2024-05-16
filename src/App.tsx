@@ -13,11 +13,11 @@ import { FinancialList } from './modules/admin/financialManagement/FinancialList
 import { FinancialUpdate } from './modules/admin/financialManagement/FinancialUpdate'
 import { GiverList } from './modules/admin/giversManagement/GiverList'
 import { GiverUpdate } from './modules/admin/giversManagement/GiverUpdate'
+import { UserManagement } from './modules/admin/userManagement/UserManagement'
 import UserList from './modules/admin/usersManagement/UserList'
 import UserUpdate from './modules/admin/usersManagement/UserUpdate'
 import Home from './modules/home/Home'
 import Login from './modules/login/Login'
-import Logout from './modules/logout/Logout'
 import { DefaultDrawer } from './shared/components/drawer/DefaultDrawer'
 import { theme } from './shared/styles/theme'
 
@@ -63,7 +63,7 @@ function App() {
 
             /* Auth */
             <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Logout />} />
+            <Route path="/user" element={<UserManagement />} />
             <Route path="*" element={<Error />} />
           </Routes>
         </DefaultDrawer>

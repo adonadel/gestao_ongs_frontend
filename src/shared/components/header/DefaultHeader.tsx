@@ -1,3 +1,4 @@
+import { Person } from '@mui/icons-material';
 import LoginIcon from '@mui/icons-material/Login';
 import { Typography } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -5,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import { useUserStore } from '../../reducers/userReducer';
 
 export interface IHeaderProps {
     open: boolean;
@@ -34,18 +36,45 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-export const DefaultHeader = (props: IHeaderProps) => {
+const IsLogged = () => {
+    const authenticated = useUserStore(state => state.authenticated);
+
+    return (
+        authenticated ? (
+            <IconButton component={Link} to="/user" sx={{ marginLeft: 'auto' }}>
+                <Person />
+            </IconButton>
+        ) : (
+            <IconButton component={Link} to="/login" sx={{ marginLeft: 'auto' }}>
+                <LoginIcon />
+            </IconButton>
+        )
+    );
+}
+
+const DefaultHeader = (props: IHeaderProps) => {
 
     return (
         <AppBar position="sticky" open={props.open} >
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {!props.open && (
-                    <Typography variant="h6" component={Link} to='/'>EBAA Patinhas</Typography>
+                    <Typography
+                        component={Link}
+                        to='/'
+                        sx={{
+                            fontSize: '1.5625rem',
+                            fontWeight: 600,
+                            color: 'secondary.main',
+                            textDecoration: 'none',
+                        }}
+                    >
+                        EBAA Patinhas
+                    </Typography>
                 )}
-                <IconButton component={Link} to="/login" sx={{ marginLeft: 'auto' }}>
-                    <LoginIcon />
-                </IconButton>
+                <IsLogged />
             </Toolbar>
         </AppBar>
     );
 };
+
+export default DefaultHeader;

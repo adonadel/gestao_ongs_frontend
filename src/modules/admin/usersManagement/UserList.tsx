@@ -4,6 +4,7 @@ import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { getToken } from '../../../shared/utils/getToken';
 
 interface Person {
   id: number;
@@ -44,10 +45,7 @@ function UserList() {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No token found');
-      }
+      const token = getToken();
 
       const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>(`${apiUrl}/api/users`, {
         headers: {
