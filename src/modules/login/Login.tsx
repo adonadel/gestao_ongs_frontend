@@ -6,6 +6,8 @@ import Checkbox from '@mui/material/Checkbox';
 import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../../shared/reducers/userReducer';
+import { getToken } from '../../shared/utils/getToken';
 
 interface LoginResponse {
   data: {
@@ -16,6 +18,9 @@ interface LoginResponse {
 function Login() {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { authenticate } = useUserStore((state) => state);
+  const setNameStored = useUserStore((state) => state.setNameStored);
+  const setEmailStored = useUserStore((state) => state.setEmailStored);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -29,6 +34,20 @@ function Login() {
     event.preventDefault();
   };
 
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      });
+      setNameStored(response.data.person.name);
+      setEmailStored(response.data.person.email);
+    } catch (error) {
+      console.error("Failed to get user data: ", error);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -39,6 +58,8 @@ function Login() {
       );
       const token = response.data.data.token;
       localStorage.setItem('token', token);
+      getUserData();
+      authenticate();
       navigate('/dashboard');
     } catch (error) {
       setError("Invalid email or password");

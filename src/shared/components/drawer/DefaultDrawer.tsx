@@ -8,7 +8,8 @@ import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { DefaultHeader } from '../header/DefaultHeader';
+import { useUserStore } from '../../reducers/userReducer';
+import DefaultHeader from '../header/DefaultHeader';
 import { ListItemDrawer } from './ListItemDrawer';
 
 export interface IDrawerProps {
@@ -76,7 +77,7 @@ interface IListDrawerProps {
 export const DefaultDrawer = (props: IDrawerProps) => {
     const drawerRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLDivElement>(null);
-    const [selectedItem, setSelectedItem] = useState<number>(1);
+    const { authenticated, nameStored } = useUserStore(state => state);
 
     const drawerList: IListDrawerProps[] = [
         {
@@ -119,8 +120,17 @@ export const DefaultDrawer = (props: IDrawerProps) => {
             text: 'Usuários',
             to: '/users',
         },
-    ]
+    ];
 
+    const [selectedItem, setSelectedItem] = useState<number>(() => {
+        const index = drawerList.findIndex(item => item.to === window.location.pathname);
+        return index !== -1 ? index : 0;
+    });
+
+    useEffect(() => {
+        const index = drawerList.findIndex(item => item.to === location.pathname);
+        if (index !== -1) setSelectedItem(index);
+    }, [location.pathname, drawerList]);
 
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {
@@ -150,53 +160,66 @@ export const DefaultDrawer = (props: IDrawerProps) => {
                 <DefaultHeader open={props.open} />
             </Grid>
             <Grid item xs={1}>
-                <Drawer
-                    anchor="left"
-                    variant="permanent"
-                    open={props.open}
-                    ref={drawerRef}
-                >
-                    <DrawerHeader >
-                        <Typography>EBAA Patinhas</Typography>
-                    </DrawerHeader>
-                    <List >
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <Avatar sx={{ width: 54, height: 54 }} />
-                            </ListItemIcon>
-                            <ListItemText
-                                primary={
-                                    <Typography
-                                        sx={{
+                {
+                    authenticated && (
+
+                        <Drawer
+                            anchor="left"
+                            variant="permanent"
+                            open={props.open}
+                            ref={drawerRef}
+                        >
+                            <DrawerHeader >
+                                <Typography
+                                    sx={{
+                                        fontSize: '1.5625rem',
+                                        fontWeight: 600,
+                                        color: 'secondary.main'
+                                    }}
+                                >
+                                    EBAA
+                                </Typography>
+                            </DrawerHeader>
+                            <List >
+                                <ListItemButton>
+                                    <ListItemIcon>
+                                        <Avatar sx={{ width: 54, height: 54 }} />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={
+                                            <Typography
+                                                sx={{
+                                                    fontSize: '1.25rem',
+                                                    fontWeight: "500",
+                                                    marginLeft: '15px'
+                                                }}>
+                                                {nameStored}
+                                            </Typography>
+                                        }
+                                        primaryTypographyProps={{
+                                            fontFamily: 'Inter',
                                             fontSize: '1.25rem',
-                                            fontWeight: "500",
-                                            marginLeft: '15px'
-                                        }}>
-                                        Usuario
-                                    </Typography>
-                                }
-                                primaryTypographyProps={{
-                                    fontFamily: 'Inter',
-                                    fontSize: '1.25rem',
-                                    fontWeight: 500
-                                }}
-                            />
-                        </ListItemButton>
-                        <Divider />
-                        {drawerList.map((item, index) => (
-                            <Fragment key={index} >
-                                <ListItemDrawer
-                                    open={props.open}
-                                    icon={item.icon}
-                                    text={item.text}
-                                    to={item.to}
-                                    selected={selectedItem === index}
-                                    onClick={item.onClick ? item.onClick : () => setSelectedItem(index)}
-                                />
-                            </ Fragment>
-                        ))}
-                    </List>
-                </Drawer>
+                                            fontWeight: 500
+                                        }}
+                                    />
+                                </ListItemButton>
+                                <Divider />
+                                {drawerList.map((item, index) => (
+                                    <Fragment key={index} >
+                                        <ListItemDrawer
+                                            open={props.open}
+                                            icon={item.icon}
+                                            text={item.text}
+                                            to={item.to}
+                                            selected={selectedItem === index}
+                                            onClick={item.onClick ? item.onClick : () => setSelectedItem(index)}
+                                        />
+                                    </ Fragment>
+                                ))}
+                            </List>
+                        </Drawer>
+                    )
+                }
             </Grid>
             <Grid item xs={11}>
                 <Container maxWidth='xl'>

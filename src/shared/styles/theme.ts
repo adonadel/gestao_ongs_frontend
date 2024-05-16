@@ -10,15 +10,7 @@ export const theme: ThemeOptions = createTheme({
       main: "#15B6B1",
     },
   },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: `
-      @font-face {
-        font-family: 'Inter';
-        font-style: normal;
-        font-weight: 400;
-        src: url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-      }`,
-    },
+  typography: {
+    fontFamily: ["Inter", "sans-serif"].join(","),
   },
 });
