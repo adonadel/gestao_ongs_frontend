@@ -55,7 +55,7 @@ const IsLogged = () => {
 const DefaultHeader = (props: IHeaderProps) => {
 
     return (
-        <AppBar position="sticky" open={props.open} >
+        <AppBar position="sticky" open={props.open} sx={{ marginBottom: '32px' }} >
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 {!props.open && (
                     <Typography

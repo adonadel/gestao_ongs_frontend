@@ -3,47 +3,22 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useUserStore } from '../../../shared/reducers/userReducer';
 import { getToken } from '../../../shared/utils/getToken';
+import { PaginatedUserResponse, User, UserStatus } from './types';
 
-interface Person {
-  id: number;
-  name: string;
-  email: string;
-}
 
-interface Role {
-  name: string;
-}
 
-enum UserStatus {
-  ENABLED = 'ENABLED',
-  DISABLED = 'DISABLED'
-
-}
-
-interface User {
-  id: number;
-  role_id: number;
-  people_id: number;
-  created_at: string;
-  person: Person;
-  role: Role;
-  status: UserStatus;
-}
-
-interface PaginatedUserResponse {
-  data: User[];
-}
 
 function UserList() {
-  const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
-
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const logout = useUserStore(state => state.logout);
 
   const fetchUsers = async () => {
+    setIsLoading(true);
     try {
       const token = getToken();
 
@@ -52,20 +27,19 @@ function UserList() {
           Authorization: `Bearer ${token}`
         }
       });
-      setUsers(response.data.data);
-      setLoading(false);
+      const users = response.data.data;
+      setUsers(users);
     } catch (error) {
       console.error('Error fetching users:', error);
-      setLoading(false);
-      navigate('/login')
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  const disableUser = async (id: number, token: string) => {
+  const disableUser = async (id: number, token: string | void) => {
     await axios.patch(`${apiUrl}/api/users/${id}/disable`, null, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -73,7 +47,7 @@ function UserList() {
     });
   }
 
-  const enableUser = async (id: number, token: string) => {
+  const enableUser = async (id: number, token: string | void) => {
     await axios.patch(`${apiUrl}/api/users/${id}/enable`, null, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -82,20 +56,16 @@ function UserList() {
   }
 
   const changeStatus = async (id: number) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-
-    const user = users.find(user => user.id === id);
-    if (!user) {
-      return;
-    }
-    if (user.status === UserStatus.ENABLED) {
-      await disableUser(id, token);
-    } else {
-      await enableUser(id, token);
+    try {
+      const token = getToken();
+      const user = users.find(user => user.id === id);
+      if (user?.status === UserStatus.ENABLED) {
+        await disableUser(id, token);
+      } else {
+        await enableUser(id, token);
+      }
+    } catch (error) {
+      logout();
     }
     fetchUsers();
   }
@@ -114,7 +84,7 @@ function UserList() {
 
       </Grid>
 
-      {loading ?
+      {isLoading ?
         <p>Carregando...</p>
         :
         <TableContainer component={Paper}>
