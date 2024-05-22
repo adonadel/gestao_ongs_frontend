@@ -1,4 +1,5 @@
-import create from "zustand";
+import { useNavigate } from "react-router-dom";
+import { create } from "zustand";
 
 type User = {
   authenticated: boolean;
@@ -9,6 +10,7 @@ type User = {
 type Action = {
   authenticate: () => void;
   deauthenticate: () => void;
+  logout: () => void;
   setNameStored: (name: string) => void;
   setEmailStored: (email: string) => void;
 };
@@ -29,6 +31,16 @@ export const useUserStore = create<User & Action>((set) => {
     deauthenticate: () => {
       set({ authenticated: false });
       localStorage.removeItem("authenticated");
+    },
+    logout: () => {
+      set({ authenticated: false });
+      localStorage.removeItem("authenticated");
+      localStorage.removeItem("nameStored");
+      localStorage.removeItem("emailStored");
+      return () => {
+        const navigate = useNavigate();
+        navigate("/login");
+      };
     },
     setNameStored: (nameStored: string) => {
       set({ nameStored });

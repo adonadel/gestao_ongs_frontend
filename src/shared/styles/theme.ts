@@ -5,6 +5,8 @@ export const theme: ThemeOptions = createTheme({
     mode: "light",
     primary: {
       main: "#FCFFFF",
+      light: "#F4F4F4",
+      dark: "#D9D9D9",
     },
     secondary: {
       main: "#15B6B1",
@@ -12,5 +14,17 @@ export const theme: ThemeOptions = createTheme({
   },
   typography: {
     fontFamily: ["Inter", "sans-serif"].join(","),
+  },
+  components: {
+    MuiOutlinedInput: {
+      defaultProps: {
+        color: "secondary",
+      },
+    },
+    MuiSelect: {
+      defaultProps: {
+        color: "secondary",
+      },
+    },
   },
 });

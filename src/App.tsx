@@ -1,21 +1,23 @@
 import { ThemeProvider } from '@mui/material'
 import { useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { AnimalList } from './modules/admin/animalsManagement/AnimalList'
-import { AnimalUpdate } from './modules/admin/animalsManagement/AnimalUpdate'
+import AnimalList from './modules/admin/animalsManagement/AnimalList'
+import AnimalUpdate from './modules/admin/animalsManagement/AnimalUpdate'
 import { BannerList } from './modules/admin/bannersManagement/BannerList'
 import { BannerUpdate } from './modules/admin/bannersManagement/BannerUpdate'
 import { Dashboard } from './modules/admin/dashboard/Dashboard'
 import { DonationList } from './modules/admin/donationsManagement/DonationList'
 import { DonationUpdate } from './modules/admin/donationsManagement/DonationUpdate'
-import Error from './modules/admin/error/Error'
 import { FinancialList } from './modules/admin/financialManagement/FinancialList'
 import { FinancialUpdate } from './modules/admin/financialManagement/FinancialUpdate'
 import { GiverList } from './modules/admin/giversManagement/GiverList'
 import { GiverUpdate } from './modules/admin/giversManagement/GiverUpdate'
+import RolesList from './modules/admin/rolesManagement/RolesList'
+import RolesUpdate from './modules/admin/rolesManagement/RolesUpdate'
 import { UserManagement } from './modules/admin/userManagement/UserManagement'
 import UserList from './modules/admin/usersManagement/UserList'
 import UserUpdate from './modules/admin/usersManagement/UserUpdate'
+import Error from './modules/error/Error'
 import Home from './modules/home/Home'
 import Login from './modules/login/Login'
 import { DefaultDrawer } from './shared/components/drawer/DefaultDrawer'
@@ -35,6 +37,9 @@ function App() {
             <Route path="/users" element={<UserList />} />
             <Route path="/users/new" element={<UserUpdate />} />
             <Route path="/users/:id" element={<UserUpdate />} />
+            <Route path="/roles" element={<RolesList />} />
+            <Route path="/roles/new" element={<RolesUpdate />} />
+            <Route path="/roles/:id" element={<RolesUpdate />} />
 
             /* Animals Management */
             <Route path="/animals" element={<AnimalList />} />
