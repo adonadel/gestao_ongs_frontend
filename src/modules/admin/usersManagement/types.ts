@@ -23,6 +23,7 @@ export type Person = {
   email: string;
   cpf_cnpj: string;
   address: AddressValues;
+  profile_picture_id: number;
 };
 
 export type Role = {
@@ -37,7 +38,7 @@ export type UserValues = {
   role_id: number;
   address_id: number;
   address: AddressValues;
-  profile_picture_id: number;
+  
 };
 
 export type AddressValues = {

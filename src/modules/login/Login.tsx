@@ -82,7 +82,7 @@ function Login() {
             <FormControl fullWidth margin="normal">
               <TextField
                 variant="outlined"
-                color="primary"
+                color="secondary"
                 required
                 fullWidth
                 id="email"
