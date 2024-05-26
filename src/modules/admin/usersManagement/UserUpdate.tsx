@@ -64,8 +64,9 @@ const UserUpdate: React.FC = () => {
         left: 0,
         whiteSpace: 'nowrap',
         width: 1,
-      });
-    const inputPictureId = document.getElementById('inputPictureId') as HTMLInputElement;
+    });
+    const { register, handleSubmit, setValue, formState } = useForm<UserValues>();
+      const [inputPictureId, setInputPictureId] = useState<string | null>(null);
 
       const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -75,25 +76,32 @@ const UserUpdate: React.FC = () => {
         formData.append('media', file);
     
         try {
-            const token = getToken();
-            const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            const media = response.data;
-            inputPictureId.value = media.id;       
+          const token = getToken();
+          const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          const media = response.data;
+          setInputPictureId(media.id); // Atualize o estado com o ID da imagem
         } catch (error) {
-            console.error(error);
+          console.error(error);
         }
-    };
+      };
+    
+      // Atualize o valor do campo oculto quando o estado inputPictureId mudar
+        useEffect(() => {
+            if (inputPictureId) {
+                setValue('person.profile_picture_id', Number(inputPictureId));
+                console.log('Valor do campo oculto definido:', inputPictureId);
+            }
+        }, [inputPictureId, setValue]);
 
     const openImagePicker = () => {
-        const input = document.getElementById('inputImagePicker') as HTMLInputElement;
-        input.click();
+            const input = document.getElementById('inputImagePicker') as HTMLInputElement;
+            input.click();
     }
-
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -135,6 +143,7 @@ const UserUpdate: React.FC = () => {
                             Authorization: `Bearer ${token}`
                         }
                     });
+                    console.log(response.data)
                     const user = response.data;                    
                     setUser(user);
                 } catch (error) {
@@ -145,7 +154,7 @@ const UserUpdate: React.FC = () => {
         }
     }, [id, isEditMode, navigate]);
 
-    const { register, handleSubmit, formState, setValue } = useForm<UserValues>();
+    
 
     const onSubmit = async (data: UserValues) => {
         try {
@@ -223,7 +232,7 @@ const UserUpdate: React.FC = () => {
                             <Avatar
                                 sx={{ width: '64px', height: '64px' }}
                                 alt={isEditMode ? user?.person.name : 'Imagem de perfil'}
-                                src={isEditMode ? `https://drive.google.com/thumbnail?id=${user?.person?.profile_picture_id}` : ''}
+                                src={isEditMode ? `https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}` : ''}
                             />
                                                     
                             <VisuallyHiddenInput id="inputImagePicker" type="file" onChange={postImage}/>                            

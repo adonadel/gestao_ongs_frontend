@@ -17,12 +17,17 @@ export type PaginatedUserResponse = {
   data: User[];
 };
 
+export type ProfilePicture = {
+  filename_id: string;
+}
+
 export type Person = {
   id: number;
   name: string;
   email: string;
   cpf_cnpj: string;
   address: AddressValues;
+  profile_picture: ProfilePicture;
   profile_picture_id: number;
 };
 
