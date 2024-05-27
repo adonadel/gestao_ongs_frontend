@@ -9,6 +9,7 @@ import { useUserStore } from '../../../shared/reducers/userReducer';
 import { getToken } from '../../../shared/utils/getToken';
 import PermissionsDialog from '../rolesManagement/PermissionsDialog';
 import { CustomProps, Role, User } from './types';
+import { Loading } from '../../../shared/components/loading/Loading';
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
@@ -276,7 +277,7 @@ const UserUpdate: React.FC = () => {
                             <Avatar
                                 sx={{ width: '64px', height: '64px' }}
                                 alt={isEditMode ? user?.person.name : 'Imagem de perfil'}
-                                src={isEditMode ? `${srcUserProfile}` : ''}
+                                src={srcUserProfile ? `${srcUserProfile}` : ''}
                             />
 
 
@@ -531,11 +532,7 @@ const UserUpdate: React.FC = () => {
 
                     {
                         isLoading && (
-                            <Grid item xs={12}>
-                                <Box sx={{ width: '80%', margin: '0 auto' }}>
-                                    <LinearProgress color='secondary' />
-                                </Box>
-                            </Grid>
+                            <Loading />
                         )
                     }
 
