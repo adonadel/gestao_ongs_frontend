@@ -10,7 +10,7 @@ export const theme: ThemeOptions = createTheme({
     },
     secondary: {
       main: "#15B6B1",
-    },
+    }
   },
   typography: {
     fontFamily: ["Inter", "sans-serif"].join(","),

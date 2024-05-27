@@ -1,5 +1,5 @@
-import { AddPhotoAlternateOutlined, CreateOutlined, Edit, Person, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Box, Button, Divider, Grid, Hidden, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
+import { AddPhotoAlternateOutlined, CreateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Avatar, Box, Button, CircularProgress, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, LinearProgress, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useUserStore } from '../../../shared/reducers/userReducer';
 import { getToken } from '../../../shared/utils/getToken';
 import PermissionsDialog from '../rolesManagement/PermissionsDialog';
-import { CustomProps, RoleValues, UserValues } from './types';
+import { CustomProps, Role, User } from './types';
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
@@ -47,13 +47,15 @@ const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
     const apiUrl = import.meta.env.VITE_API_URL;
+    const apiCepUrl = import.meta.env.VITE_API_CEP;
     const { id } = useParams<{ id: string }>();
-    const [user, setUser] = useState<UserValues | null>(null);
-    const [roles, setRoles] = useState<RoleValues[]>([]);
+    const [user, setUser] = useState<User | null>(null);
+    const [roles, setRoles] = useState<Role[]>([]);
     const [showPassword, setShowPassword] = useState(false);
+    const [shrinkInput, setShrinkInput] = useState(false);
     const logout = useUserStore(state => state.logout);
     const isEditMode = !!id;
-    const [isModalOpen, setIsModalOpen] = useState(false);    
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
         clipPath: 'inset(50%)',
@@ -65,42 +67,53 @@ const UserUpdate: React.FC = () => {
         whiteSpace: 'nowrap',
         width: 1,
     });
-    const { register, handleSubmit, setValue, formState } = useForm<UserValues>();
-      const [inputPictureId, setInputPictureId] = useState<string | null>(null);
+    const { register, handleSubmit, setValue, formState } = useForm<User>();
+    const [srcUserProfile, setSrcUserProfile] = useState<string | null>('');
+    const [isLoading, setIsLoading] = useState(false);
 
-      const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
         const file = event.target.files?.[0];
         if (!file) return;
-    
+
+        const validImageTypes = ['image/jpeg', 'image/png'];
+        //Verificando tipo de imagem
+        if (!validImageTypes.includes(file.type)) {
+            console.error('Invalid image type:', file.type);
+            return;
+        }
+
+        const tempSrcImage = URL.createObjectURL(file);
+        setSrcUserProfile(tempSrcImage);
+        setIsLoading(true);        
+
         const formData = new FormData();
         formData.append('media', file);
-    
+
         try {
-          const token = getToken();
-          const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-          const media = response.data;
-          setInputPictureId(media.id); // Atualize o estado com o ID da imagem
+            const token = getToken();
+            const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            const media = response.data;
+            setValue('person.profile_picture_id', media.id);
+            setSrcUserProfile(`https://drive.google.com/thumbnail?id=${media.filename_id}`);
+
         } catch (error) {
-          console.error(error);
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+            URL.revokeObjectURL(tempSrcImage);
         }
-      };
-    
-      // Atualize o valor do campo oculto quando o estado inputPictureId mudar
-        useEffect(() => {
-            if (inputPictureId) {
-                setValue('person.profile_picture_id', Number(inputPictureId));
-                console.log('Valor do campo oculto definido:', inputPictureId);
-            }
-        }, [inputPictureId, setValue]);
+    };
 
     const openImagePicker = () => {
-            const input = document.getElementById('inputImagePicker') as HTMLInputElement;
-            input.click();
+        const input = document.getElementById('inputImagePicker') as HTMLInputElement;
+        input.click();
     }
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -112,6 +125,33 @@ const UserUpdate: React.FC = () => {
     const handleClickOpen = () => {
         setIsModalOpen(true);
     }
+
+
+    const searchCEP = async () => {
+        const cep = (document.getElementById('inputCep') as HTMLInputElement).value;
+        setIsLoading(true);
+        try {            
+            const response = await axios.get(`${apiCepUrl}/${cep}/json/`, { 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }               
+            });
+            const data = response.data;
+            setValue('person.address.state', data.uf);
+            setValue('person.address.city', data.localidade);
+            setValue('person.address.neighborhood', data.bairro);
+            setValue('person.address.street', data.logradouro);
+            setValue('person.address.complement', data.complemento);
+            setShrinkInput(true);
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
 
     useEffect(() => {
         const fetchRoles = async () => {
@@ -125,7 +165,6 @@ const UserUpdate: React.FC = () => {
                 });
                 const roles = response.data.data;
                 setRoles(roles);
-                console.log(roles)
             } catch (error) {
                 logout();
             }
@@ -143,8 +182,8 @@ const UserUpdate: React.FC = () => {
                             Authorization: `Bearer ${token}`
                         }
                     });
-                    console.log(response.data)
-                    const user = response.data;                    
+                    const user = response.data;
+                    setSrcUserProfile(`https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}`);
                     setUser(user);
                 } catch (error) {
                     logout();
@@ -154,12 +193,13 @@ const UserUpdate: React.FC = () => {
         }
     }, [id, isEditMode, navigate]);
 
-    
 
-    const onSubmit = async (data: UserValues) => {
+
+    const onSubmit = async (data: User) => {
         try {
             const token = getToken();
             if (isEditMode) {
+
                 await axios.put(`${apiUrl}/api/users/${id}`, data, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -187,7 +227,9 @@ const UserUpdate: React.FC = () => {
 
     return (
         <>
+
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
+
                 <TextField
                     type="hidden"
                     {...register('person.id')}
@@ -195,6 +237,7 @@ const UserUpdate: React.FC = () => {
                     sx={{ display: 'none' }}
                 />
                 <Grid
+                    item
                     container
                     spacing={2}
                     sm={12}
@@ -207,6 +250,7 @@ const UserUpdate: React.FC = () => {
                         padding: '20px',
                         borderRadius: '10px'
                     }}>
+
                     <Grid
                         item xs={12}
                         sx={{
@@ -216,6 +260,7 @@ const UserUpdate: React.FC = () => {
                             gap: '1rem',
                         }}
                     >
+
                         <Box
                             position='relative'
                             onClick={openImagePicker}
@@ -228,16 +273,17 @@ const UserUpdate: React.FC = () => {
 
                             }}
                         >
-
                             <Avatar
                                 sx={{ width: '64px', height: '64px' }}
                                 alt={isEditMode ? user?.person.name : 'Imagem de perfil'}
-                                src={isEditMode ? `https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}` : ''}
+                                src={isEditMode ? `${srcUserProfile}` : ''}
                             />
-                                                    
-                            <VisuallyHiddenInput id="inputImagePicker" type="file" onChange={postImage}/>                            
-                            <input id="inputPictureId" type="hidden" {...register('person.profile_picture_id')}/>                                                      
-                            
+
+
+                            <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
+                            <input id="inputPictureId" type="hidden" accept='image/*' {...register('person.profile_picture_id')} />
+
+
                             <Box className="hoverBox"
                                 sx={{
                                     display: 'flex',
@@ -261,7 +307,7 @@ const UserUpdate: React.FC = () => {
                                             display: 'block',
                                             color: 'white',
                                             width: '50%',
-                                            zIndex: 999
+                                            zIndex: 1
                                         }
                                     }
                                 />
@@ -269,6 +315,7 @@ const UserUpdate: React.FC = () => {
 
 
                         </Box>
+
 
                         <TextField
                             label='Nome completo'
@@ -279,7 +326,8 @@ const UserUpdate: React.FC = () => {
                             fullWidth
                         />
                     </Grid>
-                    <Grid xs={12} sx={{ marginTop: '2rem' }}>
+
+                    <Grid item xs={12}>
                         <Divider />
                     </Grid>
                     <Grid item xs={12} sm={9} md={10}>
@@ -330,7 +378,7 @@ const UserUpdate: React.FC = () => {
                             <MenuItem disabled value="">
                                 <em>Selecione ou crie um nível</em>
                             </MenuItem>
-                            {roles && roles.map((role: RoleValues) => (
+                            {roles && roles.map((role: Role) => (
                                 <MenuItem key={role.id} value={role.id}>{role.name}</MenuItem>
                             ))}
                         </Select>
@@ -376,11 +424,37 @@ const UserUpdate: React.FC = () => {
                             />
                         </Grid>
                     )}
-                    <Grid xs={12} sx={{ marginTop: '2rem' }}>
+                    <Grid item xs={12}>
                         <Divider />
                     </Grid>
                     <Grid item xs={12}>
                         <Typography>Endereço</Typography>
+                    </Grid>
+                    <Grid item xs={12} sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+
+                    }}>
+                        <TextField
+                            label='CEP'
+                            type='text'
+                            id='inputCep'
+                            {...register('person.address.zip')}
+                            defaultValue={isEditMode ? user?.person?.address?.zip : ''}
+                            variant='outlined'
+                            fullWidth
+                        />
+                        <IconButton
+                            onClick={searchCEP}
+                            sx={{
+                                border: '1px solid',
+                                borderColor: 'primary.dark',
+                                borderRadius: '4px',
+                            }}>
+                            <Search />
+                        </IconButton>
                     </Grid>
                     <Grid item xs={6}>
                         <TextField
@@ -389,6 +463,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.state')}
                             defaultValue={isEditMode ? user?.person?.address?.state : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
@@ -399,6 +474,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.city')}
                             defaultValue={isEditMode ? user?.person?.address?.city : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
@@ -409,6 +485,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.neighborhood')}
                             defaultValue={isEditMode ? user?.person?.address?.neighborhood : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
@@ -419,6 +496,18 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.street')}
                             defaultValue={isEditMode ? user?.person?.address?.street : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Complemento'
+                            type='text'
+                            {...register('person.address.complement')}
+                            defaultValue={isEditMode ? user?.person?.address?.complement : ''}
+                            variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
@@ -432,12 +521,24 @@ const UserUpdate: React.FC = () => {
                             fullWidth
                         />
                     </Grid>
+
                     <PermissionsDialog open={isModalOpen} onClose={() => setIsModalOpen(false)} permissions={[]} roleName={''} />
                     <Grid item xs={12} sx={{ marginTop: '2rem' }}>
-                        <Button type='submit' variant='contained' color="success" fullWidth size='large'>
+                        <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>
                             {isEditMode ? 'Salvar' : 'Criar'}
                         </Button>
                     </Grid>
+
+                    {
+                        isLoading && (
+                            <Grid item xs={12}>
+                                <Box sx={{ width: '80%', margin: '0 auto' }}>
+                                    <LinearProgress color='secondary' />
+                                </Box>
+                            </Grid>
+                        )
+                    }
+
                 </Grid>
             </form>
         </>
