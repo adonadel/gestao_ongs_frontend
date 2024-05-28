@@ -1,5 +1,5 @@
 import { AddPhotoAlternateOutlined, CreateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Box, Button, CircularProgress, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, LinearProgress, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
+import { Alert, Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, MenuItem, Select, Snackbar, TextField, Typography, styled } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,8 @@ import { getToken } from '../../../shared/utils/getToken';
 import PermissionsDialog from '../rolesManagement/PermissionsDialog';
 import { CustomProps, Role, User } from './types';
 import { Loading } from '../../../shared/components/loading/Loading';
+import { Message } from '../../../shared/components/message/Message';
+import { setTimeout } from 'timers/promises';
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
@@ -71,6 +73,10 @@ const UserUpdate: React.FC = () => {
     const { register, handleSubmit, setValue, formState } = useForm<User>();
     const [srcUserProfile, setSrcUserProfile] = useState<string | null>('');
     const [isLoading, setIsLoading] = useState(false);
+    const [textMessage, setTextMessage] = useState('Mensagem padrão');
+    const [typeMessage, setTypeMessage] = useState('warning');
+    const [openMessage, setOpenMessage] = useState(false);
+   
 
     const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -79,14 +85,16 @@ const UserUpdate: React.FC = () => {
 
         const validImageTypes = ['image/jpeg', 'image/png'];
         //Verificando tipo de imagem
-        if (!validImageTypes.includes(file.type)) {
-            console.error('Invalid image type:', file.type);
-            return;
+        if (!validImageTypes.includes(file.type)) {            
+            setTextMessage('Selecione um arquivo de imagem do tipo: JPEG, JPG ou PNG');
+            setTypeMessage('error');
+            setOpenMessage(true);                   
         }
+        
 
         const tempSrcImage = URL.createObjectURL(file);
         setSrcUserProfile(tempSrcImage);
-        setIsLoading(true);        
+        setIsLoading(true);
 
         const formData = new FormData();
         formData.append('media', file);
@@ -131,12 +139,12 @@ const UserUpdate: React.FC = () => {
     const searchCEP = async () => {
         const cep = (document.getElementById('inputCep') as HTMLInputElement).value;
         setIsLoading(true);
-        try {            
-            const response = await axios.get(`${apiCepUrl}/${cep}/json/`, { 
+        try {
+            const response = await axios.get(`${apiCepUrl}/${cep}/json/`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
-                }               
+                }
             });
             const data = response.data;
             setValue('person.address.state', data.uf);
@@ -534,6 +542,14 @@ const UserUpdate: React.FC = () => {
                         isLoading && (
                             <Loading />
                         )
+                    }
+
+                    {
+                        <Message
+                            message={textMessage}
+                            type={typeMessage}
+                            open={openMessage}
+                        />
                     }
 
                 </Grid>
