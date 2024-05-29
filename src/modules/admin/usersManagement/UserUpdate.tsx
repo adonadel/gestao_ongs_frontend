@@ -2,7 +2,7 @@ import { AddPhotoAlternateOutlined, CreateOutlined, Search, Visibility, Visibili
 import { Alert, Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, MenuItem, Select, Snackbar, TextField, Typography, styled } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { IMaskInput } from 'react-imask';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserStore } from '../../../shared/reducers/userReducer';
@@ -11,7 +11,6 @@ import PermissionsDialog from '../rolesManagement/PermissionsDialog';
 import { CustomProps, Role, User } from './types';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
-import { setTimeout } from 'timers/promises';
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
@@ -73,10 +72,18 @@ const UserUpdate: React.FC = () => {
     const { register, handleSubmit, setValue, formState } = useForm<User>();
     const [srcUserProfile, setSrcUserProfile] = useState<string | null>('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const handleClose = () => {
+        setOpenMessage(false);
+    }
+
     const [textMessage, setTextMessage] = useState('Mensagem padrão');
     const [typeMessage, setTypeMessage] = useState('warning');
     const [openMessage, setOpenMessage] = useState(false);
-   
+
+
+    
+
 
     const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -84,13 +91,13 @@ const UserUpdate: React.FC = () => {
         if (!file) return;
 
         const validImageTypes = ['image/jpeg', 'image/png'];
-        //Verificando tipo de imagem
-        if (!validImageTypes.includes(file.type)) {            
+
+        if (!validImageTypes.includes(file.type)) {
             setTextMessage('Selecione um arquivo de imagem do tipo: JPEG, JPG ou PNG');
             setTypeMessage('error');
-            setOpenMessage(true);                   
+            setOpenMessage(true);
+            return;
         }
-        
 
         const tempSrcImage = URL.createObjectURL(file);
         setSrcUserProfile(tempSrcImage);
@@ -115,6 +122,10 @@ const UserUpdate: React.FC = () => {
         } catch (error) {
             console.error(error);
         } finally {
+
+            setTextMessage('Upload de imagem concluído!');
+            setTypeMessage('info');
+            setOpenMessage(true);
             setIsLoading(false);
             URL.revokeObjectURL(tempSrcImage);
         }
@@ -157,6 +168,9 @@ const UserUpdate: React.FC = () => {
         } catch (error) {
             console.error(error);
         } finally {
+            setTextMessage('Campos preenchidos automaticamente com base no CEP informado');
+            setTypeMessage('info');
+            setOpenMessage(true);
             setIsLoading(false);
         }
     }
@@ -223,6 +237,9 @@ const UserUpdate: React.FC = () => {
                     }
                 });
             }
+            setTextMessage('Upload de imagem concluído!');
+            setTypeMessage('info');
+            setOpenMessage(true);
             navigate('/users');
         } catch (error) {
             logout();
@@ -544,13 +561,14 @@ const UserUpdate: React.FC = () => {
                         )
                     }
 
-                    {
-                        <Message
-                            message={textMessage}
-                            type={typeMessage}
-                            open={openMessage}
-                        />
-                    }
+
+                    <Message
+                        message={textMessage}
+                        type={typeMessage}
+                        open={openMessage}
+                        onClose={handleClose}
+                    />
+
 
                 </Grid>
             </form>
