@@ -1,14 +1,17 @@
-import { CreateOutlined, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Button, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { AddPhotoAlternateOutlined, CreateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { IMaskInput } from 'react-imask';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUserStore } from '../../../shared/reducers/userReducer';
 import { getToken } from '../../../shared/utils/getToken';
 import PermissionsDialog from '../rolesManagement/PermissionsDialog';
-import { CustomProps, RoleValues, UserValues } from './types';
+import { CustomProps, Role, User } from './types';
+import { Loading } from '../../../shared/components/loading/Loading';
+import { Message } from '../../../shared/components/message/Message';
+import CepMask from '../../../shared/components/inputMask/CepMask';
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
@@ -44,16 +47,102 @@ const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     },
 );
 
+
+
+
+
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
     const apiUrl = import.meta.env.VITE_API_URL;
+    const apiCepUrl = import.meta.env.VITE_API_CEP;
     const { id } = useParams<{ id: string }>();
-    const [user, setUser] = useState<UserValues | null>(null);
-    const [roles, setRoles] = useState<RoleValues[]>([]);
+    const [user, setUser] = useState<User | null>(null);
+    const [roles, setRoles] = useState<Role[]>([]);
     const [showPassword, setShowPassword] = useState(false);
+    const [shrinkInput, setShrinkInput] = useState(false);
     const logout = useUserStore(state => state.logout);
     const isEditMode = !!id;
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const VisuallyHiddenInput = styled('input')({
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+    });
+    const { register, handleSubmit, setValue, formState } = useForm<User>();
+    const [srcUserProfile, setSrcUserProfile] = useState<string | null>('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleClose = () => {
+        setOpenMessage(false);
+    }
+
+    const [textMessage, setTextMessage] = useState('Mensagem padrão');
+    const [typeMessage, setTypeMessage] = useState('warning');
+    const [openMessage, setOpenMessage] = useState(false);
+
+
+    
+
+
+    const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const validImageTypes = ['image/jpeg', 'image/png'];
+
+        if (!validImageTypes.includes(file.type)) {
+            setTextMessage('Selecione um arquivo de imagem do tipo: JPEG, JPG ou PNG');
+            setTypeMessage('error');
+            setOpenMessage(true);
+            return;
+        }
+
+        const tempSrcImage = URL.createObjectURL(file);
+        setSrcUserProfile(tempSrcImage);
+        setIsLoading(true);
+
+        const formData = new FormData();
+        formData.append('media', file);
+
+        try {
+            const token = getToken();
+            const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            const media = response.data;
+            setValue('person.profile_picture_id', media.id);
+            setSrcUserProfile(`https://drive.google.com/thumbnail?id=${media.filename_id}`);
+
+        } catch (error) {
+            setTextMessage('Ocorreu um erro com o upload da imagem, tente novamente!');
+            setTypeMessage('error');
+            setOpenMessage(true);
+            console.error(error);
+        } finally {
+
+            setTextMessage('Upload de imagem concluído!');
+            setTypeMessage('info');
+            setOpenMessage(true);
+            setIsLoading(false);
+            URL.revokeObjectURL(tempSrcImage);
+        }
+    };
+
+    const openImagePicker = () => {
+        const input = document.getElementById('inputImagePicker') as HTMLInputElement;
+        input.click();
+    }
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -64,6 +153,39 @@ const UserUpdate: React.FC = () => {
     const handleClickOpen = () => {
         setIsModalOpen(true);
     }
+
+
+    const searchCEP = async () => {
+        const cep = (document.getElementById('inputCep') as HTMLInputElement).value;
+        setIsLoading(true);
+        try {
+            const response = await axios.get(`${apiCepUrl}/${cep}/json/`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
+            });
+            const data = response.data;
+            setValue('person.address.state', data.uf);
+            setValue('person.address.city', data.localidade);
+            setValue('person.address.neighborhood', data.bairro);
+            setValue('person.address.street', data.logradouro);
+            setValue('person.address.complement', data.complemento);
+            setShrinkInput(true);
+
+        } catch (error) {
+            setTextMessage('CEP inválido, tente novamente!');
+            setTypeMessage('error');
+            setOpenMessage(true);
+            console.error(error);
+        } finally {
+            setTextMessage('Campos preenchidos automaticamente!');
+            setTypeMessage('info');
+            setOpenMessage(true);
+            setIsLoading(false);
+        }
+    }
+
 
     useEffect(() => {
         const fetchRoles = async () => {
@@ -77,8 +199,10 @@ const UserUpdate: React.FC = () => {
                 });
                 const roles = response.data.data;
                 setRoles(roles);
-                console.log(roles)
             } catch (error) {
+                setTextMessage('Ocorreu um erro ao acessar essa página!');
+                setTypeMessage('error');
+                setOpenMessage(true);
                 logout();
             }
         }
@@ -96,8 +220,12 @@ const UserUpdate: React.FC = () => {
                         }
                     });
                     const user = response.data;
+                    setSrcUserProfile(`https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}`);
                     setUser(user);
                 } catch (error) {
+                    setTextMessage('Ocorreu um erro ao acessar essa página!');
+                    setTypeMessage('error');
+                    setOpenMessage(true);
                     logout();
                 }
             };
@@ -105,14 +233,13 @@ const UserUpdate: React.FC = () => {
         }
     }, [id, isEditMode, navigate]);
 
-    const { register, handleSubmit, formState } = useForm<UserValues>();
 
 
-    const onSubmit = async (data: UserValues) => {
+    const onSubmit = async (data: User) => {
         try {
             const token = getToken();
-
             if (isEditMode) {
+
                 await axios.put(`${apiUrl}/api/users/${id}`, data, {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -129,9 +256,13 @@ const UserUpdate: React.FC = () => {
             }
             navigate('/users');
         } catch (error) {
+            setTextMessage('Ocorreu um erro ao salvar o usuário!');
+            setTypeMessage('error');
+            setOpenMessage(true);
             logout();
         }
     };
+
 
     if (isEditMode && !user || !roles.length) {
         return <div>Loading...</div>;
@@ -139,7 +270,9 @@ const UserUpdate: React.FC = () => {
 
     return (
         <>
+
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
+
                 <TextField
                     type="hidden"
                     {...register('person.id')}
@@ -147,8 +280,12 @@ const UserUpdate: React.FC = () => {
                     sx={{ display: 'none' }}
                 />
                 <Grid
+                    item
                     container
                     spacing={2}
+                    sm={12}
+                    md={8}
+                    lg={6}
                     sx={{
                         border: 'solid 0.5px',
                         borderColor: 'primary.light',
@@ -156,16 +293,75 @@ const UserUpdate: React.FC = () => {
                         padding: '20px',
                         borderRadius: '10px'
                     }}>
-                    <Grid item xs={12} sm={3} md={2}>
-                        <label htmlFor='avatar-input'>
+
+                    <Grid
+                        item xs={12}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            gap: '1rem',
+                        }}
+                    >
+
+                        <Box
+                            position='relative'
+                            onClick={openImagePicker}
+                            sx={{
+                                width: 'fit-content',
+                                cursor: 'pointer',
+                                '&:hover .hoverBox': {
+                                    visibility: 'visible',
+                                }
+
+                            }}
+                        >
                             <Avatar
-                                sx={{ width: '116px', height: '116px' }}
+                                sx={{ width: '64px', height: '64px' }}
+                                alt={isEditMode ? user?.person.name : 'Imagem de perfil'}
+                                src={srcUserProfile ? `${srcUserProfile}` : ''}
                             />
-                        </label>
-                    </Grid>
-                    <Grid item xs={12} sm={9} md={10}>
-                        <InputLabel>Nome</InputLabel>
+
+
+                            <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
+                            <input id="inputPictureId" type="hidden" accept='image/*' {...register('person.profile_picture_id')} />
+
+
+                            <Box className="hoverBox"
+                                sx={{
+                                    display: 'flex',
+                                    visibility: 'hidden',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    position: 'absolute',
+                                    top: '0',
+                                    left: '0',
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                                    backdropFilter: 'blur(5px)',
+                                    borderRadius: '50%',
+                                }}
+                            >
+
+                                <AddPhotoAlternateOutlined
+                                    sx={
+                                        {
+                                            display: 'block',
+                                            color: 'white',
+                                            width: '50%',
+                                            zIndex: 1
+                                        }
+                                    }
+                                />
+                            </Box>
+
+
+                        </Box>
+
+
                         <TextField
+                            label='Nome completo'
                             type='text'
                             {...register('person.name')}
                             defaultValue={isEditMode ? user?.person.name : ''}
@@ -173,9 +369,15 @@ const UserUpdate: React.FC = () => {
                             fullWidth
                         />
                     </Grid>
+
+                    <Grid item xs={12}>
+                        <Divider />
+                    </Grid>
+                    <Grid item xs={12} sm={9} md={10}>
+                    </Grid>
                     <Grid item xs={6}>
-                        <InputLabel>Email</InputLabel>
                         <TextField
+                            label='E-mail'
                             type="email"
                             {...register('person.email', { required: 'E-mail necessário', pattern: { value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/i, message: 'E-mail inválido' } })}
                             error={!!formState.errors.person?.email}
@@ -186,8 +388,8 @@ const UserUpdate: React.FC = () => {
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <InputLabel>CPF/CNPJ</InputLabel>
                         <TextField
+                            label='CPF/CNPJ'
                             type="text"
                             fullWidth
                             {...register('person.cpf_cnpj')}
@@ -198,29 +400,44 @@ const UserUpdate: React.FC = () => {
                             }}
                         />
                     </Grid>
-                    <Grid item xs={6}>
-                        <InputLabel id="role-label">Cargo</InputLabel>
+                    <Grid item xs={6}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: '.5rem',
+
+
+                        }}
+                    >
                         <Select
                             labelId="role-label"
+                            label='Nível de acesso'
                             {...register('role_id')}
                             defaultValue={isEditMode ? user?.role_id : roles[0]['id']}
                             variant='outlined'
-                            sx={{
-                                width: '85%'
-                            }}
+                            fullWidth={true}
                         >
-                            {roles && roles.map((role: RoleValues) => (
+                            <MenuItem disabled value="">
+                                <em>Selecione ou crie um nível</em>
+                            </MenuItem>
+                            {roles && roles.map((role: Role) => (
                                 <MenuItem key={role.id} value={role.id}>{role.name}</MenuItem>
                             ))}
                         </Select>
-                        <IconButton onClick={handleClickOpen} sx={{ border: '1px solid', borderColor: 'primary.dark', borderRadius: '4px', padding: '15px', marginLeft: '5px' }}>
+                        <IconButton onClick={handleClickOpen}
+                            sx={{
+                                border: '1px solid',
+                                borderColor: 'primary.dark',
+                                borderRadius: '4px',
+                            }}>
                             <CreateOutlined />
                         </IconButton>
                     </Grid>
                     {!isEditMode && (
                         <Grid item xs={6}>
-                            <InputLabel>Senha</InputLabel>
                             <TextField
+                                label='Senha'
                                 type={showPassword ? "text" : "password"}
                                 disabled={isEditMode}
                                 {...register('password', {
@@ -250,55 +467,96 @@ const UserUpdate: React.FC = () => {
                             />
                         </Grid>
                     )}
-                    <Grid xs={12} marginY='10px'>
+                    <Grid item xs={12}>
                         <Divider />
                     </Grid>
                     <Grid item xs={12}>
                         <Typography>Endereço</Typography>
                     </Grid>
-                    <Grid item xs={6}>
-                        <InputLabel>Estado</InputLabel>
+                    <Grid item xs={12} sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+
+                    }}>
                         <TextField
+                            label='CEP'
+                            type='text'
+                            id='inputCep'
+                            {...register('person.address.zip')}
+                            defaultValue={isEditMode ? user?.person?.address?.zip : ''}
+                            variant='outlined'
+                            fullWidth                        
+                        />
+                        <IconButton
+                            onClick={searchCEP}
+                            sx={{
+                                border: '1px solid',
+                                borderColor: 'primary.dark',
+                                borderRadius: '4px',
+                            }}>
+                            <Search />
+                        </IconButton>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Estado'
                             type='text'
                             {...register('person.address.state')}
                             defaultValue={isEditMode ? user?.person?.address?.state : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <InputLabel>Cidade</InputLabel>
                         <TextField
+                            label='Cidade'
                             type='text'
                             {...register('person.address.city')}
                             defaultValue={isEditMode ? user?.person?.address?.city : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <InputLabel>Bairro</InputLabel>
                         <TextField
+                            label='Bairro'
                             type='text'
                             {...register('person.address.neighborhood')}
                             defaultValue={isEditMode ? user?.person?.address?.neighborhood : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <InputLabel>Rua</InputLabel>
                         <TextField
+                            label='Rua'
                             type='text'
                             {...register('person.address.street')}
                             defaultValue={isEditMode ? user?.person?.address?.street : ''}
                             variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
                             fullWidth
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <InputLabel>Número da residência</InputLabel>
                         <TextField
+                            label='Complemento'
+                            type='text'
+                            {...register('person.address.complement')}
+                            defaultValue={isEditMode ? user?.person?.address?.complement : ''}
+                            variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput }}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Número da residência'
                             type='text'
                             {...register('person.address.number')}
                             defaultValue={isEditMode ? user?.person?.address?.number : ''}
@@ -306,12 +564,29 @@ const UserUpdate: React.FC = () => {
                             fullWidth
                         />
                     </Grid>
+
                     <PermissionsDialog open={isModalOpen} onClose={() => setIsModalOpen(false)} permissions={[]} roleName={''} />
-                    <Grid item xs={12}>
-                        <Button type='submit' variant='contained' color="success" fullWidth>
+                    <Grid item xs={12} sx={{ marginTop: '2rem' }}>
+                        <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>
                             {isEditMode ? 'Salvar' : 'Criar'}
                         </Button>
                     </Grid>
+
+                    {
+                        isLoading && (
+                            <Loading />
+                        )
+                    }
+
+
+                    <Message
+                        message={textMessage}
+                        type={typeMessage}
+                        open={openMessage}
+                        onClose={handleClose}
+                    />
+
+
                 </Grid>
             </form>
         </>

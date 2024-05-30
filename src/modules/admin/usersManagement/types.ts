@@ -3,26 +3,19 @@ export enum UserStatus {
   DISABLED = "DISABLED",
 }
 
-export type User = {
-  id: number;
-  role_id: number;
-  people_id: number;
-  created_at: string;
-  person: Person;
-  role: Role;
-  status: UserStatus;
-};
-
-export type PaginatedUserResponse = {
-  data: User[];
-};
+export type ProfilePicture = {
+  filename_id: string;
+}
 
 export type Person = {
   id: number;
   name: string;
   email: string;
   cpf_cnpj: string;
-  address: AddressValues;
+  address_id: number;
+  address: Address;
+  profile_picture: ProfilePicture;
+  profile_picture_id: number;
 };
 
 export type Role = {
@@ -30,28 +23,29 @@ export type Role = {
   name: string;
 };
 
-export type UserValues = {
-  password: string;
-  person: Person;
-  role: Role;
-  role_id: number;
-  address_id: number;
-  address: AddressValues;
-  profile_picture_id: number;
-};
-
-export type AddressValues = {
+export type Address = {
   street: string;
   number: string;
   neighborhood: string;
   city: string;
   state: string;
   zip: string;
+  complement: string;
 };
 
-export type RoleValues = {
+export type User = {
   id: number;
-  name: string;
+  people_id: number;
+  password: string;
+  person: Person;
+  role_id: number;
+  role: Role;
+  status: UserStatus;
+  created_at: string;
+};
+
+export type PaginatedUserResponse = {
+  data: User[];
 };
 
 export interface CustomProps {
