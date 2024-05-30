@@ -1,5 +1,5 @@
 import { AddPhotoAlternateOutlined, CreateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Alert, Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, MenuItem, Select, Snackbar, TextField, Typography, styled } from '@mui/material';
+import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { set, useForm } from 'react-hook-form';
@@ -11,6 +11,7 @@ import PermissionsDialog from '../rolesManagement/PermissionsDialog';
 import { CustomProps, Role, User } from './types';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
+import CepMask from '../../../shared/components/inputMask/CepMask';
 
 const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
@@ -45,6 +46,10 @@ const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
         );
     },
 );
+
+
+
+
 
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -120,6 +125,9 @@ const UserUpdate: React.FC = () => {
             setSrcUserProfile(`https://drive.google.com/thumbnail?id=${media.filename_id}`);
 
         } catch (error) {
+            setTextMessage('Ocorreu um erro com o upload da imagem, tente novamente!');
+            setTypeMessage('error');
+            setOpenMessage(true);
             console.error(error);
         } finally {
 
@@ -166,9 +174,12 @@ const UserUpdate: React.FC = () => {
             setShrinkInput(true);
 
         } catch (error) {
+            setTextMessage('CEP inválido, tente novamente!');
+            setTypeMessage('error');
+            setOpenMessage(true);
             console.error(error);
         } finally {
-            setTextMessage('Campos preenchidos automaticamente com base no CEP informado');
+            setTextMessage('Campos preenchidos automaticamente!');
             setTypeMessage('info');
             setOpenMessage(true);
             setIsLoading(false);
@@ -189,6 +200,9 @@ const UserUpdate: React.FC = () => {
                 const roles = response.data.data;
                 setRoles(roles);
             } catch (error) {
+                setTextMessage('Ocorreu um erro ao acessar essa página!');
+                setTypeMessage('error');
+                setOpenMessage(true);
                 logout();
             }
         }
@@ -209,6 +223,9 @@ const UserUpdate: React.FC = () => {
                     setSrcUserProfile(`https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}`);
                     setUser(user);
                 } catch (error) {
+                    setTextMessage('Ocorreu um erro ao acessar essa página!');
+                    setTypeMessage('error');
+                    setOpenMessage(true);
                     logout();
                 }
             };
@@ -237,11 +254,11 @@ const UserUpdate: React.FC = () => {
                     }
                 });
             }
-            setTextMessage('Upload de imagem concluído!');
-            setTypeMessage('info');
-            setOpenMessage(true);
             navigate('/users');
         } catch (error) {
+            setTextMessage('Ocorreu um erro ao salvar o usuário!');
+            setTypeMessage('error');
+            setOpenMessage(true);
             logout();
         }
     };
@@ -470,7 +487,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.zip')}
                             defaultValue={isEditMode ? user?.person?.address?.zip : ''}
                             variant='outlined'
-                            fullWidth
+                            fullWidth                        
                         />
                         <IconButton
                             onClick={searchCEP}

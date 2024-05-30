@@ -14,7 +14,7 @@ export const Message: React.FC<messageProps> = ({ message, type = "success", ope
         if (open) {
             const timer = setTimeout(() => {
                 onClose();
-            }, 3000);
+            }, 5000);
 
             return () => clearTimeout(timer);
         }
