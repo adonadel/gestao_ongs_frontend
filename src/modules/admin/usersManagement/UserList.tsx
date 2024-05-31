@@ -1,12 +1,15 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Avatar, Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Avatar, Button, Container, Grid, Icon, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useUserStore } from '../../../shared/reducers/userReducer';
 import { getToken } from '../../../shared/utils/getToken';
 import { PaginatedUserResponse, User, UserStatus } from './types';
+import { ClearIcon } from '@mui/x-date-pickers';
+import { AddCircleOutlineOutlined } from '@mui/icons-material';
+import { grey } from '@mui/material/colors';
 
 
 
@@ -73,29 +76,28 @@ function UserList() {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ paddingY: '10px' }}>
-      <Grid container justifyContent="space-between" alignItems="center">
+     <Grid>
+      <Grid container justifyContent="space-between" alignItems="center" marginBottom={"1rem"}>
         <Grid item>
-          <Typography variant="h3">Usuários</Typography>
+          <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'}>Usuários</Typography>
         </Grid>
         <Grid item>
-          <Button variant='contained' color='primary' component={Link} to="new">
-            <Typography>Adicionar Usuário</Typography>
+          <Button variant='contained' color='success' component={Link} to="new" endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}>
+            <Typography fontSize="inherit" marginBottom={'0'}>Novo</Typography>
           </Button>
         </Grid>
-
       </Grid>
 
       {isLoading ?
         <p>Carregando...</p>
         :
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} sx={{border: '1px solid #d6d6d6'}}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
-              <TableRow>
+              <TableRow>                
                 <TableCell>Nome</TableCell>
                 <TableCell>E-mail</TableCell>
-                <TableCell>Nível</TableCell>               
+                <TableCell>Nível</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -104,7 +106,7 @@ function UserList() {
                   sx={{
                     filter: user.status === UserStatus.DISABLED ? 'grayscale(1)' : 'none'
                   }}
-                >                  
+                >
                   <TableCell sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -131,7 +133,8 @@ function UserList() {
           </Table>
         </TableContainer>
       }
-    </Container>
+      </Grid>
+
   )
 }
 
