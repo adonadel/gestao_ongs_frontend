@@ -55,6 +55,7 @@ const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
     const apiUrl = import.meta.env.VITE_API_URL;
     const apiCepUrl = import.meta.env.VITE_API_CEP;
+    const imageUrl = import.meta.env.VITE_URL_IMAGE;
     const { id } = useParams<{ id: string }>();
     const [user, setUser] = useState<User | null>(null);
     const [roles, setRoles] = useState<Role[]>([]);
@@ -122,7 +123,7 @@ const UserUpdate: React.FC = () => {
 
             const media = response.data;
             setValue('person.profile_picture_id', media.id);
-            setSrcUserProfile(`https://drive.google.com/thumbnail?id=${media.filename_id}`);
+            setSrcUserProfile(`${imageUrl + media.filename_id}`);
 
         } catch (error) {
             setTextMessage('Ocorreu um erro com o upload da imagem, tente novamente!');
@@ -220,7 +221,7 @@ const UserUpdate: React.FC = () => {
                         }
                     });
                     const user = response.data;
-                    setSrcUserProfile(`https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}`);
+                    setSrcUserProfile(`${imageUrl + user?.person?.profile_picture?.filename_id}`);
                     setUser(user);
                 } catch (error) {
                     setTextMessage('Ocorreu um erro ao acessar essa página!');

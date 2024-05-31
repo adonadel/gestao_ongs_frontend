@@ -1,6 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Avatar, Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -13,6 +13,7 @@ import { PaginatedUserResponse, User, UserStatus } from './types';
 
 function UserList() {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const imageUrl = import.meta.env.VITE_URL_IMAGE;
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const logout = useUserStore(state => state.logout);
@@ -29,6 +30,7 @@ function UserList() {
       });
       const users = response.data.data;
       setUsers(users);
+      console.log(users);
     } catch (error) {
       console.error('Error fetching users:', error);
     }
@@ -91,11 +93,9 @@ function UserList() {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
                 <TableCell>Nome</TableCell>
-                <TableCell>Cargo</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell />
+                <TableCell>E-mail</TableCell>
+                <TableCell>Nível</TableCell>               
               </TableRow>
             </TableHead>
             <TableBody>
@@ -104,11 +104,23 @@ function UserList() {
                   sx={{
                     filter: user.status === UserStatus.DISABLED ? 'grayscale(1)' : 'none'
                   }}
-                >
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>{user.person.name}</TableCell>
-                  <TableCell>{user.role.name}</TableCell>
+                >                  
+                  <TableCell sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem'
+                  }}>
+                    <Avatar
+                      sx={{ width: '32px', height: '32px' }}
+                      alt={user.person.name}
+                      {
+                      ...(user.person.profile_picture != null ? { src: `${imageUrl + user.person.profile_picture.filename_id}` } : {})
+                      }
+                    />
+                    {user.person.name}
+                  </TableCell>
                   <TableCell>{user.person.email}</TableCell>
+                  <TableCell>{user.role.name}</TableCell>
                   <TableCell>
                     <IconButton component={Link} to={`${user.id}`}><EditIcon color="warning" /></IconButton>
                     <IconButton onClick={() => changeStatus(user.id)}><DeleteIcon color="error" /></IconButton>
