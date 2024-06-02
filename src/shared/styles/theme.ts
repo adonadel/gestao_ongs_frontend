@@ -10,20 +10,55 @@ export const theme: ThemeOptions = createTheme({
     },
     secondary: {
       main: "#15B6B1",
-    },
+    }
   },
   typography: {
     fontFamily: ["Inter", "sans-serif"].join(","),
   },
   components: {
-    MuiOutlinedInput: {
+    MuiTextField: {
       defaultProps: {
         color: "secondary",
+        variant: "outlined",
+        size: "small",
+        fullWidth: true,
+
       },
     },
     MuiSelect: {
       defaultProps: {
+        size: "small",
         color: "secondary",
+      },
+    },
+    MuiButton: {
+      defaultProps: {
+        variant: "contained",
+        color: "primary",
+        size: "small",
+      },
+    },
+    MuiCheckbox: {
+      defaultProps: {
+        color: "secondary",
+        size: "small",
+      },
+    },
+    MuiFormControlLabel: {
+      defaultProps: {
+        color: "secondary",        
+      },
+    },
+    MuiInputLabel: {
+      defaultProps: {
+        color: "secondary",
+        size: "small",
+      },
+    },
+    MuiIconButton: {
+      defaultProps: {
+        color: "secondary",
+        size: "small",                
       },
     },
   },
