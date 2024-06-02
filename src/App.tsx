@@ -60,6 +60,8 @@ function App() {
             <Route path="/financial" element={<FinancialList />} />
             <Route path="/financial/new" element={<FinancialUpdate />} />
             <Route path="/financial/:id" element={<FinancialUpdate />} />
+            <Route path="payment/success/:id" element={<Home />} />
+            <Route path="payment/cancel/:id" element={<Home />} />
 
             /* Givers Management */
             <Route path="/givers" element={<GiverList />} />

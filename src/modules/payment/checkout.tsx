@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-const ProductDisplay = () => {
+export const Checkout = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const { handleSubmit } = useForm();
 
@@ -39,35 +38,4 @@ const ProductDisplay = () => {
             </form>
         </section>
     )
-};
-
-const Message = ({ message }: { message: string }) => (
-    <section>
-        <p>{message}</p>
-    </section>
-);
-
-export default function Checkout() {
-    const [message, setMessage] = useState("");
-
-    useEffect(() => {
-        // Check to see if this is a redirect back from Checkout
-        const query = new URLSearchParams(window.location.search);
-
-        if (query.get("success")) {
-            setMessage("Order placed! You will receive an email confirmation.");
-        }
-
-        if (query.get("canceled")) {
-            setMessage(
-                "Order canceled -- continue to shop around and checkout when you're ready."
-            );
-        }
-    }, []);
-
-    return message ? (
-        <Message message={message} />
-    ) : (
-        <ProductDisplay />
-    );
 }
