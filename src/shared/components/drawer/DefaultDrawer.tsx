@@ -37,10 +37,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
         duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('md')]: {
-        width: `calc(${theme.spacing(10)} + 1px)`,
-    },
+    width: `calc(${theme.spacing(10)} + 1px)`,
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -159,10 +156,11 @@ export const DefaultDrawer = (props: IDrawerProps) => {
             <Grid item xs={12}>
                 <DefaultHeader open={props.open} />
             </Grid>
-            <Grid item xs={1}>
+            <Grid
+                item
+            >
                 {
                     authenticated && (
-
                         <Drawer
                             anchor="left"
                             variant="permanent"
@@ -220,9 +218,7 @@ export const DefaultDrawer = (props: IDrawerProps) => {
                         </Drawer>
                     )
                 }
-            </Grid>
-            <Grid item xs={11}>
-                <Container maxWidth='xl'>
+                <Container maxWidth='xl' sx={{ marginLeft: '81px' }}>
                     {props.children}
                 </Container>
             </Grid>
