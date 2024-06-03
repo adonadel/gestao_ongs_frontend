@@ -435,6 +435,19 @@ const UserUpdate: React.FC = () => {
                             <CreateOutlined />
                         </IconButton>
                     </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Telefone'
+                            type="text"
+                            {...register('person.phone', { required: 'Telefone necessário', pattern: { value: /^[0-9]/i, message: 'Telefone inválido' } })}
+                            error={!!formState.errors.person?.phone}
+                            helperText={formState.errors.person?.phone?.message}
+                            defaultValue={isEditMode ? user?.person.phone : ''}
+                            variant='outlined'
+                            fullWidth
+                        />
+                    </Grid>
+
                     {!isEditMode && (
                         <Grid item xs={6}>
                             <TextField
@@ -507,7 +520,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.state')}
                             defaultValue={isEditMode ? user?.person?.address?.state : ''}
                             variant='outlined'
-                            InputLabelProps={{ shrink: shrinkInput }}
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true}}
                             fullWidth
                         />
                     </Grid>
@@ -518,7 +531,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.city')}
                             defaultValue={isEditMode ? user?.person?.address?.city : ''}
                             variant='outlined'
-                            InputLabelProps={{ shrink: shrinkInput }}
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
                             fullWidth
                         />
                     </Grid>
@@ -529,7 +542,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.neighborhood')}
                             defaultValue={isEditMode ? user?.person?.address?.neighborhood : ''}
                             variant='outlined'
-                            InputLabelProps={{ shrink: shrinkInput }}
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
                             fullWidth
                         />
                     </Grid>
@@ -540,7 +553,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.street')}
                             defaultValue={isEditMode ? user?.person?.address?.street : ''}
                             variant='outlined'
-                            InputLabelProps={{ shrink: shrinkInput }}
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
                             fullWidth
                         />
                     </Grid>
@@ -551,7 +564,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.complement')}
                             defaultValue={isEditMode ? user?.person?.address?.complement : ''}
                             variant='outlined'
-                            InputLabelProps={{ shrink: shrinkInput }}
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
                             fullWidth
                         />
                     </Grid>

@@ -76,10 +76,14 @@ function UserList() {
   }
 
   return (
-     <Grid>
+     <Container maxWidth="xl">
       <Grid container justifyContent="space-between" alignItems="center" marginBottom={"1rem"}>
-        <Grid item>
-          <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'}>Usuários</Typography>
+        <Grid item> 
+          {
+            users.length <= 1 &&
+            <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'} color={grey[500]}>Usuário</Typography>
+          }
+          <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'}>Listando {users.length} usuários</Typography>
         </Grid>
         <Grid item>
           <Button variant='contained' color='success' component={Link} to="new" endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}>
@@ -133,7 +137,7 @@ function UserList() {
           </Table>
         </TableContainer>
       }
-      </Grid>
+      </Container>
 
   )
 }
