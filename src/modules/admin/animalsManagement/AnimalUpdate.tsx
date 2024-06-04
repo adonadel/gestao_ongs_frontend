@@ -1,4 +1,4 @@
-import { Button, TextField, Grid, Avatar, Box, IconButton } from '@mui/material';
+import { Button, TextField, Grid, Avatar, Box, IconButton, Radio } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getToken } from '../../../shared/utils/getToken';
 import { Animal } from './types';
 import { Loading } from '../../../shared/components/loading/Loading';
-import { Filter } from '@mui/icons-material';
+import { Delete, Filter } from '@mui/icons-material';
 
 const AnimalUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -199,18 +199,39 @@ const AnimalUpdate: React.FC = () => {
 
 
                     <Grid item xs={12}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
 
 
                             {Array.isArray(images) &&
                                 images.map((image: any, index: number) => (
+
                                     <Avatar
                                         key={index}
                                         alt="Imagem"
-                                        src={imageUrl+image.filename_id}
+                                        src={imageUrl + image.filename_id}
                                         variant='rounded'
-                                        sx={{ width: '6rem', height: '6rem' }}
-                                    />
+                                        sx={{ width: '6rem', height: '6rem', position: 'relative' }}>
+
+                                        <Radio value="solid" sx={{
+                                            color: 'primary.dark',
+                                            '&.Mui-checked': {
+                                                color: 'primary.dark',
+                                            },
+                                            position: 'absolute',
+                                            top: '1rem',
+                                            right: '1rem',
+                                        }} />
+                                        <IconButton
+                                            onClick={deleteThisImage(image.id)}
+                                            color="error"
+                                            sx={{
+                                                border: '1px solid',
+                                                borderColor: 'error',
+                                                borderRadius: '4px',
+                                            }}>
+                                            <Delete />
+                                        </IconButton>
+                                    </Avatar>
                                 ))
                             }
 
@@ -252,7 +273,7 @@ const AnimalUpdate: React.FC = () => {
                     }
 
                 </Grid>
-            </form>
+            </form >
         </>
     );
 };
