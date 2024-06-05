@@ -1,4 +1,4 @@
-import { Button, TextField, Grid, Avatar, Box, IconButton, Radio } from '@mui/material';
+import { Button, TextField, Grid, Avatar, Box, IconButton, Radio, FormControl, RadioGroup, FormControlLabel, InputLabel, Select, MenuItem, FormLabel, FormHelperText } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -7,6 +7,7 @@ import { getToken } from '../../../shared/utils/getToken';
 import { Animal } from './types';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Delete, Filter } from '@mui/icons-material';
+import FullLoader from '../../../shared/components/loading/FullLoader';
 
 const AnimalUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -23,7 +24,13 @@ const AnimalUpdate: React.FC = () => {
         document.getElementById('imagePicker')?.click();
     }
 
+    const deleteThisImage = (id: number) => {
+        return null;
+    }
 
+    const setPrincipalImage = (animal: Object) => {
+        console.log(animal)
+    }
     const handleImageChange = async (e: any) => {
         const files: File[] = Array.from(e.target.files);
         const formData = new FormData();
@@ -95,7 +102,7 @@ const AnimalUpdate: React.FC = () => {
     };
 
     if (isEditMode && !animal) {
-        return <div>Loading...</div>;
+        return <FullLoader />;
     }
 
     return (
@@ -124,13 +131,25 @@ const AnimalUpdate: React.FC = () => {
                             defaultValue={isEditMode ? animal?.name : 'Alfredo'}
                         />
                     </Grid>
+
                     <Grid item xs={6}>
-                        <TextField
-                            label="Espécie"
-                            type="text"
-                            defaultValue={'DOG'}
-                        />
+                        <FormControl fullWidth>
+                            <Select
+                                labelId="especie-label"
+                                id="especie"
+                                {...register('specie')}
+                                defaultValue={isEditMode ? animal?.specie : 'DOG'}
+                            >                                
+                                <MenuItem value="" disabled>
+                                    Selecione a espécie do animal
+                                </MenuItem>
+                                <MenuItem value="DOG">Cachorro</MenuItem>
+                                <MenuItem value="CAT">Gato</MenuItem>                                
+                                <MenuItem value="OTHER">Outro</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
+
                     <Grid item xs={6}>
                         <TextField
                             label="Gênero"
@@ -139,6 +158,7 @@ const AnimalUpdate: React.FC = () => {
                             defaultValue={isEditMode ? animal?.gender : 'MALE'}
                         />
                     </Grid>
+
                     <Grid item xs={6}>
                         <TextField
                             label="Tamanho"
@@ -154,8 +174,8 @@ const AnimalUpdate: React.FC = () => {
                             {...register('age_type')}
                             defaultValue={isEditMode ? animal?.age_type : 'CUB'}
                         />
-
                     </Grid>
+
                     <Grid item xs={6}>
                         <TextField
                             label="Castração"
@@ -196,44 +216,59 @@ const AnimalUpdate: React.FC = () => {
 
                     <input id='imagePicker' type="file" accept='image/*' multiple onChange={handleImageChange} style={{ visibility: 'hidden', height: '0', width: '0' }} />
 
-
-
                     <Grid item xs={12}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
 
+                            <FormControl component="fieldset">
+                                <RadioGroup aria-label="Imagem de perfil animal" name="radio-group-imagem-perfil-animal" sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', alignItems: 'center' }}>
 
-                            {Array.isArray(images) &&
-                                images.map((image: any, index: number) => (
 
-                                    <Avatar
-                                        key={index}
-                                        alt="Imagem"
-                                        src={imageUrl + image.filename_id}
-                                        variant='rounded'
-                                        sx={{ width: '6rem', height: '6rem', position: 'relative' }}>
 
-                                        <Radio value="solid" sx={{
-                                            color: 'primary.dark',
-                                            '&.Mui-checked': {
-                                                color: 'primary.dark',
-                                            },
-                                            position: 'absolute',
-                                            top: '1rem',
-                                            right: '1rem',
-                                        }} />
-                                        <IconButton
-                                            onClick={deleteThisImage(image.id)}
-                                            color="error"
-                                            sx={{
-                                                border: '1px solid',
-                                                borderColor: 'error',
-                                                borderRadius: '4px',
-                                            }}>
-                                            <Delete />
-                                        </IconButton>
-                                    </Avatar>
-                                ))
-                            }
+                                    {Array.isArray(images) &&
+                                        images.map((image: any, index: number) => (
+                                            <Box sx={{ width: '6rem', height: '6rem', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
+                                                <Avatar
+                                                    key={index}
+                                                    alt="Imagem"
+                                                    src={imageUrl + image.filename_id}
+                                                    variant='rounded'
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        width: '100%',
+                                                        height: '100%',
+                                                        zIndex: '1'
+                                                    }}
+                                                />
+
+                                                <FormControlLabel value={image.id} control={<Radio value={animal?.id} color="success" size='small' sx={{
+                                                    color: 'primary.dark',
+                                                    '&.Mui-checked': {
+                                                        color: 'primary.dark',
+                                                    },
+                                                    position: 'absolute',
+                                                    top: '-0.4rem',
+                                                    zIndex: '2',
+                                                    left: '-0.4rem',
+                                                }} />} label="" />
+
+                                                <IconButton
+                                                    color="error"
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        bottom: '-0rem',
+                                                        zIndex: '999',
+                                                        right: '-0rem',
+                                                    }}>
+                                                    <Delete sx={{ fontSize: '1rem' }} />
+                                                </IconButton>
+
+                                            </Box>
+                                        ))
+                                    }
+                                </RadioGroup>
+                            </FormControl>
+
+
 
                             <IconButton
                                 onClick={openImagePicker}

@@ -13,6 +13,7 @@ export type Animal = {
   description: string;
   location: string;
   tags: string;
+  specie: string;
   created_at: string;
   medias: any[];
 };
