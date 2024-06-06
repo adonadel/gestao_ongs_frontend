@@ -1,4 +1,4 @@
-import { Button, TextField, Grid, Avatar, Box, IconButton, Radio, FormControl, RadioGroup, FormControlLabel, InputLabel, Select, MenuItem, FormLabel, FormHelperText } from '@mui/material';
+import { Button, TextField, Grid, Avatar, Box, IconButton, Radio, FormControl, RadioGroup, FormControlLabel, InputLabel, Select, MenuItem, FormLabel, FormHelperText, TextareaAutosize } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -14,7 +14,7 @@ const AnimalUpdate: React.FC = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const { id } = useParams<{ id: string }>();
     const [animal, setAnimal] = useState<Animal | null>(null);
-    const { register, handleSubmit } = useForm<Animal>();
+    const { register, handleSubmit, setValue } = useForm<Animal>();
     const isEditMode = !!id;
     const [isLoading, setIsLoading] = useState(false);
     const [images, setImages] = useState<any>();
@@ -28,20 +28,24 @@ const AnimalUpdate: React.FC = () => {
         return null;
     }
 
-    const setPrincipalImage = (animal: Object) => {
-        console.log(animal)
+    const setPrincipalImage = (id: number, e: any) => {
+
+        console.log(e)
+        console.log(id)
     }
+
     const handleImageChange = async (e: any) => {
         const files: File[] = Array.from(e.target.files);
-        const formData = new FormData();
+        const formData = new FormData();        
 
         files.forEach((file, index) => {
             formData.append(`medias[${index}][media]`, file);
         });
 
-        const token = getToken();
+        const token = getToken();        
         setIsLoading(true);
-        try {
+
+        try {            
             const response = await axios.post(`${apiUrl}/api/medias/bulk`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -50,6 +54,11 @@ const AnimalUpdate: React.FC = () => {
             })
 
             setImages(response.data);
+            response.data.map((image: any, index: number) => {
+                setValue(`medias.${index}.id`, image.id);
+                setValue(`medias.${index}.is_cover`, false);
+            });
+                        
 
         } catch (error) {
             console.log("Error:", error);
@@ -128,80 +137,135 @@ const AnimalUpdate: React.FC = () => {
                             label="Nome"
                             type="text"
                             {...register('name')}
-                            defaultValue={isEditMode ? animal?.name : 'Alfredo'}
+                            defaultValue={isEditMode ? animal?.name : ''}
                         />
                     </Grid>
 
                     <Grid item xs={6}>
                         <FormControl fullWidth>
+                            <InputLabel id="especie-label">Espécie do animal</InputLabel>
                             <Select
                                 labelId="especie-label"
+                                label="Espécie do animal"
                                 id="especie"
-                                {...register('specie')}
-                                defaultValue={isEditMode ? animal?.specie : 'DOG'}
-                            >                                
+                                {...register('animal_type')}
+                                defaultValue={isEditMode ? animal?.animal_type : ''}
+                            >
                                 <MenuItem value="" disabled>
                                     Selecione a espécie do animal
                                 </MenuItem>
                                 <MenuItem value="DOG">Cachorro</MenuItem>
-                                <MenuItem value="CAT">Gato</MenuItem>                                
+                                <MenuItem value="CAT">Gato</MenuItem>
                                 <MenuItem value="OTHER">Outro</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
 
                     <Grid item xs={6}>
-                        <TextField
-                            label="Gênero"
-                            type="text"
-                            {...register('gender')}
-                            defaultValue={isEditMode ? animal?.gender : 'MALE'}
-                        />
+                        <FormControl fullWidth>
+                            <InputLabel id="genero-label">Gênero do animal</InputLabel>
+                            <Select
+                                labelId="genero-label"
+                                label="Gênero do animal"
+                                id="genero"
+                                {...register('gender')}
+                                defaultValue={isEditMode ? animal?.gender : ''}
+                            >
+                                <MenuItem value="" disabled>
+                                    Selecione a gênero do animal
+                                </MenuItem>
+                                <MenuItem value="MALE">Macho</MenuItem>
+                                <MenuItem value="FEMALE">Fêmea</MenuItem>
+
+                            </Select>
+                        </FormControl>
                     </Grid>
 
                     <Grid item xs={6}>
-                        <TextField
-                            label="Tamanho"
-                            type="text"
-                            {...register('size')}
-                            defaultValue={isEditMode ? animal?.size : 'SMALL'}
-                        />
-                    </Grid>
-                    <Grid item xs={6}>
-                        <TextField
-                            label="Idade"
-                            type="text"
-                            {...register('age_type')}
-                            defaultValue={isEditMode ? animal?.age_type : 'CUB'}
-                        />
+                        <FormControl fullWidth>
+                            <InputLabel id="porte-label">Porte do animal</InputLabel>
+                            <Select
+                                labelId="porte-label"
+                                label="Porte do animal"
+                                id="porte"
+                                {...register('size')}
+                                defaultValue={isEditMode ? animal?.size : ''}
+                            >
+                                <MenuItem value="" disabled>
+                                    Selecione o porte do animal
+                                </MenuItem>
+                                <MenuItem value="SMALL">Pequeno</MenuItem>
+                                <MenuItem value="MEDIUM">Médio</MenuItem>
+                                <MenuItem value="LARGE">Grande</MenuItem>
+                                <MenuItem value="VERY_LARGE">Muito Grande</MenuItem>
+
+                            </Select>
+                        </FormControl>
                     </Grid>
 
                     <Grid item xs={6}>
-                        <TextField
-                            label="Castração"
-                            type="text"
-                            {...register('castrate_type')}
-                            defaultValue={isEditMode ? animal?.castrate_type : 'CASTRATED'}
-                        />
+                        <FormControl fullWidth>
+                            <InputLabel id="idade-label">Idade do animal</InputLabel>
+                            <Select
+                                label="Idade do animal"
+                                labelId="idade-label"
+                                id="idade"
+                                {...register('age_type')}
+                                defaultValue={isEditMode ? animal?.age_type : ''}
+                            >
+                                <MenuItem value="" disabled>
+                                    Selecione a idade do animal
+                                </MenuItem>
+                                <MenuItem value="CUB">Bebê</MenuItem>
+                                <MenuItem value="TEEN">Jovem</MenuItem>
+                                <MenuItem value="ADULT">Adulto</MenuItem>
+                                <MenuItem value="ELDERLY">Idoso</MenuItem>
+
+                            </Select>
+                        </FormControl>
                     </Grid>
+
+                    <Grid item xs={6}>
+                        <FormControl fullWidth>
+                            <InputLabel id="castracao-label">Status de castração</InputLabel>
+                            <Select
+                                label="Status de castração"
+                                labelId="castracao-label"
+                                id="castracao"
+                                {...register('castrate_type')}
+                                defaultValue={isEditMode ? animal?.castrate_type : ''}
+                            >
+                                <MenuItem value="" disabled>
+                                    Selecione o status de castração do animal
+                                </MenuItem>
+                                <MenuItem value="CASTRATED">Castrado</MenuItem>
+                                <MenuItem value="NOT_CASTRATED">Não castrado</MenuItem>
+                                <MenuItem value="AWAITING_CASTRATION">Aguardando castração</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+
 
                     <Grid item xs={6}>
                         <TextField
                             label="Tags"
                             type="text"
                             {...register('tags')}
-                            defaultValue={isEditMode ? animal?.tags : 'tags names'}
+                            defaultValue={isEditMode ? animal?.tags : ''}
                         />
                     </Grid>
 
 
                     <Grid item xs={12}>
                         <TextField
-                            label="Descrição"
+                            label="Descrição ou resumo do animal"
+                            multiline minRows={4} maxRows={6}
+
                             type="text"
                             {...register('description')}
-                            defaultValue={isEditMode ? animal?.description : 'Lorem ipsum'}
+                            defaultValue={isEditMode ? animal?.description : ''}
                         />
+
                     </Grid>
 
 
@@ -210,7 +274,7 @@ const AnimalUpdate: React.FC = () => {
                             label="Localização do animal"
                             type="text"
                             {...register('location')}
-                            defaultValue={isEditMode ? animal?.location : 'centro, rua tal de tal'}
+                            defaultValue={isEditMode ? animal?.location : ''}
                         />
                     </Grid>
 
@@ -240,7 +304,7 @@ const AnimalUpdate: React.FC = () => {
                                                     }}
                                                 />
 
-                                                <FormControlLabel value={image.id} control={<Radio value={animal?.id} color="success" size='small' sx={{
+                                                <FormControlLabel value={image.id} control={<Radio onChange={(e) => setPrincipalImage(image?.id, e)} value={animal?.id} color="success" size='small' sx={{
                                                     color: 'primary.dark',
                                                     '&.Mui-checked': {
                                                         color: 'primary.dark',
@@ -303,7 +367,7 @@ const AnimalUpdate: React.FC = () => {
 
                     {
                         isLoading && (
-                            <Loading />
+                            <Loading />                            
                         )
                     }
 
