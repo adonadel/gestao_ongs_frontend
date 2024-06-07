@@ -28,10 +28,22 @@ const AnimalUpdate: React.FC = () => {
         return null;
     }
 
-    const setPrincipalImage = (id: number, e: any) => {
-
+    const setPrincipalImage = async (id: number, e: any) => {
+        
         console.log(e)
-        console.log(id)
+
+        const token = getToken(); 
+
+        try {
+            await axios.put(`${apiUrl}/api/medias/${id}`, { is_cover: true }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            
+        } catch (error) {
+            console.log("Error:", error);
+        }
     }
 
     const handleImageChange = async (e: any) => {
@@ -52,13 +64,24 @@ const AnimalUpdate: React.FC = () => {
                     'Content-Type': 'multipart/form-data',
                 }
             })
+            
+            let tmpImages = response.data;
 
-            setImages(response.data);
-            response.data.map((image: any, index: number) => {
-                setValue(`medias.${index}.id`, image.id);
-                setValue(`medias.${index}.is_cover`, false);
+            if (Array.isArray(images)) {
+                tmpImages = [...images, ...response.data];
+                setImages(tmpImages);
+            }
+
+            setImages(tmpImages);
+
+            let imagesId = "";
+
+            response.data.forEach((image : any) => {
+                imagesId += image.id.toString() + ',';
+                console.log(imagesId)
             });
-                        
+            
+            setValue(`medias`, imagesId);
 
         } catch (error) {
             console.log("Error:", error);

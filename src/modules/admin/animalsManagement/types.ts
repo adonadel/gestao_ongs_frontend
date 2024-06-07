@@ -3,11 +3,6 @@ export enum AnimalStatus {
   DISABLED = "DISABLED",
 }
 
-export type Media = {
-  id: number;  
-  is_cover: boolean;
-}
-
 export type Animal = {
   id: number;
   name: string
@@ -21,7 +16,8 @@ export type Animal = {
   animal_type: string;
   created_at: string;
   adoption_status: string;
-  medias: Media[];
+  medias: string;
+  is_cover: boolean;
 };
 
 
