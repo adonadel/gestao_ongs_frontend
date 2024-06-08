@@ -1,5 +1,5 @@
 import { Avatar, Stack, TextField } from "@mui/material";
-import { useUserStore } from "../../../shared/reducers/userReducer";
+import { useUserStore } from "../../../shared/store/authStore";
 import { Logout } from "../../logout/Logout";
 
 export const UserManagement = () => {

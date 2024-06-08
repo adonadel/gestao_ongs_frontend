@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUserStore } from '../../../shared/reducers/userReducer';
+import { useUserStore } from '../../../shared/store/authStore';
 import { getToken } from '../../../shared/utils/getToken';
 import PermissionsDialog from './PermissionsDialog';
 import { PermissionValues, RoleValues } from './types';

@@ -8,7 +8,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { useUserStore } from '../../reducers/userReducer';
+import { useUserStore } from '../../store/authStore';
 import DefaultHeader from '../header/DefaultHeader';
 import { ListItemDrawer } from './ListItemDrawer';
 

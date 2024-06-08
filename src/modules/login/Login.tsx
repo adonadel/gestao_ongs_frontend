@@ -6,7 +6,7 @@ import Checkbox from '@mui/material/Checkbox';
 import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from '../../shared/reducers/userReducer';
+import { useUserStore } from '../../shared/store/authStore';
 import { getToken } from '../../shared/utils/getToken';
 
 interface LoginResponse {

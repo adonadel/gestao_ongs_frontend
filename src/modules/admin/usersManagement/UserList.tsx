@@ -4,7 +4,7 @@ import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useUserStore } from '../../../shared/reducers/userReducer';
+import { useUserStore } from '../../../shared/store/authStore';
 import { getToken } from '../../../shared/utils/getToken';
 import { PaginatedUserResponse, User, UserStatus } from './types';
 

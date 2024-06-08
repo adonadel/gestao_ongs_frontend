@@ -7,7 +7,7 @@ import { IMaskInput } from 'react-imask';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
-import { useUserStore } from '../../../shared/reducers/userReducer';
+import { useUserStore } from '../../../shared/store/authStore';
 import { getToken } from '../../../shared/utils/getToken';
 import PermissionsDialog from '../rolesManagement/PermissionsDialog';
 import { CustomProps, Role, User } from './types';

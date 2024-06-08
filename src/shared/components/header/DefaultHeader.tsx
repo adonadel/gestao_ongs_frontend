@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
-import { useUserStore } from '../../reducers/userReducer';
+import { useUserStore } from '../../store/authStore';
 
 export interface IHeaderProps {
     open: boolean;
