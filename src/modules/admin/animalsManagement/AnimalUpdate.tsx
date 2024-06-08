@@ -1,7 +1,7 @@
 import { Button, TextField, Grid, Avatar, Box, IconButton, Radio, FormControl, RadioGroup, FormControlLabel, InputLabel, Select, MenuItem, FormLabel, FormHelperText, TextareaAutosize } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useFormState } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getToken } from '../../../shared/utils/getToken';
 import { Animal } from './types';
@@ -14,7 +14,7 @@ const AnimalUpdate: React.FC = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
     const { id } = useParams<{ id: string }>();
     const [animal, setAnimal] = useState<Animal | null>(null);
-    const { register, handleSubmit, setValue } = useForm<Animal>();
+    const { register, handleSubmit, setValue, formState } = useForm<Animal>();
     const isEditMode = !!id;
     const [isLoading, setIsLoading] = useState(false);
     const [images, setImages] = useState<any>();
@@ -76,9 +76,11 @@ const AnimalUpdate: React.FC = () => {
 
             let imagesId = "";
 
-            response.data.forEach((image : any) => {
-                imagesId += image.id.toString() + ',';
-                console.log(imagesId)
+            response.data.forEach((image: any, index: number) => {
+                imagesId += image.id.toString();
+                if (index !== response.data.length - 1) {
+                    imagesId += ',';
+                }
             });
             
             setValue(`medias`, imagesId);
@@ -102,6 +104,8 @@ const AnimalUpdate: React.FC = () => {
                     });
                     const animal = response.data;
                     setAnimal(animal);
+                    setImages(animal.medias);
+                    console.log(animal.medias);
                 } catch (error) {
                     navigate('/login');
                 }
@@ -159,7 +163,9 @@ const AnimalUpdate: React.FC = () => {
                         <TextField
                             label="Nome"
                             type="text"
-                            {...register('name')}
+                            {...register('name', { required: 'Nome é necessário' })}
+                            error={!!formState.errors.name}
+                            helperText={formState.errors.name?.message}
                             defaultValue={isEditMode ? animal?.name : ''}
                         />
                     </Grid>
@@ -171,7 +177,7 @@ const AnimalUpdate: React.FC = () => {
                                 labelId="especie-label"
                                 label="Espécie do animal"
                                 id="especie"
-                                {...register('animal_type')}
+                                {...register('animal_type', { required: 'Espécie é necessário' })}
                                 defaultValue={isEditMode ? animal?.animal_type : ''}
                             >
                                 <MenuItem value="" disabled>
@@ -191,7 +197,7 @@ const AnimalUpdate: React.FC = () => {
                                 labelId="genero-label"
                                 label="Gênero do animal"
                                 id="genero"
-                                {...register('gender')}
+                                {...register('gender', { required: 'Gênero é necessário' })}
                                 defaultValue={isEditMode ? animal?.gender : ''}
                             >
                                 <MenuItem value="" disabled>
@@ -211,7 +217,7 @@ const AnimalUpdate: React.FC = () => {
                                 labelId="porte-label"
                                 label="Porte do animal"
                                 id="porte"
-                                {...register('size')}
+                                {...register('size', { required: 'Porte é necessário' })}
                                 defaultValue={isEditMode ? animal?.size : ''}
                             >
                                 <MenuItem value="" disabled>
@@ -233,7 +239,7 @@ const AnimalUpdate: React.FC = () => {
                                 label="Idade do animal"
                                 labelId="idade-label"
                                 id="idade"
-                                {...register('age_type')}
+                                {...register('age_type', { required: 'Idade é necessário' })}
                                 defaultValue={isEditMode ? animal?.age_type : ''}
                             >
                                 <MenuItem value="" disabled>
@@ -255,7 +261,7 @@ const AnimalUpdate: React.FC = () => {
                                 label="Status de castração"
                                 labelId="castracao-label"
                                 id="castracao"
-                                {...register('castrate_type')}
+                                {...register('castrate_type', { required: 'Status de castração é necessário' })}
                                 defaultValue={isEditMode ? animal?.castrate_type : ''}
                             >
                                 <MenuItem value="" disabled>
