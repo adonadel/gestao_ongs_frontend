@@ -1,11 +1,11 @@
 import {Button, Stack, TextField} from '@mui/material';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {getToken} from '../../../shared/utils/getToken';
-import PermissionsList from './PermissionsList.tsx';
-import {PermissionValues, RoleValues} from './types';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getToken } from '../../../shared/utils/getToken';
+import PermissionsDialog from './PermissionsDialog';
+import { PermissionValues, RoleValues } from './types';
 
 const RolesUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -28,7 +28,7 @@ const RolesUpdate: React.FC = () => {
                 const permissions = response.data;
                 setPermissions(permissions);
             } catch (error) {
-                //
+                console.log(error);
             }
         };
         fetchPermissions();
@@ -86,7 +86,7 @@ const RolesUpdate: React.FC = () => {
             }
             navigate('/roles');
         } catch (error) {
-            //
+            console.log(error);
         }
     };
     
