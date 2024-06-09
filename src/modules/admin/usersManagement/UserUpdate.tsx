@@ -5,11 +5,9 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IMaskInput } from 'react-imask';
 import { useNavigate, useParams } from 'react-router-dom';
+import baseApi from '../../../lib/api';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
-import { useUserStore } from '../../../shared/store/authStore';
-import { getToken } from '../../../shared/utils/getToken';
-import PermissionsDialog from '../rolesManagement/PermissionsDialog';
 import { CustomProps, Role, User } from './types';
 
 const TextMaskCpfCnpj = React.forwardRef<HTMLInputElement, CustomProps>(
@@ -87,15 +85,12 @@ const VisuallyHiddenInput = styled('input')({
 
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
-    const apiUrl = import.meta.env.VITE_API_URL;
     const apiCepUrl = import.meta.env.VITE_API_CEP;
     const { id } = useParams<{ id: string }>();
     const [user, setUser] = useState<User | null>(null);
     const [roles, setRoles] = useState<Role[]>([]);
     const [showPassword, setShowPassword] = useState(false);
-    const logout = useUserStore(state => state.logout);
     const isEditMode = !!id;
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const { register, handleSubmit, setValue, formState } = useForm<User>();
     const [srcUserProfile, setSrcUserProfile] = useState<string | null>('');
     const [isLoading, setIsLoading] = useState(false);
@@ -128,12 +123,11 @@ const UserUpdate: React.FC = () => {
 
         const formData = new FormData();
         formData.append('media', file);
+        formData.append('origin', 'user');
 
         try {
-            const token = getToken();
-            const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
+            const response = await baseApi.post(`/api/medias/`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
@@ -148,7 +142,6 @@ const UserUpdate: React.FC = () => {
             setOpenMessage(true);
             console.error(error);
         } finally {
-
             setTextMessage('Upload de imagem concluído!');
             setTypeMessage('info');
             setOpenMessage(true);
@@ -167,10 +160,6 @@ const UserUpdate: React.FC = () => {
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
-
-    const handleClickOpen = () => {
-        setIsModalOpen(true);
-    }
 
     const searchCEP = async () => {
         const cep = (document.getElementById('inputCep') as HTMLInputElement).value;
@@ -206,20 +195,13 @@ const UserUpdate: React.FC = () => {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const token = getToken();
-
-                const response = await axios.get(`${apiUrl}/api/roles`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                const response = await baseApi.get(`/api/roles`);
                 const roles = response.data.data;
                 setRoles(roles);
             } catch (error) {
                 setTextMessage('Ocorreu um erro ao acessar essa página!');
                 setTypeMessage('error');
                 setOpenMessage(true);
-                logout();
             }
         }
         fetchRoles();
@@ -229,12 +211,7 @@ const UserUpdate: React.FC = () => {
         if (isEditMode) {
             const fetchUser = async () => {
                 try {
-                    const token = getToken();
-                    const response = await axios.get(`${apiUrl}/api/users/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const response = await baseApi.get(`/api/users/${id}`);
                     const user = response.data;
                     setSrcUserProfile(`https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}`);
                     setUser(user);
@@ -250,22 +227,11 @@ const UserUpdate: React.FC = () => {
 
     const onSubmit = async (data: User) => {
         try {
-            const token = getToken();
             if (isEditMode) {
 
-                await axios.put(`${apiUrl}/api/users/${id}`, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    }
-                });
+                await baseApi.put(`/api/users/${id}`, data);
             } else {
-                await axios.post(`${apiUrl}/api/users`, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    }
-                });
+                await baseApi.post(`/api/users`, data);
             }
             navigate('/users');
         } catch (error) {
@@ -427,7 +393,7 @@ const UserUpdate: React.FC = () => {
                                 ))}
                             </Select>
                         </FormControl>
-                        <IconButton onClick={handleClickOpen}
+                        <IconButton
                             sx={{
                                 border: '1px solid',
                                 borderColor: 'primary.dark',
@@ -567,7 +533,6 @@ const UserUpdate: React.FC = () => {
                         )
                     }
 
-                    <PermissionsDialog open={isModalOpen} onClose={() => setIsModalOpen(false)} permissions={[]} roleName={''} />
                     <Grid item xs={12} sx={{ marginTop: '2rem' }}>
                         <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>
                             {isEditMode ? 'Salvar' : 'Criar'}

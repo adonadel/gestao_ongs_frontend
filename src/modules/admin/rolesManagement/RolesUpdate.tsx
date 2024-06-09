@@ -3,7 +3,6 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useUserStore } from '../../../shared/store/authStore';
 import { getToken } from '../../../shared/utils/getToken';
 import PermissionsDialog from './PermissionsDialog';
 import { PermissionValues, RoleValues } from './types';
@@ -16,7 +15,6 @@ const RolesUpdate: React.FC = () => {
     const [permissions, setPermissions] = useState<PermissionValues[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const isEditMode = !!id;
-    const logout = useUserStore(state => state.logout);
     const [open, setOpen] = useState(false);
 
     useEffect(() => {
@@ -32,7 +30,7 @@ const RolesUpdate: React.FC = () => {
                 const permissions = response.data;
                 setPermissions(permissions);
             } catch (error) {
-                logout();
+                console.log(error);
             }
         };
         fetchPermissions();
@@ -79,7 +77,7 @@ const RolesUpdate: React.FC = () => {
             }
             navigate('/roles');
         } catch (error) {
-            logout();
+            console.log(error);
         }
     };
 

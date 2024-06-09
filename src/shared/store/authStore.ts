@@ -1,54 +1,50 @@
-import { useNavigate } from "react-router-dom";
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import { User } from "../../modules/admin/usersManagement/types";
 
-type User = {
-  authenticated: boolean;
-  nameStored?: string;
-  emailStored?: string;
-};
+interface AuthState {
+  userData: User | null;
+  isLogged: boolean;
+  setLogin: () => void;
+  setLogout: () => void;
+  token: string;
+  refreshToken: string;
+  setToken: (bearer: string, refresh: string) => void;
+  setLoginInfo: (bearer: string, refresh?: string) => void;
+  setUserData: (userData: User) => void;
+}
 
-type Action = {
-  authenticate: () => void;
-  deauthenticate: () => void;
-  logout: () => void;
-  setNameStored: (name: string) => void;
-  setEmailStored: (email: string) => void;
-};
+const useAuthStore = create(
+  persist(
+    (set) => ({
+      userData: null,
+      isLogged: false,
+      token: "",
+      refreshToken: "",
+      setLogin: () => set({ isLogged: true }),
+      setLogout: () => set({ token: "", refreshToken: "", userData: null}),
+      setToken: (bearer: string, refresh: string) =>
+        set({ token: bearer, refreshToken: refresh }),
+      setLoginInfo: (bearer, refresh) =>
+        set({
+          token: bearer,
+          refreshToken: refresh,
+        }),
+      setUserData: (userData: User) => set({ userData }),
+    }),
+    {
+      name: "Auth",
+      partialize: (state: AuthState) => ({
+        token: state.token,
+        refreshToken: state.refreshToken,
+        userData: state.userData,
+      }),
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
 
-export const useUserStore = create<User & Action>((set) => {
-  const storedAuthenticated = localStorage.getItem("authenticated");
+const { getState, setState } = useAuthStore;
 
-  return {
-    authenticated: storedAuthenticated
-      ? JSON.parse(storedAuthenticated)
-      : false,
-    nameStored: localStorage.getItem("nameStored") || "",
-    emailStored: localStorage.getItem("emailStored") || "",
-    authenticate: () => {
-      set({ authenticated: true });
-      localStorage.setItem("authenticated", "true");
-    },
-    deauthenticate: () => {
-      set({ authenticated: false });
-      localStorage.removeItem("authenticated");
-    },
-    logout: () => {
-      set({ authenticated: false });
-      localStorage.removeItem("authenticated");
-      localStorage.removeItem("nameStored");
-      localStorage.removeItem("emailStored");
-      return () => {
-        const navigate = useNavigate();
-        navigate("/login");
-      };
-    },
-    setNameStored: (nameStored: string) => {
-      set({ nameStored });
-      localStorage.setItem("nameStored", nameStored);
-    },
-    setEmailStored: (emailStored: string) => {
-      set({ emailStored });
-      localStorage.setItem("emailStored", emailStored);
-    },
-  };
-});
+export { getState, setState };
+export default useAuthStore;
