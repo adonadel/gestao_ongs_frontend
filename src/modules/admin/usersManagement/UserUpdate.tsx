@@ -1,16 +1,32 @@
-import { AddPhotoAlternateOutlined, AdminPanelSettings, CreateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Box, Button, Divider, FormControl, Grid, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
+import {AddPhotoAlternateOutlined, Search, Visibility, VisibilityOff} from '@mui/icons-material';
+import {
+    Avatar,
+    Box,
+    Button,
+    Divider,
+    FormControl,
+    Grid,
+    IconButton,
+    InputAdornment,
+    InputBaseComponentProps,
+    InputLabel,
+    MenuItem,
+    Select,
+    styled,
+    TextField,
+    Typography
+} from '@mui/material';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { IMaskInput } from 'react-imask';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Loading } from '../../../shared/components/loading/Loading';
-import { Message } from '../../../shared/components/message/Message';
-import { useUserStore } from '../../../shared/reducers/userReducer';
-import { getToken } from '../../../shared/utils/getToken';
-import PermissionsDialog from '../rolesManagement/PermissionsDialog';
-import { CustomProps, Role, User } from './types';
+import React, {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {IMaskInput} from 'react-imask';
+import {useNavigate, useParams} from 'react-router-dom';
+import {Loading} from '../../../shared/components/loading/Loading';
+import {Message} from '../../../shared/components/message/Message';
+import {useUserStore} from '../../../shared/reducers/userReducer';
+import {getToken} from '../../../shared/utils/getToken';
+import PermissionsList from '../rolesManagement/PermissionsList.tsx';
+import {CustomProps, Role, User} from './types';
 
 const TextMaskCpfCnpj = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
@@ -128,7 +144,7 @@ const UserUpdate: React.FC = () => {
 
         const formData = new FormData();
         formData.append('media', file);
-
+        formData.append('origin', 'user');
         try {
             const token = getToken();
             const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
@@ -559,7 +575,7 @@ const UserUpdate: React.FC = () => {
                         )
                     }
 
-                    <PermissionsDialog open={isModalOpen} onClose={() => setIsModalOpen(false)} permissions={[]} roleName={''} />
+                    <PermissionsList open={isModalOpen} onClose={() => setIsModalOpen(false)} permissions={[]} roleName={''} />
                     <Grid item xs={12} sx={{ marginTop: '2rem' }}>
                         <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>
                             {isEditMode ? 'Salvar' : 'Criar'}

@@ -68,6 +68,11 @@ function App() {
             <Route path="/givers/new" element={<GiverUpdate />} />
             <Route path="/givers/:id" element={<GiverUpdate />} />
 
+            /* Roles */
+            <Route path="/roles" element={<RolesList />}/>
+            <Route path="/roles/new" element={<RolesUpdate />}/>
+            <Route path="/roles/:id" element={<RolesUpdate />}/>
+
             /* Auth */
             <Route path="/login" element={<Login />} />
             <Route path="/user" element={<UserManagement />} />

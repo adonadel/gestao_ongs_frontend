@@ -114,8 +114,8 @@ export const DefaultDrawer = (props: IDrawerProps) => {
         },
         {
             icon: <AdminPanelSettings />,
-            text: 'Permissões',
-            to: '/permissions',
+            text: 'Níveis de permissão',
+            to: '/roles',
         },
         {
             icon: <Groups2 />,
