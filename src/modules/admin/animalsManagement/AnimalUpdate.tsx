@@ -1,7 +1,7 @@
 import { Button, TextField, Grid, Avatar, Box, IconButton, Radio, FormControl, RadioGroup, FormControlLabel, InputLabel, Select, MenuItem, FormLabel, FormHelperText, TextareaAutosize } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useForm, useFormState } from 'react-hook-form';
+import { set, useForm, useFormState } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getToken } from '../../../shared/utils/getToken';
 import { Animal } from './types';
@@ -19,78 +19,108 @@ const AnimalUpdate: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [images, setImages] = useState<any>();
     const imageUrl = import.meta.env.VITE_URL_IMAGE;
+    const [imagesId, setImagesId] = useState<string>("");
 
     const openImagePicker = () => {
         document.getElementById('imagePicker')?.click();
     }
 
-    const deleteThisImage = (id: number) => {
-        return null;
-    }
-
-    const setPrincipalImage = async (id: number, e: any) => {
-        
-        console.log(e)
-
-        const token = getToken(); 
+    const handleDeleteImage = (id: number) => {
+        const token = getToken();
 
         try {
-            await axios.put(`${apiUrl}/api/medias/${id}`, { is_cover: true }, {
+            axios.delete(`${apiUrl}/api/medias/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            
         } catch (error) {
             console.log("Error:", error);
         }
+            
+        const updatedImages = images.filter((image: any) => image.id !== id);
+
+        const updatedImagesId = updatedImages.map((image: any) => image.id).join(",");
+        
+        setImages(updatedImages);
+        setImagesId(updatedImagesId);
+        setValue(`medias`, updatedImagesId);
+    
+    }
+    
+
+
+    const handleImageSelect = (imageId: number) => {
+        const token = getToken();
+
+        const updatedImages = images.map(async (image: any) => {
+            if (imageId === image.id) {
+                try {
+                    await axios.put(`${apiUrl}/api/medias/${image.id}`, { is_cover: true }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                } catch (error) {
+                    console.log("Error:", error);
+                }
+            } else {
+                try {
+                    await axios.put(`${apiUrl}/api/medias/${image.id}`, { is_cover: false }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                } catch (error) {
+                    console.log("Error:", error);
+                }
+            }
+        })
     }
 
     const handleImageChange = async (e: any) => {
         const files: File[] = Array.from(e.target.files);
-        const formData = new FormData();        
+        const formData = new FormData();
 
         files.forEach((file, index) => {
             formData.append(`medias[${index}][media]`, file);
         });
 
-        const token = getToken();        
+        const token = getToken();
         setIsLoading(true);
 
-        try {            
+        try {
             const response = await axios.post(`${apiUrl}/api/medias/bulk`, formData, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 }
-            })
-            
+            });
+
             let tmpImages = response.data;
 
             if (Array.isArray(images)) {
                 tmpImages = [...images, ...response.data];
-                setImages(tmpImages);
             }
 
             setImages(tmpImages);
 
-            let imagesId = "";
+            const newIds = tmpImages.map((image: any) => image.id).join(',');
+            const updatedImagesId = imagesId ? `${imagesId},${newIds}` : newIds;
+            setImagesId(updatedImagesId);
 
-            response.data.forEach((image: any, index: number) => {
-                imagesId += image.id.toString();
-                if (index !== response.data.length - 1) {
-                    imagesId += ',';
-                }
-            });
-            
-            setValue(`medias`, imagesId);
+            setValue(`medias`, updatedImagesId);
 
         } catch (error) {
             console.log("Error:", error);
         } finally {
             setIsLoading(false);
         }
-    };
+
+    }
+
 
     useEffect(() => {
         if (isEditMode) {
@@ -104,8 +134,7 @@ const AnimalUpdate: React.FC = () => {
                     });
                     const animal = response.data;
                     setAnimal(animal);
-                    setImages(animal.medias);
-                    console.log(animal.medias);
+                    setImages(animal.medias);                    
                 } catch (error) {
                     navigate('/login');
                 }
@@ -314,14 +343,10 @@ const AnimalUpdate: React.FC = () => {
 
                             <FormControl component="fieldset">
                                 <RadioGroup aria-label="Imagem de perfil animal" name="radio-group-imagem-perfil-animal" sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', alignItems: 'center' }}>
-
-
-
                                     {Array.isArray(images) &&
-                                        images.map((image: any, index: number) => (
-                                            <Box sx={{ width: '6rem', height: '6rem', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center' }} >
+                                        images.map((image) => (
+                                            <Box key={image.id} sx={{ width: '6rem', height: '6rem', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                                                 <Avatar
-                                                    key={index}
                                                     alt="Imagem"
                                                     src={imageUrl + image.filename_id}
                                                     variant='rounded'
@@ -329,35 +354,45 @@ const AnimalUpdate: React.FC = () => {
                                                         position: 'absolute',
                                                         width: '100%',
                                                         height: '100%',
-                                                        zIndex: '1'
+                                                        zIndex: '1',
                                                     }}
                                                 />
-
-                                                <FormControlLabel value={image.id} control={<Radio onChange={(e) => setPrincipalImage(image?.id, e)} value={animal?.id} color="success" size='small' sx={{
-                                                    color: 'primary.dark',
-                                                    '&.Mui-checked': {
-                                                        color: 'primary.dark',
-                                                    },
-                                                    position: 'absolute',
-                                                    top: '-0.4rem',
-                                                    zIndex: '2',
-                                                    left: '-0.4rem',
-                                                }} />} label="" />
-
+                                                <FormControlLabel
+                                                    value={image.id}
+                                                    checked={image.is_cover}
+                                                    control={
+                                                        <Radio
+                                                            onChange={() => handleImageSelect(image.id)}
+                                                            checked={image.is_cover}
+                                                            color="success"
+                                                            size='small'
+                                                            sx={{
+                                                                color: 'primary.dark',
+                                                                '&.Mui-checked': {
+                                                                    color: 'primary.dark',
+                                                                },
+                                                                position: 'absolute',
+                                                                top: '-0.4rem',
+                                                                zIndex: '2',
+                                                                left: '-0.4rem',
+                                                            }}
+                                                        />
+                                                    }
+                                                    label=""
+                                                />
                                                 <IconButton
                                                     color="error"
+                                                    onClick={() => handleDeleteImage(image.id)}
                                                     sx={{
                                                         position: 'absolute',
-                                                        bottom: '-0rem',
+                                                        bottom: '0',
                                                         zIndex: '999',
-                                                        right: '-0rem',
+                                                        right: '0',
                                                     }}>
                                                     <Delete sx={{ fontSize: '1rem' }} />
                                                 </IconButton>
-
                                             </Box>
-                                        ))
-                                    }
+                                        ))}
                                 </RadioGroup>
                             </FormControl>
 
@@ -396,7 +431,7 @@ const AnimalUpdate: React.FC = () => {
 
                     {
                         isLoading && (
-                            <Loading />                            
+                            <Loading />
                         )
                     }
 
