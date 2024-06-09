@@ -37,48 +37,52 @@ const AnimalUpdate: React.FC = () => {
         } catch (error) {
             console.log("Error:", error);
         }
-            
+
         const updatedImages = images.filter((image: any) => image.id !== id);
 
         const updatedImagesId = updatedImages.map((image: any) => image.id).join(",");
-        
+
         setImages(updatedImages);
         setImagesId(updatedImagesId);
         setValue(`medias`, updatedImagesId);
-    
+
     }
-    
 
 
-    const handleImageSelect = (imageId: number) => {
+    const handleImageSelect = async (imageId: number) => {
         const token = getToken();
 
-        const updatedImages = images.map(async (image: any) => {
-            if (imageId === image.id) {
-                try {
-                    await axios.put(`${apiUrl}/api/medias/${image.id}`, { is_cover: true }, {
+        const updateImageCoverStatus = async (id: number, isCover: boolean) => {
+            try {
+                const response = await axios.put(
+                    `${apiUrl}/api/medias/${id}`,
+                    { is_cover: isCover },
+                    {
                         headers: {
-                            Authorization: `Bearer ${token}`
+                            Authorization: `Bearer ${token}`,
+                            'Content-Type': 'application/json',
                         }
-                    });
-
-                } catch (error) {
-                    console.log("Error:", error);
-                }
-            } else {
-                try {
-                    await axios.put(`${apiUrl}/api/medias/${image.id}`, { is_cover: false }, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-
-                } catch (error) {
-                    console.log("Error:", error);
-                }
+                    }
+                );
+                console.log(`Updated image ${id} with is_cover: ${isCover}`, response.data);
+            } catch (error) {
+                console.log("Error:", error);
             }
-        })
-    }
+        };
+
+       
+        await updateImageCoverStatus(imageId, true);
+        const updatePromises = images
+            .filter((image : any ) => image.id !== imageId)
+            .map((image : any ) => updateImageCoverStatus(image.id, false));
+
+        await Promise.all(updatePromises);
+
+        setImages(images.map((image : any ) =>
+            image.id === imageId ? { ...image, is_cover: true } : { ...image, is_cover: false }
+        ));
+    };
+
 
     const handleImageChange = async (e: any) => {
         const files: File[] = Array.from(e.target.files);
@@ -134,7 +138,7 @@ const AnimalUpdate: React.FC = () => {
                     });
                     const animal = response.data;
                     setAnimal(animal);
-                    setImages(animal.medias);                    
+                    setImages(animal.medias);              
                 } catch (error) {
                     navigate('/login');
                 }
@@ -342,7 +346,13 @@ const AnimalUpdate: React.FC = () => {
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
 
                             <FormControl component="fieldset">
-                                <RadioGroup aria-label="Imagem de perfil animal" name="radio-group-imagem-perfil-animal" sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', alignItems: 'center' }}>
+                                <RadioGroup defaultValue={
+                                    images.map((image: any) => {
+                                        if (image.is_cover === true) {
+                                            return image.id;
+                                        }
+                                    })
+                                } aria-label="Imagem de perfil animal" name="radio-group-imagem-perfil-animal" sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', alignItems: 'center' }}>
                                     {Array.isArray(images) &&
                                         images.map((image) => (
                                             <Box key={image.id} sx={{ width: '6rem', height: '6rem', position: 'relative', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -359,11 +369,9 @@ const AnimalUpdate: React.FC = () => {
                                                 />
                                                 <FormControlLabel
                                                     value={image.id}
-                                                    checked={image.is_cover}
                                                     control={
                                                         <Radio
                                                             onChange={() => handleImageSelect(image.id)}
-                                                            checked={image.is_cover}
                                                             color="success"
                                                             size='small'
                                                             sx={{
