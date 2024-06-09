@@ -1,5 +1,21 @@
-import { AddPhotoAlternateOutlined, CreateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Box, Button, Divider, FormControl, Grid, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
+import {AddPhotoAlternateOutlined, Search, Visibility, VisibilityOff} from '@mui/icons-material';
+import {
+    Avatar,
+    Box,
+    Button,
+    Divider,
+    FormControl,
+    Grid,
+    IconButton,
+    InputAdornment,
+    InputBaseComponentProps,
+    InputLabel,
+    MenuItem,
+    Select,
+    styled,
+    TextField,
+    Typography
+} from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -393,14 +409,6 @@ const UserUpdate: React.FC = () => {
                                 ))}
                             </Select>
                         </FormControl>
-                        <IconButton
-                            sx={{
-                                border: '1px solid',
-                                borderColor: 'primary.dark',
-                                borderRadius: '4px',
-                            }}>
-                            <CreateOutlined />
-                        </IconButton>
                     </Grid>
                     {!isEditMode && (
                         <Grid item xs={6}>

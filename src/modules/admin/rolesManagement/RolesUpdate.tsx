@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from '@mui/material';
+import {Button, Stack, TextField} from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -13,12 +13,10 @@ const RolesUpdate: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [role, setRole] = useState<RoleValues | null>(null);
     const [permissions, setPermissions] = useState<PermissionValues[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const isEditMode = !!id;
-    const [open, setOpen] = useState(false);
 
     useEffect(() => {
-        setIsLoading(true);
         const fetchPermissions = async () => {
             const token = getToken();
             try {
@@ -34,10 +32,10 @@ const RolesUpdate: React.FC = () => {
             }
         };
         fetchPermissions();
-        setIsLoading(false);
     }, [])
 
     useEffect(() => {
+        setIsLoading(true);
         if (isEditMode) {
             const fetchRole = async () => {
                 const token = getToken();
@@ -48,18 +46,29 @@ const RolesUpdate: React.FC = () => {
                         }
                     });
                     const role = response.data;
+                    const permissionsIds = role.permissions.map((permission) => {
+                        return permission.id
+                    });
+                    
                     setRole(role);
+                    setPermissionsToSave(permissionsIds);
                 } catch (error) {
-                    navigate('/login');
+                    //
+                } finally {
+                    setIsLoading(false);
                 }
             };
             fetchRole();
         }
     }, [id, isEditMode, navigate]);
+    
+    const [permissionsToSave, setPermissionsToSave] = useState([]);
 
     const { register, handleSubmit } = useForm<RoleValues>();
 
     const onSubmit = async (data: RoleValues) => {
+        data.permissionsIds = permissionsToSave.join(',');
+        
         try {
             const token = getToken();
             if (isEditMode) {
@@ -80,49 +89,38 @@ const RolesUpdate: React.FC = () => {
             console.log(error);
         }
     };
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
+    
     if (isEditMode && !role && isLoading) {
         return <div>Loading...</div>;
+    }else {
+        return (
+            <>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <Stack spacing={2}>
+                        <TextField
+                            type="hidden"
+                            {...register('id')}
+                            defaultValue={ isEditMode? role?.id : ''}
+                            sx={{ display: 'none' }}
+                        />
+                        <TextField
+                            label="Nome"
+                            type="text"
+                            {...register('name')}
+                            defaultValue={isEditMode ? role?.name : ''}
+                        />
+                        <PermissionsList permissions={permissions} permissionsToSave={permissionsToSave} setPermissionsToSave={setPermissionsToSave} />
+                        <Button type='button' variant='contained' color="primary" onClick={() => navigate(-1)}>
+                            Voltar
+                        </Button>
+                        <Button type='submit' variant='contained' color="primary">
+                            {isEditMode ? 'Salvar' : 'Criar'}
+                        </Button>
+                    </Stack>
+                </form>
+            </>
+        );
     }
-
-    return (
-        <>
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Stack spacing={2}>
-                    <TextField
-                        type="hidden"
-                        {...register('id')}
-                        defaultValue={isEditMode ? role?.id : ''}
-                        sx={{ display: 'none' }}
-                    />
-                    <TextField
-                        label="Nome"
-                        type="text"
-                        {...register('name')}
-                        defaultValue={isEditMode ? role?.name : ''}
-                    />
-                    <Button variant='contained' color="primary" onClick={handleClickOpen}>
-                        Permissões
-                    </Button>
-                    <PermissionsDialog open={open} onClose={handleClose} permissions={permissions} roleName={role?.name} />
-                    <Button type='button' variant='contained' color="primary" onClick={() => navigate(-1)}>
-                        Voltar
-                    </Button>
-                    <Button type='submit' variant='contained' color="primary">
-                        {isEditMode ? 'Salvar' : 'Criar'}
-                    </Button>
-                </Stack>
-            </form>
-        </>
-    );
 };
 
 export default RolesUpdate;
