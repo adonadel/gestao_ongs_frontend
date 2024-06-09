@@ -1,4 +1,4 @@
-import { AttachMoney, Diversity1, Groups2, Home } from '@mui/icons-material';
+import { AdminPanelSettings, AttachMoney, Diversity1, Groups2, Home } from '@mui/icons-material';
 import ImageIcon from '@mui/icons-material/Image';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
@@ -111,6 +111,11 @@ export const DefaultDrawer = (props: IDrawerProps) => {
             icon: <Diversity1 />,
             text: 'Doadores',
             to: '/givers',
+        },
+        {
+            icon: <AdminPanelSettings />,
+            text: 'Níveis de permissão',
+            to: '/roles',
         },
         {
             icon: <Groups2 />,
