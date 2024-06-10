@@ -54,7 +54,7 @@ const AnimalUpdate: React.FC = () => {
 
         const updateImageCoverStatus = async (id: number, isCover: boolean) => {
             try {
-                const response = await axios.post(
+                const response = await axios.put(
                     `${apiUrl}/api/medias/${id}`,
                     { is_cover: isCover },
                     {
