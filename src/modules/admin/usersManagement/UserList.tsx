@@ -1,7 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Avatar, Button, Container, Grid, Icon, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import axios, { AxiosResponse } from "axios";
+import { Avatar, Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useUserStore } from '../../../shared/reducers/userReducer';
@@ -10,6 +10,8 @@ import { PaginatedUserResponse, User, UserStatus } from './types';
 import { ClearIcon } from '@mui/x-date-pickers';
 import { AddCircleOutlineOutlined } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
+import baseApi from '../../../lib/api';
+import { User, UserStatus } from './types';
 
 
 
@@ -19,18 +21,11 @@ function UserList() {
   const imageUrl = import.meta.env.VITE_URL_IMAGE;
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const logout = useUserStore(state => state.logout);
 
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      const token = getToken();
-
-      const response: AxiosResponse<PaginatedUserResponse> = await axios.get<PaginatedUserResponse>(`${apiUrl}/api/users`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response: AxiosResponse = await baseApi.get(`/api/users`);
       const users = response.data.data;
       setUsers(users);
       console.log(users);
@@ -44,33 +39,24 @@ function UserList() {
     fetchUsers();
   }, []);
 
-  const disableUser = async (id: number, token: string | void) => {
-    await axios.patch(`${apiUrl}/api/users/${id}/disable`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  const disableUser = async (id: number) => {
+    await baseApi.patch(`/api/users/${id}/disable`, null);
   }
 
-  const enableUser = async (id: number, token: string | void) => {
-    await axios.patch(`${apiUrl}/api/users/${id}/enable`, null, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+  const enableUser = async (id: number) => {
+    await baseApi.patch(`/api/users/${id}/enable`, null);
   }
 
   const changeStatus = async (id: number) => {
     try {
-      const token = getToken();
       const user = users.find(user => user.id === id);
       if (user?.status === UserStatus.ENABLED) {
-        await disableUser(id, token);
+        await disableUser(id);
       } else {
-        await enableUser(id, token);
+        await enableUser(id);
       }
     } catch (error) {
-      logout();
+      // logout();
     }
     fetchUsers();
   }
