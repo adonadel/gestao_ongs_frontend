@@ -1,11 +1,10 @@
 import {Button, Stack, TextField} from '@mui/material';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { getToken } from '../../../shared/utils/getToken';
-import PermissionsDialog from './PermissionsDialog';
-import { PermissionValues, RoleValues } from './types';
+import React, {useEffect, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {PermissionValues, RoleValues} from './types';
+import baseApi from '../../../lib/api';
+import PermissionsList from './PermissionsList';
 
 const RolesUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -18,13 +17,8 @@ const RolesUpdate: React.FC = () => {
 
     useEffect(() => {
         const fetchPermissions = async () => {
-            const token = getToken();
             try {
-                const response = await axios.get(`${apiUrl}/api/permissions/?no-paginate=true`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                const response = await baseApi.get('/api/permissions/?no-paginate=true');
                 const permissions = response.data;
                 setPermissions(permissions);
             } catch (error) {
@@ -38,18 +32,13 @@ const RolesUpdate: React.FC = () => {
         setIsLoading(true);
         if (isEditMode) {
             const fetchRole = async () => {
-                const token = getToken();
                 try {
-                    const response = await axios.get(`${apiUrl}/api/roles/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const response = await baseApi.get(`/api/roles/${id}`);
                     const role = response.data;
                     const permissionsIds = role.permissions.map((permission) => {
                         return permission.id
                     });
-                    
+
                     setRole(role);
                     setPermissionsToSave(permissionsIds);
                 } catch (error) {
@@ -61,38 +50,29 @@ const RolesUpdate: React.FC = () => {
             fetchRole();
         }
     }, [id, isEditMode, navigate]);
-    
+
     const [permissionsToSave, setPermissionsToSave] = useState([]);
 
     const { register, handleSubmit } = useForm<RoleValues>();
 
     const onSubmit = async (data: RoleValues) => {
         data.permissionsIds = permissionsToSave.join(',');
-        
+
         try {
-            const token = getToken();
             if (isEditMode) {
-                await axios.put(`${apiUrl}/api/roles/${id}`, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                await baseApi.put(`/api/roles/${id}`, data);
             } else {
-                await axios.post(`${apiUrl}/api/roles`, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                await baseApi.post('/api/roles', data);
             }
             navigate('/roles');
         } catch (error) {
             console.log(error);
         }
     };
-    
+
     if (isEditMode && !role && isLoading) {
         return <div>Loading...</div>;
-    }else {
+    } else {
         return (
             <>
                 <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -100,7 +80,7 @@ const RolesUpdate: React.FC = () => {
                         <TextField
                             type="hidden"
                             {...register('id')}
-                            defaultValue={ isEditMode? role?.id : ''}
+                            defaultValue={isEditMode ? role?.id : ''}
                             sx={{ display: 'none' }}
                         />
                         <TextField
@@ -123,4 +103,4 @@ const RolesUpdate: React.FC = () => {
     }
 };
 
-export default RolesUpdate;
+export default RolesUpdate;
