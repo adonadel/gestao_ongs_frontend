@@ -54,9 +54,9 @@ const AnimalUpdate: React.FC = () => {
 
         const updateImageCoverStatus = async (id: number, isCover: boolean) => {
             try {
-                const response = await axios.put(
+                const response = await axios.post(
                     `${apiUrl}/api/medias/${id}`,
-                    { is_cover: isCover },
+                    { is_cover: isCover, origin: 'animal' },
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -70,15 +70,15 @@ const AnimalUpdate: React.FC = () => {
             }
         };
 
-       
+
         await updateImageCoverStatus(imageId, true);
         const updatePromises = images
-            .filter((image : any ) => image.id !== imageId)
-            .map((image : any ) => updateImageCoverStatus(image.id, false));
+            .filter((image: any) => image.id !== imageId)
+            .map((image: any) => updateImageCoverStatus(image.id, false));
 
         await Promise.all(updatePromises);
 
-        setImages(images.map((image : any ) =>
+        setImages(images.map((image: any) =>
             image.id === imageId ? { ...image, is_cover: true } : { ...image, is_cover: false }
         ));
     };
@@ -138,7 +138,7 @@ const AnimalUpdate: React.FC = () => {
                     });
                     const animal = response.data;
                     setAnimal(animal);
-                    setImages(animal.medias);              
+                    setImages(animal.medias);
                 } catch (error) {
                     navigate('/login');
                 }
@@ -347,11 +347,7 @@ const AnimalUpdate: React.FC = () => {
 
                             <FormControl component="fieldset">
                                 <RadioGroup defaultValue={
-                                    images.map((image: any) => {
-                                        if (image.is_cover === true) {
-                                            return image.id;
-                                        }
-                                    })
+                                    Array.isArray(images) && images.find((image: any) => image.is_cover)?.id
                                 } aria-label="Imagem de perfil animal" name="radio-group-imagem-perfil-animal" sx={{ display: 'flex', flexDirection: 'row', gap: '1rem', alignItems: 'center' }}>
                                     {Array.isArray(images) &&
                                         images.map((image) => (
@@ -374,15 +370,22 @@ const AnimalUpdate: React.FC = () => {
                                                             onChange={() => handleImageSelect(image.id)}
                                                             color="success"
                                                             size='small'
+
                                                             sx={{
                                                                 color: 'primary.dark',
                                                                 '&.Mui-checked': {
-                                                                    color: 'primary.dark',
+                                                                    color: 'secondary.main',
+                                                                },
+                                                                '&:hover': {
+                                                                    backgroundColor: 'primary.main',
                                                                 },
                                                                 position: 'absolute',
-                                                                top: '-0.4rem',
+                                                                top: '-0.6rem',
+                                                                padding: '0.2rem',
                                                                 zIndex: '2',
-                                                                left: '-0.4rem',
+                                                                left: '-0.6rem',
+                                                                backgroundColor: 'primary.main',                                                                
+
                                                             }}
                                                         />
                                                     }
@@ -397,7 +400,12 @@ const AnimalUpdate: React.FC = () => {
                                                         zIndex: '999',
                                                         right: '0',
                                                     }}>
-                                                    <Delete sx={{ fontSize: '1rem' }} />
+                                                    <Delete sx={{ fontSize: '0.8rem',
+                                                        backgroundColor: 'white',
+                                                        borderRadius: '50%', 
+                                                        padding: '0.2rem',
+
+                                                     }} />
                                                 </IconButton>
                                             </Box>
                                         ))}

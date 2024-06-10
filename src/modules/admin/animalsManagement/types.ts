@@ -17,7 +17,6 @@ export type Animal = {
   created_at: string;
   adoption_status: string;
   medias: string;
-  is_cover: boolean;
 };
 
 
