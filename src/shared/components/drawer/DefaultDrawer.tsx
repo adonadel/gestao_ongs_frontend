@@ -1,19 +1,17 @@
-import { AttachMoney, Diversity1, Groups2, Home } from '@mui/icons-material';
+import { AdminPanelSettings, AttachMoney, Diversity1, Groups2, Home } from '@mui/icons-material';
 import ImageIcon from '@mui/icons-material/Image';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
-import { Avatar, Container, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Avatar, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { useUserStore } from '../../reducers/userReducer';
-import DefaultHeader from '../header/DefaultHeader';
 import { ListItemDrawer } from './ListItemDrawer';
+import useAuthStore from '../../store/authStore';
 
 export interface IDrawerProps {
-    children: React.ReactNode;
     open: boolean;
     setOpen: (value: boolean) => void;
 }
@@ -37,10 +35,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
         duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
-    [theme.breakpoints.up('md')]: {
-        width: `calc(${theme.spacing(10)} + 1px)`,
-    },
+    width: `calc(${theme.spacing(10)} + 1px)`,
 });
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -77,7 +72,9 @@ interface IListDrawerProps {
 export const DefaultDrawer = (props: IDrawerProps) => {
     const drawerRef = useRef<HTMLDivElement>(null);
     const headerRef = useRef<HTMLDivElement>(null);
-    const { authenticated, nameStored } = useUserStore(state => state);
+    const { userData } = useAuthStore((state) => ({
+        userData: state.userData,
+    }));
 
     const drawerList: IListDrawerProps[] = [
         {
@@ -114,6 +111,11 @@ export const DefaultDrawer = (props: IDrawerProps) => {
             icon: <Diversity1 />,
             text: 'Doadores',
             to: '/givers',
+        },
+        {
+            icon: <AdminPanelSettings />,
+            text: 'Níveis de permissão',
+            to: '/roles',
         },
         {
             icon: <Groups2 />,
@@ -156,75 +158,65 @@ export const DefaultDrawer = (props: IDrawerProps) => {
 
     return (
         <Grid container>
-            <Grid item xs={12}>
-                <DefaultHeader open={props.open} />
-            </Grid>
-            <Grid item xs={1}>
-                {
-                    authenticated && (
+            <Grid
+                item
+            >
 
-                        <Drawer
-                            anchor="left"
-                            variant="permanent"
-                            open={props.open}
-                            ref={drawerRef}
+                <Drawer
+                    anchor="left"
+                    variant="permanent"
+                    open={props.open}
+                    ref={drawerRef}
+                >
+                    <DrawerHeader >
+                        <Typography
+                            sx={{
+                                fontSize: '1.5625rem',
+                                fontWeight: 600,
+                                color: 'secondary.main'
+                            }}
                         >
-                            <DrawerHeader >
-                                <Typography
-                                    sx={{
-                                        fontSize: '1.5625rem',
-                                        fontWeight: 600,
-                                        color: 'secondary.main'
-                                    }}
-                                >
-                                    EBAA
-                                </Typography>
-                            </DrawerHeader>
-                            <List >
-                                <ListItemButton>
-                                    <ListItemIcon>
-                                        <Avatar sx={{ width: 54, height: 54 }} />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={
-                                            <Typography
-                                                sx={{
-                                                    fontSize: '1.25rem',
-                                                    fontWeight: "500",
-                                                    marginLeft: '15px'
-                                                }}>
-                                                {nameStored}
-                                            </Typography>
-                                        }
-                                        primaryTypographyProps={{
-                                            fontFamily: 'Inter',
+                            EBAA
+                        </Typography>
+                    </DrawerHeader>
+                    <List >
+                        <ListItemButton>
+                            <ListItemIcon>
+                                <Avatar sx={{ width: 54, height: 54 }} src={`https://drive.google.com/thumbnail?id=${userData?.person.profile_picture?.filename_id}`} />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary={
+                                    <Typography
+                                        sx={{
                                             fontSize: '1.25rem',
-                                            fontWeight: 500
-                                        }}
-                                    />
-                                </ListItemButton>
-                                <Divider />
-                                {drawerList.map((item, index) => (
-                                    <Fragment key={index} >
-                                        <ListItemDrawer
-                                            open={props.open}
-                                            icon={item.icon}
-                                            text={item.text}
-                                            to={item.to}
-                                            selected={selectedItem === index}
-                                            onClick={item.onClick ? item.onClick : () => setSelectedItem(index)}
-                                        />
-                                    </ Fragment>
-                                ))}
-                            </List>
-                        </Drawer>
-                    )
-                }
-            </Grid>
-            <Grid item xs={11}>
-                <Container maxWidth='xl'>
-                    {props.children}
-                </Container>
+                                            fontWeight: "500",
+                                            marginLeft: '15px'
+                                        }}>
+                                        {userData?.person.name}
+                                    </Typography>
+                                }
+                                primaryTypographyProps={{
+                                    fontFamily: 'Inter',
+                                    fontSize: '1.25rem',
+                                    fontWeight: 500
+                                }}
+                            />
+                        </ListItemButton>
+                        <Divider />
+                        {drawerList.map((item, index) => (
+                            <Fragment key={index} >
+                                <ListItemDrawer
+                                    open={props.open}
+                                    icon={item.icon}
+                                    text={item.text}
+                                    to={item.to}
+                                    selected={selectedItem === index}
+                                    onClick={item.onClick ? item.onClick : () => setSelectedItem(index)}
+                                />
+                            </ Fragment>
+                        ))}
+                    </List>
+                </Drawer>
             </Grid>
         </Grid >
     );
