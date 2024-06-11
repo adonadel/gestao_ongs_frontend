@@ -1,19 +1,27 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Avatar, Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useUserStore } from '../../../shared/reducers/userReducer';
-import { getToken } from '../../../shared/utils/getToken';
-import { PaginatedUserResponse, User, UserStatus } from './types';
-import { ClearIcon } from '@mui/x-date-pickers';
-import { AddCircleOutlineOutlined } from '@mui/icons-material';
-import { grey } from '@mui/material/colors';
+import {
+  Avatar,
+  Button,
+  Container,
+  Grid,
+  IconButton,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography
+} from "@mui/material";
+import {AxiosResponse} from "axios";
+import {useEffect, useState} from "react";
+import {Link} from "react-router-dom";
+import {User, UserStatus} from './types';
+import {AddCircleOutlineOutlined} from '@mui/icons-material';
+import {grey} from '@mui/material/colors';
 import baseApi from '../../../lib/api';
-import { User, UserStatus } from './types';
-
-
 
 
 function UserList() {
