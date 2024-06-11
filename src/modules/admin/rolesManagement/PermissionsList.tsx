@@ -73,8 +73,9 @@ const PermissionsList: React.FC<PermissionsProps> = ({permissions, permissionsTo
                 id: permission.id,
                 type: permission.type,
             })),
-        }))
+        }))    
     );
+    
     const [isAllCheckedUpdated, setIsAllCheckedUpdated] = useState(false);
 
     const handleChangeModule = (event) => {
@@ -125,7 +126,6 @@ const PermissionsList: React.FC<PermissionsProps> = ({permissions, permissionsTo
     
     const handleAllChecked = () => {
         if (!isAllCheckedUpdated) return;
-        console.log('here');
         setIsAllCheckedUpdated(false);
         
         checkedModules.forEach((module) => {
@@ -157,19 +157,35 @@ const PermissionsList: React.FC<PermissionsProps> = ({permissions, permissionsTo
     }
     
     const initChecks = () => {
-        for (const permissionId of permissionsToSave) {
-            setCheckedModules((prevCheckedModules) =>
-                prevCheckedModules.map((module) => {
-                    return {
-                        ...module,
-                        permissions: module.permissions.map((permission) =>
-                            permission.id === permissionId
-                                ? {...permission, checked: true}
-                                : {...permission}
-                        ),
-                    };
-                })
+        if(permissionsToSave.length > 0) {
+            for (const permissionId of permissionsToSave) {
+                setCheckedModules((prevCheckedModules) =>
+                    prevCheckedModules.map((module) => {
+                        return {
+                            ...module,
+                            permissions: module.permissions.map((permission) =>
+                                permission.id === permissionId
+                                    ? {...permission, checked: true}
+                                    : {...permission}
+                            ),
+                        };
+                    })
+                );
+            }
+        }else {
+            setCheckedModules(() =>
+                modulesList.map((module) => ({
+                    name: module.name,
+                    checked: false,
+                    permissions: permissions.filter((permission) => permission.type === module.name).map((permission) => ({
+                        name: permission.name,
+                        checked: false,
+                        id: permission.id,
+                        type: permission.type,
+                    })),
+                }))
             );
+            
         }
     }
     

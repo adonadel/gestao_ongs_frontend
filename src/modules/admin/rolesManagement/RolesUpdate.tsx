@@ -89,7 +89,8 @@ const RolesUpdate: React.FC = () => {
                             {...register('name')}
                             defaultValue={isEditMode ? role?.name : ''}
                         />
-                        <PermissionsList permissions={permissions} permissionsToSave={permissionsToSave} setPermissionsToSave={setPermissionsToSave} />
+                        {permissions.length > 0 && <PermissionsList permissions={permissions} permissionsToSave={permissionsToSave}
+                                          setPermissionsToSave={setPermissionsToSave}/>}
                         <Button type='button' variant='contained' color="primary" onClick={() => navigate(-1)}>
                             Voltar
                         </Button>
