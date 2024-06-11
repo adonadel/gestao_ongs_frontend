@@ -83,7 +83,6 @@ const AnimalUpdate: React.FC = () => {
         ));
     };
 
-
     const handleImageChange = async (e: any) => {
         const files: File[] = Array.from(e.target.files);
         const formData = new FormData();
@@ -92,6 +91,10 @@ const AnimalUpdate: React.FC = () => {
             formData.append(`medias[${index}][media]`, file);
         });
 
+
+        if (isEditMode) {
+            formData.append('animal_id', id);
+        }
         const token = getToken();
         setIsLoading(true);
 
@@ -363,34 +366,40 @@ const AnimalUpdate: React.FC = () => {
                                                         zIndex: '1',
                                                     }}
                                                 />
-                                                <FormControlLabel
-                                                    value={image.id}
-                                                    control={
-                                                        <Radio
-                                                            onChange={() => handleImageSelect(image.id)}
-                                                            color="success"
-                                                            size='small'
 
-                                                            sx={{
-                                                                color: 'primary.dark',
-                                                                '&.Mui-checked': {
-                                                                    color: 'secondary.main',
-                                                                },
-                                                                '&:hover': {
-                                                                    backgroundColor: 'primary.main',
-                                                                },
-                                                                position: 'absolute',
-                                                                top: '-0.6rem',
-                                                                padding: '0.2rem',
-                                                                zIndex: '2',
-                                                                left: '-0.6rem',
-                                                                backgroundColor: 'primary.main',                                                                
+                                                {
+                                                    isEditMode && (
+                                                        <FormControlLabel
+                                                            value={image.id}
+                                                            control={
+                                                                <Radio
+                                                                    onChange={() => handleImageSelect(image.id)}
+                                                                    color="success"
+                                                                    size='small'
 
-                                                            }}
+                                                                    sx={{
+                                                                        color: 'primary.dark',
+                                                                        '&.Mui-checked': {
+                                                                            color: 'secondary.main',
+                                                                        },
+                                                                        '&:hover': {
+                                                                            backgroundColor: 'primary.main',
+                                                                        },
+                                                                        position: 'absolute',
+                                                                        top: '-0.6rem',
+                                                                        padding: '0.2rem',
+                                                                        zIndex: '2',
+                                                                        left: '-0.6rem',
+                                                                        backgroundColor: 'primary.main',
+
+                                                                    }}
+                                                                />
+                                                            }
+                                                            label=""
                                                         />
-                                                    }
-                                                    label=""
-                                                />
+                                                    )
+                                                }
+
                                                 <IconButton
                                                     color="error"
                                                     onClick={() => handleDeleteImage(image.id)}
@@ -400,12 +409,13 @@ const AnimalUpdate: React.FC = () => {
                                                         zIndex: '999',
                                                         right: '0',
                                                     }}>
-                                                    <Delete sx={{ fontSize: '0.8rem',
+                                                    <Delete sx={{
+                                                        fontSize: '0.8rem',
                                                         backgroundColor: 'white',
-                                                        borderRadius: '50%', 
+                                                        borderRadius: '50%',
                                                         padding: '0.2rem',
 
-                                                     }} />
+                                                    }} />
                                                 </IconButton>
                                             </Box>
                                         ))}
