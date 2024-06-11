@@ -1,22 +1,9 @@
 import EditIcon from '@mui/icons-material/Edit';
-import {
-  Button,
-  Container,
-  Grid,
-  IconButton,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography
-} from "@mui/material";
-import {AxiosResponse} from "axios";
-import {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import baseApi from '../../../lib/api';
+import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import axios, { AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getToken } from '../../../shared/utils/getToken';
 
 interface Role {
   id: number;
@@ -29,13 +16,20 @@ interface PaginatedRolesResponse {
 
 function RolesList() {
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchRoles = async () => {
     try {
-      const response: AxiosResponse<PaginatedRolesResponse> = await baseApi.get<PaginatedRolesResponse>('/api/roles');
+      const token = getToken();
+
+      const response: AxiosResponse<PaginatedRolesResponse> = await axios.get<PaginatedRolesResponse>(`${apiUrl}/api/roles`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setRoles(response.data.data);
       setLoading(false);
     } catch (error) {
@@ -93,4 +87,4 @@ function RolesList() {
   )
 }
 
-export default RolesList;
+export default RolesList;

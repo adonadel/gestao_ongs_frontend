@@ -1,5 +1,4 @@
 export type PermissionValues = {
-  type: string;
   id: number;
   name: string;
 };
@@ -8,14 +7,13 @@ export type RoleValues = {
   id: number;
   name: string;
   permissions: PermissionValues[];
-  permissionsIds: string;
 };
 
-export type PermissionsProps = {
+export type PermissionsDialogProps = {
+  open: boolean;
+  onClose: () => void;
   permissions: PermissionValues[];
   roleName?: string;
-  permissionsToSave: []; 
-  setPermissionsToSave: () => void;
 };
 
 export type modulesListType = {

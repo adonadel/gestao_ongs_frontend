@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import useAuthStore from "../../shared/store/authStore";
+import { useUserStore } from "../../shared/reducers/userReducer";
 
 interface ILogoutModalProps {
   open: boolean;
@@ -10,10 +10,11 @@ interface ILogoutModalProps {
 
 const LogoutModal = (props: ILogoutModalProps) => {
   const navigate = useNavigate();
-  const logout = useAuthStore(state => state.setLogout);
+  const deauthenticate = useUserStore((state) => state.deauthenticate);
 
   const handleLogout = () => {
-    logout();
+    localStorage.removeItem('token');
+    deauthenticate();
     props.setOpen(false);
     navigate('/');
   };

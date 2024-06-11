@@ -11,6 +11,7 @@ export type Person = {
   id: number;
   name: string;
   email: string;
+  phone: string;
   cpf_cnpj: string;
   address_id: number;
   address: Address;

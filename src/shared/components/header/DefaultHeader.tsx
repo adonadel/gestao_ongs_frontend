@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
-import useAuthStore from '../../store/authStore';
+import { useUserStore } from '../../reducers/userReducer';
 
 export interface IHeaderProps {
     open: boolean;
@@ -37,10 +37,10 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const IsLogged = () => {
-    const user = useAuthStore(state => state.userData);
+    const authenticated = useUserStore(state => state.authenticated);
 
     return (
-        user ? (
+        authenticated ? (
             <IconButton component={Link} to="/user" sx={{ marginLeft: 'auto' }}>
                 <Person />
             </IconButton>

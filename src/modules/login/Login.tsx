@@ -3,26 +3,30 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { Avatar, Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, IconButton, InputAdornment, TextField, Typography } from "@mui/material";
 import Checkbox from '@mui/material/Checkbox';
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import baseApi from '../../lib/api';
-import useAuthStore from '../../shared/store/authStore';
+import { useUserStore } from '../../shared/reducers/userReducer';
+import { getToken } from '../../shared/utils/getToken';
+
+interface LoginResponse {
+  data: {
+    token: string;
+  }
+}
 
 function Login() {
   const navigate = useNavigate();
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const { authenticate } = useUserStore((state) => state);
+  const setNameStored = useUserStore((state) => state.setNameStored);
+  const setEmailStored = useUserStore((state) => state.setEmailStored);
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn } = useAuthStore((state) => ({
-    signIn: state.setLoginInfo,
-  }));
-  const { userMe } = useAuthStore((state) => ({
-    userMe: state.setUserData,
-  }));
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -32,11 +36,13 @@ function Login() {
 
   const getUserData = async () => {
     try {
-      const response = await baseApi.get(`/api/auth/me`);
-
-      if (response.status === 200) {
-        userMe(response.data)
-      }
+      const response = await axios.get(`${apiUrl}/api/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      });
+      setNameStored(response.data.person.name);
+      setEmailStored(response.data.person.email);
     } catch (error) {
       console.error("Failed to get user data: ", error);
     }
@@ -46,18 +52,15 @@ function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response: AxiosResponse = await baseApi.post(
-        `/api/auth/login`,
-        { email, password, remember: true }
+      const response: AxiosResponse<LoginResponse> = await axios.post<LoginResponse>(
+        `${apiUrl}/api/auth/login`,
+        { email, password }
       );
-
-      if (response.status === 200) {
-        if (response.data.data.token && typeof response.data.data.token === 'string') {
-          signIn(response.data.data.token)
-          getUserData();
-          navigate('/dashboard');
-        }
-      }
+      const token = response.data.data.token;
+      localStorage.setItem('token', token);
+      getUserData();
+      authenticate();
+      navigate('/dashboard');
     } catch (error) {
       setError("Invalid email or password");
       console.error("Login failed: ", error);

@@ -1,32 +1,19 @@
-import {AddPhotoAlternateOutlined, Search, Visibility, VisibilityOff} from '@mui/icons-material';
-import {
-    Avatar,
-    Box,
-    Button,
-    Divider,
-    FormControl,
-    Grid,
-    IconButton,
-    InputAdornment,
-    InputBaseComponentProps,
-    InputLabel,
-    MenuItem,
-    Select,
-    styled,
-    TextField,
-    Typography
-} from '@mui/material';
+import { AddPhotoAlternateOutlined, CreateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Avatar, Box, Button, Divider, Grid, IconButton, InputAdornment, InputBaseComponentProps, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
 import { IMaskInput } from 'react-imask';
 import { useNavigate, useParams } from 'react-router-dom';
-import baseApi from '../../../lib/api';
+import { useUserStore } from '../../../shared/reducers/userReducer';
+import { getToken } from '../../../shared/utils/getToken';
+import PermissionsDialog from '../rolesManagement/PermissionsDialog';
+import { CustomProps, Role, User } from './types';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
-import { CustomProps, Role, User } from './types';
+import CepMask from '../../../shared/components/inputMask/CepMask';
 
-const TextMaskCpfCnpj = React.forwardRef<HTMLInputElement, CustomProps>(
+const TextMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
         const { onChange, ...other } = props;
         const [mask, setMask] = useState('');
@@ -60,57 +47,37 @@ const TextMaskCpfCnpj = React.forwardRef<HTMLInputElement, CustomProps>(
     },
 );
 
-const TextMaskCep = React.forwardRef<HTMLInputElement, CustomProps>(
-    function TextMaskCustom(props, ref) {
-        const { onChange, ...other } = props;
-        const [mask, setMask] = useState('');
 
-        const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-            const inputValue = event.target.value.replace(/[^\d]/g, '');
-            setMask('00000-000');
-            onChange({ target: { name: props.name, value: inputValue } });
-        }
 
-        return (
-            <IMaskInput
-                {...other}
-                mask={mask}
-                definitions={{
-                    '#': /[1-9]/,
-                }}
-                inputRef={ref}
-                onAccept={(value: string) => onChange({ target: { name: props.name, value } })}
-                overwrite
-                onChange={handleChange}
-            />
-        );
-    },
-);
 
-const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-});
 
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
+    const apiUrl = import.meta.env.VITE_API_URL;
     const apiCepUrl = import.meta.env.VITE_API_CEP;
+    const imageUrl = import.meta.env.VITE_URL_IMAGE;
     const { id } = useParams<{ id: string }>();
     const [user, setUser] = useState<User | null>(null);
     const [roles, setRoles] = useState<Role[]>([]);
     const [showPassword, setShowPassword] = useState(false);
+    const [shrinkInput, setShrinkInput] = useState(false);
+    const logout = useUserStore(state => state.logout);
     const isEditMode = !!id;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const VisuallyHiddenInput = styled('input')({
+        clip: 'rect(0 0 0 0)',
+        clipPath: 'inset(50%)',
+        height: 1,
+        overflow: 'hidden',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        whiteSpace: 'nowrap',
+        width: 1,
+    });
     const { register, handleSubmit, setValue, formState } = useForm<User>();
     const [srcUserProfile, setSrcUserProfile] = useState<string | null>('');
     const [isLoading, setIsLoading] = useState(false);
-    const [cepSearched, setCepSearched] = useState<boolean>(false);
 
     const handleClose = () => {
         setOpenMessage(false);
@@ -120,7 +87,12 @@ const UserUpdate: React.FC = () => {
     const [typeMessage, setTypeMessage] = useState('warning');
     const [openMessage, setOpenMessage] = useState(false);
 
+
+    
+
+
     const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
         const file = event.target.files?.[0];
         if (!file) return;
 
@@ -139,18 +111,19 @@ const UserUpdate: React.FC = () => {
 
         const formData = new FormData();
         formData.append('media', file);
-        formData.append('origin', 'user');
 
         try {
-            const response = await baseApi.post(`/api/medias/`, formData, {
+            const token = getToken();
+            const response = await axios.post(`${apiUrl}/api/medias/`, formData, {
                 headers: {
+                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
             const media = response.data;
             setValue('person.profile_picture_id', media.id);
-            setSrcUserProfile(`https://drive.google.com/thumbnail?id=${media.filename_id}`);
+            setSrcUserProfile(`${imageUrl + media.filename_id}`);
 
         } catch (error) {
             setTextMessage('Ocorreu um erro com o upload da imagem, tente novamente!');
@@ -158,6 +131,7 @@ const UserUpdate: React.FC = () => {
             setOpenMessage(true);
             console.error(error);
         } finally {
+
             setTextMessage('Upload de imagem concluído!');
             setTypeMessage('info');
             setOpenMessage(true);
@@ -177,6 +151,11 @@ const UserUpdate: React.FC = () => {
         event.preventDefault();
     };
 
+    const handleClickOpen = () => {
+        setIsModalOpen(true);
+    }
+
+
     const searchCEP = async () => {
         const cep = (document.getElementById('inputCep') as HTMLInputElement).value;
         setIsLoading(true);
@@ -193,6 +172,7 @@ const UserUpdate: React.FC = () => {
             setValue('person.address.neighborhood', data.bairro);
             setValue('person.address.street', data.logradouro);
             setValue('person.address.complement', data.complemento);
+            setShrinkInput(true);
 
         } catch (error) {
             setTextMessage('CEP inválido, tente novamente!');
@@ -203,21 +183,28 @@ const UserUpdate: React.FC = () => {
             setTextMessage('Campos preenchidos automaticamente!');
             setTypeMessage('info');
             setOpenMessage(true);
-            setCepSearched(true);
             setIsLoading(false);
         }
     }
 
+
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const response = await baseApi.get(`/api/roles`);
+                const token = getToken();
+
+                const response = await axios.get(`${apiUrl}/api/roles`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
                 const roles = response.data.data;
                 setRoles(roles);
             } catch (error) {
                 setTextMessage('Ocorreu um erro ao acessar essa página!');
                 setTypeMessage('error');
                 setOpenMessage(true);
+                logout();
             }
         }
         fetchRoles();
@@ -227,35 +214,56 @@ const UserUpdate: React.FC = () => {
         if (isEditMode) {
             const fetchUser = async () => {
                 try {
-                    const response = await baseApi.get(`/api/users/${id}`);
+                    const token = getToken();
+                    const response = await axios.get(`${apiUrl}/api/users/${id}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
                     const user = response.data;
-                    setSrcUserProfile(`https://drive.google.com/thumbnail?id=${user?.person?.profile_picture?.filename_id}`);
+                    setSrcUserProfile(`${imageUrl + user?.person?.profile_picture?.filename_id}`);
                     setUser(user);
                 } catch (error) {
                     setTextMessage('Ocorreu um erro ao acessar essa página!');
                     setTypeMessage('error');
                     setOpenMessage(true);
+                    logout();
                 }
             };
             fetchUser();
         }
     }, [id, isEditMode, navigate]);
 
+
+
     const onSubmit = async (data: User) => {
         try {
+            const token = getToken();
             if (isEditMode) {
 
-                await baseApi.put(`/api/users/${id}`, data);
+                await axios.put(`${apiUrl}/api/users/${id}`, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
             } else {
-                await baseApi.post(`/api/users`, data);
+                await axios.post(`${apiUrl}/api/users`, data, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
             }
             navigate('/users');
         } catch (error) {
             setTextMessage('Ocorreu um erro ao salvar o usuário!');
             setTypeMessage('error');
             setOpenMessage(true);
+            logout();
         }
     };
+
 
     if (isEditMode && !user || !roles.length) {
         return <div>Loading...</div>;
@@ -263,7 +271,9 @@ const UserUpdate: React.FC = () => {
 
     return (
         <>
+
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
+
                 <TextField
                     type="hidden"
                     {...register('person.id')}
@@ -294,6 +304,7 @@ const UserUpdate: React.FC = () => {
                             gap: '1rem',
                         }}
                     >
+
                         <Box
                             position='relative'
                             onClick={openImagePicker}
@@ -312,8 +323,10 @@ const UserUpdate: React.FC = () => {
                                 src={srcUserProfile ? `${srcUserProfile}` : ''}
                             />
 
+
                             <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
                             <input id="inputPictureId" type="hidden" accept='image/*' {...register('person.profile_picture_id')} />
+
 
                             <Box className="hoverBox"
                                 sx={{
@@ -343,7 +356,10 @@ const UserUpdate: React.FC = () => {
                                     }
                                 />
                             </Box>
+
+
                         </Box>
+
 
                         <TextField
                             label='Nome completo'
@@ -357,6 +373,8 @@ const UserUpdate: React.FC = () => {
 
                     <Grid item xs={12}>
                         <Divider />
+                    </Grid>
+                    <Grid item xs={12} sm={9} md={10}>
                     </Grid>
                     <Grid item xs={6}>
                         <TextField
@@ -379,7 +397,7 @@ const UserUpdate: React.FC = () => {
                             defaultValue={isEditMode ? user?.person.cpf_cnpj : ''}
                             variant='outlined'
                             InputProps={{
-                                inputComponent: TextMaskCpfCnpj as unknown as React.ElementType<InputBaseComponentProps>,
+                                inputComponent: TextMaskCustom as unknown as React.ElementType<InputBaseComponentProps>,
                             }}
                         />
                     </Grid>
@@ -389,27 +407,47 @@ const UserUpdate: React.FC = () => {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             gap: '.5rem',
+
+
                         }}
                     >
-                        <FormControl fullWidth>
-                            <InputLabel id="role-label">Nível de acesso</InputLabel>
-                            <Select
-                                labelId="role-label"
-                                label='Nível de acesso'
-                                {...register('role_id')}
-                                defaultValue={isEditMode ? user?.role_id : roles[0]['id']}
-                                variant='outlined'
-                                fullWidth
-                            >
-                                <MenuItem disabled value="">
-                                    <Typography sx={{ fontStyle: 'italic' }}>Selecione ou crie um nível</Typography>
-                                </MenuItem>
-                                {roles && roles.map((role: Role) => (
-                                    <MenuItem key={role.id} value={role.id}>{role.name}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
+                        <Select
+                            labelId="role-label"
+                            label='Nível de acesso'
+                            {...register('role_id')}
+                            defaultValue={isEditMode ? user?.role_id : roles[0]['id']}
+                            variant='outlined'
+                            fullWidth={true}
+                        >
+                            <MenuItem disabled value="">
+                                <em>Selecione ou crie um nível</em>
+                            </MenuItem>
+                            {roles && roles.map((role: Role) => (
+                                <MenuItem key={role.id} value={role.id}>{role.name}</MenuItem>
+                            ))}
+                        </Select>
+                        <IconButton onClick={handleClickOpen}
+                            sx={{
+                                border: '1px solid',
+                                borderColor: 'primary.dark',
+                                borderRadius: '4px',
+                            }}>
+                            <CreateOutlined />
+                        </IconButton>
                     </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Telefone'
+                            type="text"
+                            {...register('person.phone', { required: 'Telefone necessário', pattern: { value: /^[0-9]/i, message: 'Telefone inválido' } })}
+                            error={!!formState.errors.person?.phone}
+                            helperText={formState.errors.person?.phone?.message}
+                            defaultValue={isEditMode ? user?.person.phone : ''}
+                            variant='outlined'
+                            fullWidth
+                        />
+                    </Grid>
+
                     {!isEditMode && (
                         <Grid item xs={6}>
                             <TextField
@@ -463,10 +501,7 @@ const UserUpdate: React.FC = () => {
                             {...register('person.address.zip')}
                             defaultValue={isEditMode ? user?.person?.address?.zip : ''}
                             variant='outlined'
-                            InputProps={{
-                                inputComponent: TextMaskCep as unknown as React.ElementType<InputBaseComponentProps>,
-                            }}
-                            fullWidth
+                            fullWidth                        
                         />
                         <IconButton
                             onClick={searchCEP}
@@ -478,69 +513,73 @@ const UserUpdate: React.FC = () => {
                             <Search />
                         </IconButton>
                     </Grid>
-                    {
-                        (cepSearched || isEditMode) && (
-                            <>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Estado'
-                                        disabled
-                                        type='text'
-                                        {...register('person.address.state')}
-                                        defaultValue={isEditMode ? user?.person?.address?.state : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Cidade'
-                                        disabled
-                                        type='text'
-                                        {...register('person.address.city')}
-                                        defaultValue={isEditMode ? user?.person?.address?.city : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Bairro'
-                                        type='text'
-                                        {...register('person.address.neighborhood')}
-                                        defaultValue={isEditMode ? user?.person?.address?.neighborhood : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Rua'
-                                        type='text'
-                                        {...register('person.address.street')}
-                                        defaultValue={isEditMode ? user?.person?.address?.street : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Complemento'
-                                        type='text'
-                                        {...register('person.address.complement')}
-                                        defaultValue={isEditMode ? user?.person?.address?.complement : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Número da residência'
-                                        type='text'
-                                        {...register('person.address.number')}
-                                        defaultValue={isEditMode ? user?.person?.address?.number : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                            </>
-                        )
-                    }
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Estado'
+                            type='text'
+                            {...register('person.address.state')}
+                            defaultValue={isEditMode ? user?.person?.address?.state : ''}
+                            variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true}}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Cidade'
+                            type='text'
+                            {...register('person.address.city')}
+                            defaultValue={isEditMode ? user?.person?.address?.city : ''}
+                            variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Bairro'
+                            type='text'
+                            {...register('person.address.neighborhood')}
+                            defaultValue={isEditMode ? user?.person?.address?.neighborhood : ''}
+                            variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Rua'
+                            type='text'
+                            {...register('person.address.street')}
+                            defaultValue={isEditMode ? user?.person?.address?.street : ''}
+                            variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Complemento'
+                            type='text'
+                            {...register('person.address.complement')}
+                            defaultValue={isEditMode ? user?.person?.address?.complement : ''}
+                            variant='outlined'
+                            InputLabelProps={{ shrink: shrinkInput ? shrinkInput : true }}
+                            fullWidth
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            label='Número da residência'
+                            type='text'
+                            {...register('person.address.number')}
+                            defaultValue={isEditMode ? user?.person?.address?.number : ''}
+                            variant='outlined'
+                            fullWidth
+                        />
+                    </Grid>
 
+                    <PermissionsDialog open={isModalOpen} onClose={() => setIsModalOpen(false)} permissions={[]} roleName={''} />
                     <Grid item xs={12} sx={{ marginTop: '2rem' }}>
                         <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>
                             {isEditMode ? 'Salvar' : 'Criar'}
@@ -553,12 +592,15 @@ const UserUpdate: React.FC = () => {
                         )
                     }
 
+
                     <Message
                         message={textMessage}
                         type={typeMessage}
                         open={openMessage}
                         onClose={handleClose}
                     />
+
+
                 </Grid>
             </form>
         </>
