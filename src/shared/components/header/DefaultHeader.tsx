@@ -82,10 +82,11 @@ const DefaultHeader = (props: IHeaderProps) => {
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
+                alignItems: { xs: 'center', md: 'flex-start' },
+                justifyContent: { xs: 'flex-end', md: 'center' },
                 gap: '1rem',
                 height: '400px',
+                maxHeight: '400px',
                 width: '100vw',
                 backgroundColor: 'background.default',
                 color: 'text.primary',
@@ -94,16 +95,17 @@ const DefaultHeader = (props: IHeaderProps) => {
 
                 <Typography variant="h5" component="h2" gutterBottom sx={{
                     zIndex: 1,
-                    color: { xs: 'secondary.main', md: 'primary.main' },
+                    color: { xs: 'primary.main', md: 'primary.main' },
                     fontWeight: 800,
-                    fontSize: { xs: '1.2rem', md: '1.5', lg: '2rem'},
+                    fontSize: { xs: '1.2rem', md: '2rem'},
                     marginLeft: { xs: '0rem', md: '4rem' },                 
                     width: 'fit-content',       
-                    padding: '1rem',            
+                    padding: { xs: '1rem 1.5rem', md: '0rem' },
                     borderRadius: '1rem',
 
-                    backgroundColor: { xs: 'primary.main', md: 'transparent' },                                        
-                    
+                    backgroundColor: { xs: '#32bfba25', md: 'transparent' },        
+                    backdropFilter: { xs: 'blur(10px)', md: 'none' },                                
+                    boxShadow: { xs: '0 0 10px 0 rgb(255 255 255 / 42%)', md: 'none' },                                                            
                 }}
                 
                 >
@@ -122,6 +124,7 @@ const DefaultHeader = (props: IHeaderProps) => {
                         display: 'flex',
                         gap: '1rem',
                         justifyContent: 'center',
+                        marginBottom: { xs: '4rem', md: '0rem' },
                         alignItems: 'center',
                         borderRadius: '1rem',
                         padding: { xs: '1rem 1.5rem', md: '1rem' },    
@@ -162,7 +165,7 @@ const DefaultHeader = (props: IHeaderProps) => {
                     height: '100%',
                     userSelect: 'none',
                 }}>
-                    <source media="(max-width: 900px)" srcSet="public\background-header-mobile.png" />
+                    <source media="(max-width: 600px)" srcSet="public\background-header-mobile.png" />
                     <source media="(max-width: 1200px)" srcSet="public\background-header-tablet.png" />
                     <img
                         src="public/background-header.jpg"
@@ -171,7 +174,7 @@ const DefaultHeader = (props: IHeaderProps) => {
                             objectFit: 'cover',
                             width: '100%',
                             height: '100%',
-                            maxWidth: '100vw',
+                            
                         }}
 
                     />
