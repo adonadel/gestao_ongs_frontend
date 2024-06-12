@@ -82,32 +82,39 @@ const DefaultHeader = (props: IHeaderProps) => {
                 position: 'relative',
                 display: 'flex',
                 flexDirection: 'column',
-                alignItems: 'left',
+                alignItems: 'center',
                 justifyContent: 'center',
-                gap: '2rem',
+                gap: '1rem',
                 height: '400px',
                 width: '100vw',
                 backgroundColor: 'background.default',
-                color: 'text.primary',                
+                color: 'text.primary',
             }}>
 
 
                 <Typography variant="h5" component="h2" gutterBottom sx={{
                     zIndex: 1,
-                    color: 'primary.main',
+                    color: { xs: 'secondary.main', md: 'primary.main' },
                     fontWeight: 800,
-                    fontSize: '1.8rem',
-                    marginLeft: '4rem',
-                }}>
+                    fontSize: { xs: '1.2rem', md: '1.5', lg: '2rem'},
+                    marginLeft: { xs: '0rem', md: '4rem' },                 
+                    width: 'fit-content',       
+                    padding: '1rem',            
+                    borderRadius: '1rem',
+
+                    backgroundColor: { xs: 'primary.main', md: 'transparent' },                                        
+                    
+                }}
+                
+                >
                     "Amor pela vida, <br /> amor por amparar."
                 </Typography>
 
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: '1rem',
-                    marginLeft: '4rem',
+                    alignItems: 'center',                    
+                    marginLeft: { xs: '0rem', md: '4rem' },   
                     zIndex: 1,
                 }}>
                     <Typography variant="h1" component="h1" sx={{
@@ -116,24 +123,28 @@ const DefaultHeader = (props: IHeaderProps) => {
                         gap: '1rem',
                         justifyContent: 'center',
                         alignItems: 'center',
+                        borderRadius: '1rem',
+                        padding: { xs: '1rem 1.5rem', md: '1rem' },    
+                        backgroundColor: { xs: 'primary.main', md: 'transparent' },                        
                     }}>
 
                         <Avatar src='public\logoPatinhas.svg' sx={{
-                            width: '4rem',
-                            height: '4rem',
+                            width: { xs: '3rem', md: '4rem' },
+                            height: { xs: '3rem', md: '4rem' },
                         }} />
 
                         <Typography variant="h2" component="h3">
                             <Typography variant="h5" component="h3" sx={{
                                 fontWeight: 800,
-                                color: 'primary.main',
+                                color: { xs: 'secondary.main', md: 'primary.main' },
+                                fontSize: { xs: '1.2rem', md: '1.5rem' },
                             }}>
                                 Patinhas Carentes
                             </Typography>
 
-                            <Typography sx={{
-                                color: 'primary.main',
-                                fontWeight: 500,                                
+                            <Typography sx={{                                
+                                fontWeight: 500,
+                                color: { xs: 'secondary.main', md: 'primary.main' },
                             }}>
                                 Braço do Norte - SC
                             </Typography>
@@ -143,15 +154,29 @@ const DefaultHeader = (props: IHeaderProps) => {
                     </Typography>
 
                 </Box>
-                <img src="public\background-header.jpg" alt="Banner" style={{
+
+                <picture style={{
                     position: 'absolute',
                     marginBottom: '32px',
-                    objectFit: 'cover',
                     width: '100%',
                     height: '100%',
-                    maxWidth: '100vw',
                     userSelect: 'none',
-                }} />
+                }}>
+                    <source media="(max-width: 900px)" srcSet="public\background-header-mobile.png" />
+                    <source media="(max-width: 1200px)" srcSet="public\background-header-tablet.png" />
+                    <img
+                        src="public/background-header.jpg"
+                        alt="Banner"
+                        style={{
+                            objectFit: 'cover',
+                            width: '100%',
+                            height: '100%',
+                            maxWidth: '100vw',
+                        }}
+
+                    />
+                </picture>
+
 
             </Box>
         </>
