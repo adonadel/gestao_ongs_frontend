@@ -55,16 +55,18 @@ const Home: React.FC = () => {
         <>
             <HeaderBanner></HeaderBanner>
 
-            <Grid container spacing={4} justifyContent={'center'} alignItems={'strech'}>
-                <Grid item xs={3}>
+            <Grid container spacing={4} justifyContent={'center'} alignItems={'strech'} sx={{
+                    px: { xs: 2, sm: 4, md: 3, lg: 0 },
+                }}>
+                <Grid item xs={12} sm={8} md={4} lg={3}>
                     <CardAdoption />
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={12} sm={8} md={4} lg={3}>
                     <CardDonate />
                 </Grid>
 
-                <Grid item xs={3}>
+                <Grid item xs={12} sm={8} md={4} lg={3}>
                     <CardTransparency />
                 </Grid>
             </Grid>

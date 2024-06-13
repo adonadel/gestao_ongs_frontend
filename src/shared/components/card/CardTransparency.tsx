@@ -20,7 +20,8 @@ export const CardTransparency = () => {
       <Typography variant="h2" color="secondary.main" fontWeight={'700'} fontSize={'1.2rem'}>TRANSPARÊNCIA</Typography>
       <img src="public/card/card-transparency.svg" alt="" style={{
         objectFit: 'cover',
-        maxWidth: '280px'
+        maxWidth: '280px',
+        maxHeight: '100px'
       }} />
       <Typography variant="body1" color="initial">Veja como seu dinheiro está sendo investido.</Typography>
 

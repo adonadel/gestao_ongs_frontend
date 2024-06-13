@@ -23,7 +23,8 @@ export const CardAdoption = () => {
             <Typography variant="h2" color="secondary.main" fontWeight={'700'} fontSize={'1.2rem'}>QUERO ADOTAR</Typography>
             <img src="public/card/card-adoption.svg" alt="" style={{
                 objectFit: 'cover',
-                maxWidth: '280px'
+                maxWidth: '280px',
+                maxHeight: '100px'
 
             }} />
             <Typography variant="body1" color="initial">Candidate-se para adoção responsável</Typography>

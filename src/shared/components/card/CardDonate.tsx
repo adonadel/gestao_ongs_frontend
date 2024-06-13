@@ -23,9 +23,10 @@ export const CardDonate = () => {
       <Typography variant="h2" color="secondary.main" fontWeight={'700'} fontSize={'1.2rem'}>FAÇA UMA DOAÇÃO</Typography>
       <img src="public/card/card-donate.svg" alt="" style={{
         objectFit: 'cover',
-        maxWidth: '280px'
+        maxWidth: '280px',
+        maxHeight: '100px'
       }} />
-      <Typography variant="body1" color="initial">Ajude-nos a salvar mais patinhas!</Typography>
+      <Typography variant="body1" color="initial">Faça uma doação e ajude a salvar mais patinhas!</Typography>
 
       <Button
         component="label"
