@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Checkout } from '../payment/checkout';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Message } from '../../shared/components/message/Message';
 import axios from 'axios';
+import { HeaderBanner } from '../../shared/headerBanner/HeaderBanner';
+import { Grid, Stack } from '@mui/material';
+import { CardTransparency } from '../../shared/components/card/CardTransparency';
+import { CardAdoption } from '../../shared/components/card/CardAdoption';
+import { CardDonate } from '../../shared/components/card/CardDonate';
 
 const Home: React.FC = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -49,9 +52,28 @@ const Home: React.FC = () => {
     }, []);
 
     return (
-        <>                    
-                      
-    
+        <>
+            <HeaderBanner></HeaderBanner>
+
+            <Grid container spacing={4} justifyContent={'center'} alignItems={'strech'}>
+                <Grid item xs={3}>
+                    <CardAdoption />
+                </Grid>
+
+                <Grid item xs={3}>
+                    <CardDonate />
+                </Grid>
+
+                <Grid item xs={3}>
+                    <CardTransparency />
+                </Grid>
+            </Grid>
+
+            <br />
+            <br />
+            <br /><br /><br /><br /><br /><br /><br /><br />
+
+
         </>
     );
 };
