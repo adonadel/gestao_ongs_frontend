@@ -1,4 +1,4 @@
-import {AddPhotoAlternateOutlined, Filter, Search} from '@mui/icons-material';
+import {AddPhotoAlternateOutlined, Delete, Filter, Search} from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -20,6 +20,8 @@ import {CustomProps, Event} from './types';
 import baseApi from '../../../lib/api';
 import {IMaskInput} from "react-imask";
 import axios from "axios";
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 
 const EventUpdate: React.FC = () => {
@@ -42,7 +44,7 @@ const EventUpdate: React.FC = () => {
     });
     const { register, handleSubmit, setValue } = useForm<Event>();
     const [isLoading, setIsLoading] = useState(false);
-    const [images, setImages] = useState<any>([]);
+    const [image, setImage] = useState<string>('');
     const [srcImage, setSrcImage] = useState<string | null>('');
     const TextMaskCep = React.forwardRef<HTMLInputElement, CustomProps>(
         function TextMaskCustom(props, ref) {
@@ -79,6 +81,7 @@ const EventUpdate: React.FC = () => {
     const [textMessage, setTextMessage] = useState('Mensagem padrão');
     const [typeMessage, setTypeMessage] = useState('warning');
     const [openMessage, setOpenMessage] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
 
     const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -109,10 +112,10 @@ const EventUpdate: React.FC = () => {
             });
 
             const media = response.data;
-            const medias = [];
-            setImages(medias.push(media));
-            console.log(images.length > 0, srcImage !== '')
+            
+            setImage(media.id.toString());
             setSrcImage(`${imageUrl + media.filename_id}`);
+            setValue('medias', media.id.toString());
 
         } catch (error) {
             setTextMessage('Ocorreu um erro com o upload da imagem, tente novamente!');
@@ -131,6 +134,18 @@ const EventUpdate: React.FC = () => {
     const openImagePicker = () => {
         const input = document.getElementById('inputImagePicker') as HTMLInputElement;
         input.click();
+    }
+
+    const handleDeleteImage = (id: number) => {
+        try {
+            baseApi.delete(`/api/medias/${id}`);
+        } catch (error) {
+            console.log("Error:", error);
+        }
+        
+
+        setImage('');
+
     }
 
     const searchCEP = async () => {
@@ -181,6 +196,10 @@ const EventUpdate: React.FC = () => {
         }
     }, [id, isEditMode, navigate]);
 
+    useEffect(() => {
+        console.log(srcImage, image)
+    }, [image, srcImage]);
+
     const onSubmit = async (data: Event) => {
         try {
             if (isEditMode) {
@@ -190,7 +209,7 @@ const EventUpdate: React.FC = () => {
             }
             navigate('/events');
         } catch (error) {
-            setTextMessage('Ocorreu um erro ao salvar o usuário!');
+            setTextMessage('Ocorreu um erro ao salvar o evento!');
             setTypeMessage('error');
             setOpenMessage(true);
         }
@@ -310,6 +329,16 @@ const EventUpdate: React.FC = () => {
                         />
                     </Grid>
                     <Grid item xs={12}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-BR">
+                            <DatePicker
+                                label='Data do Evento'
+                                value={selectedDate}
+                                onChange={(newValue) => setSelectedDate(newValue)}
+                                renderInput={(props) => <TextField {...props} {...register('event_date')} />}
+                            />
+                        </LocalizationProvider>
+                    </Grid>
+                    <Grid item xs={12}>
                         <Divider />
                     </Grid>
 
@@ -323,9 +352,9 @@ const EventUpdate: React.FC = () => {
                     >
                         <Box
                             position='relative'
-                            onClick={openImagePicker}
                             sx={{
-                                width: 'fit-content',
+                                width: '6rem',
+                                height: '6rem',
                                 cursor: 'pointer',
                                 '&:hover .hoverBox': {
                                     visibility: 'visible',
@@ -333,9 +362,12 @@ const EventUpdate: React.FC = () => {
 
                             }}
                         >
-                            {(images.length > 0 || srcImage !== '') && <Avatar
+                           
+                            <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
+                            
+                            {(image !== '' || srcImage !== '') && <Avatar
                                 alt="Imagem"
-                                src={srcImage ? `${srcImage}` : ''}
+                                src={srcImage !== '' ? `${srcImage}` : ''}
                                 variant='rounded'
                                 sx={{
                                     position: 'absolute',
@@ -343,28 +375,29 @@ const EventUpdate: React.FC = () => {
                                     height: '100%',
                                     zIndex: '1',
                                 }}
-
-
+                                
                             />}
-                            {images.length === 0 && <IconButton
-                                onClick={openImagePicker}
-                                color="secondary"
+                            {srcImage !== '' && !isLoading && <IconButton
+                                color="error"
+                                onClick={() => handleDeleteImage(image)}
                                 sx={{
-                                    border: '1px solid',
-                                    borderColor: 'primary.dark',
-                                    borderRadius: '4px',
-                                    width: '6rem',
-                                    height: '6rem'
+                                    position: 'absolute',
+                                    bottom: '0',
+                                    zIndex: '999',
+                                    right: '0',
                                 }}>
-                                <Filter/>
-                            </IconButton>}
+                                <Delete sx={{
+                                    fontSize: '0.8rem',
+                                    backgroundColor: 'white',
+                                    borderRadius: '50%',
+                                    padding: '0.2rem',
 
-                            <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
-                            
-                            <Box className="hoverBox"
+                                }} />
+                            </IconButton>}
+                            <Box 
+                                 onClick={openImagePicker}
                                 sx={{
                                     display: 'flex',
-                                    visibility: 'hidden',
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     position: 'absolute',
@@ -374,7 +407,7 @@ const EventUpdate: React.FC = () => {
                                     height: '100%',
                                     backgroundColor: 'rgba(0, 0, 0, 0.1)',
                                     backdropFilter: 'blur(5px)',
-                                    borderRadius: '50%',
+                                    borderRadius: '0.5rem',
                                 }}
                             >
 
@@ -389,6 +422,8 @@ const EventUpdate: React.FC = () => {
                                     }
                                 />
                             </Box>
+                            
+                            
                         </Box>
                     </Grid>
                     <Grid item xs={12}>

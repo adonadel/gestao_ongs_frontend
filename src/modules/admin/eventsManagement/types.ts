@@ -6,6 +6,7 @@ export type Event = {
   event_date: string;
   address_id: number;
   address: Address;
+  medias: string;
 };
 
 export type Address = {
