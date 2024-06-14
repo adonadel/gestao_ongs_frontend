@@ -42,6 +42,17 @@ function EventList() {
   useEffect(() => {
     fetchEvents();
   }, []);
+    
+  function formatDate(date:string, usToBr:boolean = false)
+  {
+      let splitted;
+      if (usToBr) {
+          splitted = date.split('-')
+          return splitted.reverse().join('/');
+      }
+      splitted = date.split('/');
+      return splitted.reverse().join('-');
+  }
 
   return (
      <Container maxWidth="xl">
@@ -83,7 +94,7 @@ function EventList() {
                     {event.name}
                   </TableCell>
                   <TableCell>{event.description}</TableCell>
-                  <TableCell>{event.event_date}</TableCell>
+                  <TableCell>{formatDate(event.event_date, true)}</TableCell>
                   <TableCell>
                     <IconButton component={Link} to={`${event.id}`}><EditIcon color="warning" /></IconButton>
                   </TableCell>

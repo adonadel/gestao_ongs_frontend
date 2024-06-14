@@ -22,6 +22,7 @@ import {IMaskInput} from "react-imask";
 import axios from "axios";
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from 'dayjs'; 
 
 
 const EventUpdate: React.FC = () => {
@@ -46,6 +47,7 @@ const EventUpdate: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [image, setImage] = useState<string>('');
     const [srcImage, setSrcImage] = useState<string | null>('');
+    const [dateError, setDateError] = useState('');
     const TextMaskCep = React.forwardRef<HTMLInputElement, CustomProps>(
         function TextMaskCustom(props, ref) {
             const { onChange, ...other } = props;
@@ -142,10 +144,9 @@ const EventUpdate: React.FC = () => {
         } catch (error) {
             console.log("Error:", error);
         }
-        
 
         setImage('');
-
+        setSrcImage('');
     }
 
     const searchCEP = async () => {
@@ -185,7 +186,14 @@ const EventUpdate: React.FC = () => {
                 try {
                     const response = await baseApi.get(`/api/events/${id}`);
                     const event = response.data;
+                    const formatted = formatDate(event.event_date, true);
+                    event.event_date = formatted;
+                    setSelectedDate(dayjs(formatted));
                     setEvent(event);
+                    const eventMedia = event.medias[0];
+                    setImage(eventMedia.id.toString());
+                    setSrcImage(`${imageUrl + eventMedia.filename_id}`);
+                    setValue('medias', eventMedia.id.toString());
                 } catch (error) {
                     setTextMessage('Ocorreu um erro ao acessar essa página!');
                     setTypeMessage('error');
@@ -195,13 +203,22 @@ const EventUpdate: React.FC = () => {
             fetchEvent();
         }
     }, [id, isEditMode, navigate]);
-
-    useEffect(() => {
-        console.log(srcImage, image)
-    }, [image, srcImage]);
+    
+    function formatDate(date:string, usToBr:boolean = false)
+    {
+        let splitted;
+        if (usToBr) {
+            splitted = date.split('-')
+            return splitted.reverse().join('/');
+        }
+        splitted = date.split('/');
+        return splitted.reverse().join('-');
+    }
 
     const onSubmit = async (data: Event) => {
         try {
+            const eventDate = formatDate(data.event_date);
+            data.event_date = eventDate;
             if (isEditMode) {
                 await baseApi.put(`/api/events/${id}`, data);
             } else {
@@ -218,7 +235,7 @@ const EventUpdate: React.FC = () => {
     if (isEditMode && !event) {
         return <div>Loading...</div>;
     }
-
+    
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -334,8 +351,21 @@ const EventUpdate: React.FC = () => {
                                 label='Data do Evento'
                                 value={selectedDate}
                                 onChange={(newValue) => setSelectedDate(newValue)}
-                                renderInput={(props) => <TextField {...props} {...register('event_date')} />}
-                            />
+                                slotProps={{ textField: {
+                                        ...register('event_date'),
+                                        error: dateError && dateError === 'minDate',
+                                        helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
+                                    } 
+                                }}
+                                onError={(err) => {
+                                    setDateError(err);
+                                }}
+                                onAccept={() => {
+                                    setDateError('');
+                                }}
+                                minDate={dayjs(new Date())}
+                                disablePast={true}
+                            />                            
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={12}>
@@ -450,6 +480,7 @@ const EventUpdate: React.FC = () => {
                                 inputComponent: TextMaskCep as unknown as React.ElementType<InputBaseComponentProps>,
                             }}
                             fullWidth
+                            onBlur={searchCEP}
                         />
                         <IconButton
                             onClick={searchCEP}
@@ -525,7 +556,7 @@ const EventUpdate: React.FC = () => {
                     }
 
                     <Grid item xs={12} sx={{ marginTop: '2rem' }}>
-                        <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>
+                        <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading || image === '' || dateError === 'minDate'}>
                             {isEditMode ? 'Salvar' : 'Criar'}
                         </Button>
                     </Grid>
