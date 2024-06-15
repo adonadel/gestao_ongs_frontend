@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { HeaderBanner } from '../../shared/headerBanner/HeaderBanner';
-import { Grid, Stack } from '@mui/material';
+import { Box, Grid, Stack, Container } from '@mui/material';
 import { CardTransparency } from '../../shared/components/card/CardTransparency';
 import { CardAdoption } from '../../shared/components/card/CardAdoption';
 import { CardDonate } from '../../shared/components/card/CardDonate';
@@ -55,31 +55,38 @@ const Home: React.FC = () => {
     return (
         <>
             <HeaderBanner></HeaderBanner>
+            <Container maxWidth="lg">
 
-            <Grid container spacing={4} justifyContent={'center'} alignItems={'strech'} sx={{
-                px: { xs: 2, sm: 4, md: 3, lg: 0 },
-            }}>
-                <Grid item xs={12} sm={8} md={4} lg={3}>
-                    <CardAdoption />
+                <Grid container spacing={4} justifyContent={'center'} alignItems={'strech'}>
+                    <Grid item xs={12} sm={8} md={4} lg={3}>
+                        <CardAdoption />
+                    </Grid>
+
+                    <Grid item xs={12} sm={8} md={4} lg={3}>
+                        <CardDonate />
+                    </Grid>
+
+                    <Grid item xs={12} sm={8} md={4} lg={3}>
+                        <CardTransparency />
+                    </Grid>
                 </Grid>
 
-                <Grid item xs={12} sm={8} md={4} lg={3}>
-                    <CardDonate />
+
+                <Grid container sx={{
+                    paddingY: 10,
+                }}>
+                    <Grid item xs={12} >
+                        <AnimalCarousel />
+                    </Grid>
                 </Grid>
 
-                <Grid item xs={12} sm={8} md={4} lg={3}>
-                    <CardTransparency />
-                </Grid>
-            </Grid>
 
 
-            <Grid container justifyContent={'center'} padding={8}>
-                <AnimalCarousel />
+                <br />
+                <br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
+            </Container>
 
-            </Grid>
-            <br />
-            <br />
-            <br /><br /><br /><br /><br /><br /><br /><br />
 
 
         </>
