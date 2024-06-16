@@ -49,7 +49,7 @@ export const CardAnimalForAdoption = (props: CardAnimalForAdoptionProps) => {
     }, [medias]);
 
     return (
-        <Card sx={{ border: "1px solid #e0e0e0", marginBottom: '4rem', borderRadius: '1rem' }}>
+        <Card sx={{ border: "1px solid #e0e0e0", borderRadius: '1rem' }}>
 
             <CardMedia
                 component="img"
