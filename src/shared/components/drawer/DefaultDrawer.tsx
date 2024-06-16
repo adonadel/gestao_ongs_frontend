@@ -8,8 +8,8 @@ import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { ListItemDrawer } from './ListItemDrawer';
 import useAuthStore from '../../store/authStore';
+import { ListItemDrawer } from './ListItemDrawer';
 
 export interface IDrawerProps {
     open: boolean;
@@ -132,7 +132,7 @@ export const DefaultDrawer = (props: IDrawerProps) => {
     useEffect(() => {
         const index = drawerList.findIndex(item => item.to === location.pathname);
         if (index !== -1) setSelectedItem(index);
-    }, [location.pathname, drawerList]);
+    }, [location.pathname]);
 
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {

@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from "../../shared/store/authStore";
@@ -11,9 +11,12 @@ interface ILogoutModalProps {
 const LogoutModal = (props: ILogoutModalProps) => {
   const navigate = useNavigate();
   const logout = useAuthStore(state => state.setLogout);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    setLoggingOut(true);
+    await logout();
+    setLoggingOut(false);
     props.setOpen(false);
     navigate('/');
   };
@@ -21,10 +24,18 @@ const LogoutModal = (props: ILogoutModalProps) => {
   return (
     <Dialog open={props.open}>
       <DialogTitle>Sair?</DialogTitle>
-      <DialogContent>Você quer sair da conta?</DialogContent>
-      <DialogActions>
-        <Button color="warning" onClick={handleLogout}>Sim</Button>
-        <Button color="success" onClick={() => props.setOpen(false)}>Não</Button>
+      <DialogContent>
+        <Typography>
+          Você quer sair da conta?
+        </Typography>
+      </DialogContent>
+      <DialogActions sx={{ justifyContent: 'center' }}>
+        <Button color="error" disabled={loggingOut} onClick={handleLogout}>
+          {loggingOut ? <CircularProgress size={20} /> : "Confirmar"}
+        </Button>
+        <Button color="success" disabled={loggingOut} onClick={() => props.setOpen(false)}>
+          Cancelar
+        </Button>
       </DialogActions>
     </Dialog>
   );
@@ -35,7 +46,9 @@ export const Logout = () => {
 
   return (
     <>
-      <Button variant="contained" color="error" onClick={() => setOpen(true)}>Sair</Button>
+      <Button fullWidth variant="contained" color="error" onClick={() => setOpen(true)}>
+        Sair
+      </Button>
       <LogoutModal open={open} setOpen={setOpen} />
     </>
   );

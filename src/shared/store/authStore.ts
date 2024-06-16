@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { User } from "../../modules/admin/usersManagement/types";
 
 interface AuthState {
@@ -8,9 +8,8 @@ interface AuthState {
   setLogin: () => void;
   setLogout: () => void;
   token: string;
-  refreshToken: string;
-  setToken: (bearer: string, refresh: string) => void;
-  setLoginInfo: (bearer: string, refresh?: string) => void;
+  setToken: (bearer: string) => void;
+  setLoginInfo: (bearer: string) => void;
   setUserData: (userData: User) => void;
 }
 
@@ -20,15 +19,19 @@ const useAuthStore = create(
       userData: null,
       isLogged: false,
       token: "",
-      refreshToken: "",
       setLogin: () => set({ isLogged: true }),
-      setLogout: () => set({ token: "", refreshToken: "", userData: null}),
-      setToken: (bearer: string, refresh: string) =>
-        set({ token: bearer, refreshToken: refresh }),
-      setLoginInfo: (bearer, refresh) =>
+      setLogout: () => {
+        set({
+          token: "",
+          userData: null,
+          isLogged: false,
+        });
+        useAuthStore.persist.clearStorage();
+      },
+      setToken: (bearer: string) => set({ token: bearer }),
+      setLoginInfo: (bearer) =>
         set({
           token: bearer,
-          refreshToken: refresh,
         }),
       setUserData: (userData: User) => set({ userData }),
     }),
@@ -36,7 +39,6 @@ const useAuthStore = create(
       name: "Auth",
       partialize: (state: AuthState) => ({
         token: state.token,
-        refreshToken: state.refreshToken,
         userData: state.userData,
       }),
       storage: createJSONStorage(() => localStorage),

@@ -1,4 +1,3 @@
-import { Person } from '@mui/icons-material';
 import LoginIcon from '@mui/icons-material/Login';
 import { Avatar, Box, Typography } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
@@ -6,6 +5,7 @@ import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import { User } from '../../../modules/admin/usersManagement/types';
 import useAuthStore from '../../store/authStore';
 
 export interface IHeaderProps {
@@ -36,13 +36,12 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const IsLogged = () => {
-    const user = useAuthStore(state => state.userData);
+const IsLogged = ({ user }: { user: User | null }) => {
 
     return (
         user ? (
             <IconButton component={Link} to="/user" sx={{ marginLeft: 'auto' }}>
-                <Person />
+                <Typography sx={{ fontSize: '1rem', marginRight: '16px', color: 'common.black' }}>Minha conta</Typography> <Avatar src={`https://drive.google.com/thumbnail?id=${user?.person.profile_picture?.filename_id}`} />
             </IconButton>
         ) : (
             <IconButton component={Link} to="/login" sx={{ marginLeft: 'auto' }}>
@@ -53,10 +52,10 @@ const IsLogged = () => {
 }
 
 const DefaultHeader = (props: IHeaderProps) => {
+    const user = useAuthStore(state => state.userData);
 
     return (
         <>
-
             <AppBar position="sticky" open={props.open} >
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     {!props.open && (
@@ -73,7 +72,7 @@ const DefaultHeader = (props: IHeaderProps) => {
                             EBAA Patinhas
                         </Typography>
                     )}
-                    <IsLogged />
+                    <IsLogged user={user} />
                 </Toolbar>
             </AppBar>
 
@@ -97,17 +96,17 @@ const DefaultHeader = (props: IHeaderProps) => {
                     zIndex: 1,
                     color: { xs: 'primary.main', md: 'primary.main' },
                     fontWeight: 800,
-                    fontSize: { xs: '1.2rem', md: '2rem'},
-                    marginLeft: { xs: '0rem', md: '4rem' },                 
-                    width: 'fit-content',       
+                    fontSize: { xs: '1.2rem', md: '2rem' },
+                    marginLeft: { xs: '0rem', md: '4rem' },
+                    width: 'fit-content',
                     padding: { xs: '1rem 1.5rem', md: '0rem' },
                     borderRadius: '1rem',
 
-                    backgroundColor: { xs: '#32bfba25', md: 'transparent' },        
-                    backdropFilter: { xs: 'blur(10px)', md: 'none' },                                
-                    boxShadow: { xs: '0 0 10px 0 rgb(255 255 255 / 42%)', md: 'none' },                                                            
+                    backgroundColor: { xs: '#32bfba25', md: 'transparent' },
+                    backdropFilter: { xs: 'blur(10px)', md: 'none' },
+                    boxShadow: { xs: '0 0 10px 0 rgb(255 255 255 / 42%)', md: 'none' },
                 }}
-                
+
                 >
                     "Amor pela vida, <br /> amor por amparar."
                 </Typography>
@@ -115,8 +114,8 @@ const DefaultHeader = (props: IHeaderProps) => {
                 <Box sx={{
                     display: 'flex',
                     flexDirection: 'row',
-                    alignItems: 'center',                    
-                    marginLeft: { xs: '0rem', md: '4rem' },   
+                    alignItems: 'center',
+                    marginLeft: { xs: '0rem', md: '4rem' },
                     zIndex: 1,
                 }}>
                     <Typography variant="h1" component="h1" sx={{
@@ -127,8 +126,8 @@ const DefaultHeader = (props: IHeaderProps) => {
                         marginBottom: { xs: '4rem', md: '0rem' },
                         alignItems: 'center',
                         borderRadius: '1rem',
-                        padding: { xs: '1rem 1.5rem', md: '1rem' },    
-                        backgroundColor: { xs: 'primary.main', md: 'transparent' },                        
+                        padding: { xs: '1rem 1.5rem', md: '1rem' },
+                        backgroundColor: { xs: 'primary.main', md: 'transparent' },
                     }}>
 
                         <Avatar src='public\logoPatinhas.svg' sx={{
@@ -145,7 +144,7 @@ const DefaultHeader = (props: IHeaderProps) => {
                                 Patinhas Carentes
                             </Typography>
 
-                            <Typography sx={{                                
+                            <Typography sx={{
                                 fontWeight: 500,
                                 color: { xs: 'secondary.main', md: 'primary.main' },
                             }}>
@@ -174,7 +173,7 @@ const DefaultHeader = (props: IHeaderProps) => {
                             objectFit: 'cover',
                             width: '100%',
                             height: '100%',
-                            
+
                         }}
 
                     />

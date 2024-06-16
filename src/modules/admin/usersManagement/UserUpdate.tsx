@@ -1,49 +1,14 @@
 import { AddPhotoAlternateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Box, Button, Divider, FormControl, Grid, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, styled, TextField, Typography } from '@mui/material';
+import { Avatar, Box, Button, Divider, FormControl, Grid, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { IMaskInput } from 'react-imask';
 import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from '../../../lib/api';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
-import { CustomProps, Role, User } from './types';
-import baseApi from '../../../lib/api';
-
-const TextMaskCpfCnpj = React.forwardRef<HTMLInputElement, CustomProps>(
-    function TextMaskCustom(props, ref) {
-        const { onChange, ...other } = props;
-        const [mask, setMask] = useState('');
-
-        const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-            const inputValue = event.target.value.replace(/[^\d]/g, '');
-            const inputLength = inputValue.length;
-
-            if (inputLength <= 11) {
-                setMask('000.000.000-000');
-            } else {
-                setMask('00.000.000/0000-00');
-            }
-
-            onChange({ target: { name: props.name, value: inputValue } });
-        }
-
-        return (
-            <IMaskInput
-                {...other}
-                mask={mask}
-                definitions={{
-                    '#': /[1-9]/,
-                }}
-                inputRef={ref}
-                onAccept={(value: string) => onChange({ target: { name: props.name, value } })}
-                overwrite
-                onChange={handleChange}
-            />
-        );
-    },
-);
-
+import { TextMaskCep, TextMaskCpfCnpj } from '../../../shared/utils/masks';
+import { Role, User, UserType } from './types';
 
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -54,33 +19,7 @@ const UserUpdate: React.FC = () => {
     const [roles, setRoles] = useState<Role[]>([]);
     const [showPassword, setShowPassword] = useState(false);
     const isEditMode = !!id;
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const TextMaskCep = React.forwardRef<HTMLInputElement, CustomProps>(
-        function TextMaskCustom(props, ref) {
-            const { onChange, ...other } = props;
-            const [mask, setMask] = useState('');
 
-            const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-                const inputValue = event.target.value.replace(/[^\d]/g, '');
-                setMask('00000-000');
-                onChange({ target: { name: props.name, value: inputValue } });
-            }
-
-            return (
-                <IMaskInput
-                    {...other}
-                    mask={mask}
-                    definitions={{
-                        '#': /[1-9]/,
-                    }}
-                    inputRef={ref}
-                    onAccept={(value: string) => onChange({ target: { name: props.name, value } })}
-                    overwrite
-                    onChange={handleChange}
-                />
-            );
-        },
-    );
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
         clipPath: 'inset(50%)',
@@ -441,6 +380,36 @@ const UserUpdate: React.FC = () => {
                             />
                         </Grid>
                     )}
+
+                    <Grid item xs={6}
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: '.5rem',
+                        }}
+                    >
+                        <FormControl fullWidth>
+                            <InputLabel id="type-label">Tipo de usuário</InputLabel>
+                            <Select
+                                labelId="type-label"
+                                label='Tipo de usuário'
+                                {...register('type')}
+                                defaultValue={isEditMode ? user?.role_id : roles[0]['id']}
+                                variant='outlined'
+                                fullWidth
+                            >
+                                <MenuItem disabled value="">
+                                    <Typography sx={{ fontStyle: 'italic' }}>Selecione o tipo do usuário</Typography>
+                                </MenuItem>
+                                {Object.values(UserType).map((type) => (
+                                    <MenuItem key={type} value={type}>
+                                        {type === UserType.INTERNAL ? 'Interno' : 'Externo'}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>
                     <Grid item xs={12}>
                         <Divider />
                     </Grid>
