@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Checkout } from '../payment/checkout';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Message } from '../../shared/components/message/Message';
 import axios from 'axios';
+import { HeaderBanner } from '../../shared/headerBanner/HeaderBanner';
+import { Box, Grid, Stack, Container } from '@mui/material';
+import { CardTransparency } from '../../shared/components/card/CardTransparency';
+import { CardAdoption } from '../../shared/components/card/CardAdoption';
+import { CardDonate } from '../../shared/components/card/CardDonate';
+import { AnimalCarousel } from '../../shared/components/carousel/AnimalCarousel';
+import { GridAnimalsForAdoption } from '../../shared/components/animals/GridAnimalsForAdoption';
 
 const Home: React.FC = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -49,9 +54,46 @@ const Home: React.FC = () => {
     }, []);
 
     return (
-        <>                    
-                      
-    
+        <>
+            <HeaderBanner></HeaderBanner>
+            <Container maxWidth="lg">
+
+                <Grid container spacing={4} justifyContent={'center'} alignItems={'strech'}>
+                    <Grid item xs={12} sm={8} md={4} lg={3}>
+                        <CardAdoption />
+                    </Grid>
+
+                    <Grid item xs={12} sm={8} md={4} lg={3}>
+                        <CardDonate />
+                    </Grid>
+
+                    <Grid item xs={12} sm={8} md={4} lg={3}>
+                        <CardTransparency />
+                    </Grid>
+                </Grid>
+
+
+                <Grid container sx={{
+                    paddingY: 10,
+                }}>
+                    <Grid item xs={12} >
+                        <AnimalCarousel />
+                    </Grid>
+                </Grid>
+
+                <Grid container>
+                    <Grid item xs={12}>
+                        <GridAnimalsForAdoption />
+                    </Grid>
+                </Grid>
+
+
+
+                <br />
+                <br />
+                <br /><br /><br /><br /><br /><br /><br /><br />
+            </Container>
+
         </>
     );
 };

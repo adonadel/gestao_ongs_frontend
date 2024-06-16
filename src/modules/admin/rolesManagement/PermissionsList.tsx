@@ -1,4 +1,12 @@
-import {AdminPanelSettings, Diversity1, Groups2, InsertPhoto, TextSnippet, Wallet} from '@mui/icons-material';
+import {
+    AdminPanelSettings,
+    Diversity1,
+    EventAvailable,
+    Groups2,
+    InsertPhoto,
+    TextSnippet,
+    Wallet
+} from '@mui/icons-material';
 import PetsIcon from '@mui/icons-material/Pets';
 import {Box, Checkbox, FormControlLabel, Grid, Paper, Stack, Typography} from '@mui/material';
 import React, {useEffect, useState} from 'react';
@@ -21,7 +29,7 @@ const modulesList: modulesListType[] = [
         id: 3,
         title: 'Eventos',
         name: 'event',
-        icon: <Diversity1/>
+        icon: <EventAvailable/>
     },
     {
         id: 4,

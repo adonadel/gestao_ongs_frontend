@@ -1,19 +1,17 @@
-import { Route, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
-import { Fragment } from "react/jsx-runtime";
+import {createBrowserRouter, createRoutesFromElements, Route} from "react-router-dom";
+import {Fragment} from "react/jsx-runtime";
 import AnimalList from "../modules/admin/animalsManagement/AnimalList";
 import AnimalUpdate from "../modules/admin/animalsManagement/AnimalUpdate";
-import { BannerList } from "../modules/admin/bannersManagement/BannerList";
-import { BannerUpdate } from "../modules/admin/bannersManagement/BannerUpdate";
-import { Dashboard } from "../modules/admin/dashboard/Dashboard";
-import { DonationList } from "../modules/admin/donationsManagement/DonationList";
-import { DonationUpdate } from "../modules/admin/donationsManagement/DonationUpdate";
-import { FinancialList } from "../modules/admin/financialManagement/FinancialList";
-import { FinancialUpdate } from "../modules/admin/financialManagement/FinancialUpdate";
-import { GiverList } from "../modules/admin/giversManagement/GiverList";
-import { GiverUpdate } from "../modules/admin/giversManagement/GiverUpdate";
+import {Dashboard} from "../modules/admin/dashboard/Dashboard";
+import {DonationList} from "../modules/admin/donationsManagement/DonationList";
+import {DonationUpdate} from "../modules/admin/donationsManagement/DonationUpdate";
+import {FinancialList} from "../modules/admin/financialManagement/FinancialList";
+import {FinancialUpdate} from "../modules/admin/financialManagement/FinancialUpdate";
+import {GiverList} from "../modules/admin/giversManagement/GiverList";
+import {GiverUpdate} from "../modules/admin/giversManagement/GiverUpdate";
 import RolesList from "../modules/admin/rolesManagement/RolesList";
 import RolesUpdate from "../modules/admin/rolesManagement/RolesUpdate";
-import { UserManagement } from "../modules/admin/userManagement/UserManagement";
+import {UserManagement} from "../modules/admin/userManagement/UserManagement";
 import UserList from "../modules/admin/usersManagement/UserList";
 import UserUpdate from "../modules/admin/usersManagement/UserUpdate";
 import ErrorPage from "../modules/error/Error";
@@ -49,9 +47,9 @@ export const router = createBrowserRouter(
                 <Route path="/animals/:id" element={<AnimalUpdate />} />
 
             /* Banners Management */
-                <Route path="/banners" element={<BannerList />} />
-                <Route path="/banners/new" element={<BannerUpdate />} />
-                <Route path="/banners/:id" element={<BannerUpdate />} />
+                <Route path="/events" element={<EventList />} />
+                <Route path="/events/new" element={<EventUpdate />} />
+                <Route path="/events/:id" element={<EventUpdate />} />
 
             /* Donations Management */
                 <Route path="/donations" element={<DonationList />} />

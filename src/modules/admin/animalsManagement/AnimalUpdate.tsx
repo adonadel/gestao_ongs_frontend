@@ -1,17 +1,15 @@
 import { Button, TextField, Grid, Avatar, Box, IconButton, Radio, FormControl, RadioGroup, FormControlLabel, InputLabel, Select, MenuItem, FormLabel, FormHelperText, TextareaAutosize } from '@mui/material';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { set, useForm, useFormState } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getToken } from '../../../shared/utils/getToken';
 import { Animal } from './types';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Delete, Filter } from '@mui/icons-material';
 import FullLoader from '../../../shared/components/loading/FullLoader';
+import baseApi from "../../../lib/api.ts";
 
 const AnimalUpdate: React.FC = () => {
     const navigate = useNavigate();
-    const apiUrl = import.meta.env.VITE_API_URL;
     const { id } = useParams<{ id: string }>();
     const [animal, setAnimal] = useState<Animal | null>(null);
     const { register, handleSubmit, setValue, formState } = useForm<Animal>();
@@ -26,14 +24,8 @@ const AnimalUpdate: React.FC = () => {
     }
 
     const handleDeleteImage = (id: number) => {
-        const token = getToken();
-
         try {
-            axios.delete(`${apiUrl}/api/medias/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            baseApi.delete(`/api/medias/${id}`);
         } catch (error) {
             console.log("Error:", error);
         }
@@ -50,19 +42,11 @@ const AnimalUpdate: React.FC = () => {
 
 
     const handleImageSelect = async (imageId: number) => {
-        const token = getToken();
-
         const updateImageCoverStatus = async (id: number, isCover: boolean) => {
             try {
-                const response = await axios.post(
-                    `${apiUrl}/api/medias/${id}`,
-                    { is_cover: isCover, origin: 'animal' },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        }
-                    }
+                const response = await baseApi.post(
+                    `/api/medias/${id}`,
+                    { is_cover: isCover, origin: 'animal' }
                 );
                 console.log(`Updated image ${id} with is_cover: ${isCover}`, response.data);
             } catch (error) {
@@ -95,13 +79,12 @@ const AnimalUpdate: React.FC = () => {
         if (isEditMode) {
             formData.append('animal_id', id);
         }
-        const token = getToken();
+        
         setIsLoading(true);
 
         try {
-            const response = await axios.post(`${apiUrl}/api/medias/bulk`, formData, {
+            const response = await baseApi.post(`/api/medias/bulk`, formData, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 }
             });
@@ -133,12 +116,7 @@ const AnimalUpdate: React.FC = () => {
         if (isEditMode) {
             const fetchAnimal = async () => {
                 try {
-                    const token = getToken();
-                    const response = await axios.get(`${apiUrl}/api/animals/${id}`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
+                    const response = await baseApi.get(`/api/animals/${id}`);
                     const animal = response.data;
                     setAnimal(animal);
                     setImages(animal.medias);
@@ -153,19 +131,10 @@ const AnimalUpdate: React.FC = () => {
 
     const onSubmit = async (data: Animal) => {
         try {
-            const token = getToken();
             if (isEditMode) {
-                await axios.put(`${apiUrl}/api/animals/${id}`, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                await baseApi.put(`/api/animals/${id}`, data);
             } else {
-                await axios.post(`${apiUrl}/api/animals`, data, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                await baseApi.post(`/api/animals`, data);
             }
             navigate('/animals');
         } catch (error) {
