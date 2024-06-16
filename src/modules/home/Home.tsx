@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { HeaderBanner } from '../../shared/headerBanner/HeaderBanner';
-import { Box, Grid, Stack, Container } from '@mui/material';
+import { Grid, Container } from '@mui/material';
 import { CardTransparency } from '../../shared/components/card/CardTransparency';
 import { CardAdoption } from '../../shared/components/card/CardAdoption';
 import { CardDonate } from '../../shared/components/card/CardDonate';
-import { AnimalCarousel } from '../../shared/components/carousel/AnimalCarousel';
+import { EventsCarousel } from '../../shared/components/carousel/EventsCarousel';
 import { GridAnimalsForAdoption } from '../../shared/components/animals/GridAnimalsForAdoption';
 
 const Home: React.FC = () => {
@@ -77,7 +77,7 @@ const Home: React.FC = () => {
                     paddingY: 10,
                 }}>
                     <Grid item xs={12} >
-                        <AnimalCarousel />
+                        <EventsCarousel />
                     </Grid>
                 </Grid>
 
@@ -88,9 +88,6 @@ const Home: React.FC = () => {
                 </Grid>
 
 
-
-                <br />
-                <br />
                 <br /><br /><br /><br /><br /><br /><br /><br />
             </Container>
 

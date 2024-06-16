@@ -56,7 +56,7 @@ export const HeaderBanner = () => {
                     backgroundColor: { xs: 'primary.main', md: 'transparent' },
                 }}>
 
-                    <Avatar src='public\logoPatinhas.svg' sx={{
+                    <Avatar src='\logoPatinhas.svg' sx={{
                         width: { xs: '3rem', md: '4rem' },
                         height: { xs: '3rem', md: '4rem' },
                     }} />
@@ -90,10 +90,10 @@ export const HeaderBanner = () => {
                 height: '100%',
                 userSelect: 'none',
             }}>
-                <source media="(max-width: 600px)" srcSet="public\background-header-mobile.png" />
-                <source media="(max-width: 1200px)" srcSet="public\background-header-tablet.png" />
+                <source media="(max-width: 600px)" srcSet="\background-header-mobile.png" />
+                <source media="(max-width: 1200px)" srcSet="\background-header-tablet.png" />
                 <img
-                    src="public/background-header.jpg"
+                    src="/background-header.jpg"
                     alt="Banner"
                     style={{
                         objectFit: 'cover',
