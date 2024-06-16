@@ -1,20 +1,27 @@
-import { EventAvailable } from "@mui/icons-material"
-import { Box } from "@mui/material"
+import React from 'react';
+import { Box } from '@mui/material';
 
-
-export const TagTitle = () => {
-    return (
-        <Box sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',            
-            borderRadius: '1rem',
-            width: '4rem',
-            height: '4rem',
-            backgroundColor: '#15b6b125',            
-        
-        }}>
-            <EventAvailable color="secondary" sx={{ fontSize: '1.5rem'}} />
-        </Box>
-    )
+interface TagTitleProps {
+    backgroundColor: string;
+    icon: React.ElementType;
+    iconColor: string;
 }
+
+const TagTitle = ({ backgroundColor, icon: Icon, iconColor }: TagTitleProps) => {
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: backgroundColor,
+                padding: '1rem',                
+                borderRadius: '20%',
+            }}
+        >
+            {Icon && <Icon sx={{ color: iconColor}} />}
+
+        </Box>
+    );
+};
+
+export default TagTitle;

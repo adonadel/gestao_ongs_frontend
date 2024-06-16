@@ -1,22 +1,23 @@
-import { Box, IconButton, Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { CardEvent } from "../cardEvent/CardEvent";
-import { ChevronLeft, ChevronRight, Tag } from "@mui/icons-material";
-import { TagTitle } from "../tagTitle/TagTitle";
+import { ChevronLeft, ChevronRight, EventAvailable } from "@mui/icons-material";
 import { useEffect, useState } from "react";
+import TagTitle from "../tagTitle/TagTitle";
+
 
 export const AnimalCarousel = () => {
 
     const getCenterSlidePercentage = () => {
-        if(window.innerWidth < 400) {
-            return 100; // Mobile
+        if (window.innerWidth < 400) {
+            return 100;
         } else if (window.innerWidth < 600) {
-            return 80; // Mobile
+            return 80;
         } else if (window.innerWidth < 960) {
-            return 50; // Tablet
+            return 50;
         } else {
-            return 30; // Desktop
+            return 30;
         }
     };
 
@@ -59,12 +60,19 @@ export const AnimalCarousel = () => {
 
     return (
         <>
-            <Typography variant="h2" color="secondary.dark" fontSize={'1.5rem'} fontWeight={600} display={'flex'} alignItems={'center'} gap={2}>
-                <TagTitle />
+            <Typography variant="h2" color="secondary.dark" fontWeight={600} display={'flex'} alignItems={'center'} gap={2} sx={{
+                fontSize: { xs: '1.2rem', sm: '1.5rem' }
+            }}>
+                <TagTitle backgroundColor="#15b6b125" icon={EventAvailable} iconColor="secondary.light" />
+                
                 Eventos
             </Typography>
 
-            <Typography variant="body1" color="grey.600" mt={2} mb={4}>
+            <Typography variant="body1" color="grey.600" mt={2} sx={{
+                fontSize: { xs: '0.8rem', sm: '1rem'},
+                mb: {xs: '1rem', sm: '2rem'}
+
+            }}>
                 Fique por dentro de todos nossos eventos, lives, sorteios e feirinhas!
             </Typography>
 
@@ -78,7 +86,7 @@ export const AnimalCarousel = () => {
                 infiniteLoop
 
 
-                renderArrowPrev={(onClickHandler, hasPrev, label) =>
+                renderArrowPrev={(onClickHandler, hasPrev) =>
                     hasPrev && (
                         <IconButton color="secondary" onClick={onClickHandler} aria-label="left" sx={{
                             ...arrowStyles, left: 15,
@@ -91,7 +99,7 @@ export const AnimalCarousel = () => {
                     )
                 }
 
-                renderArrowNext={(onClickHandler, hasNext, label) =>
+                renderArrowNext={(onClickHandler, hasNext) =>
                     hasNext && (
                         <IconButton color="secondary" onClick={onClickHandler} aria-label="right" sx={{
                             ...arrowStyles, right: 15, '&:hover': {
@@ -128,34 +136,13 @@ export const AnimalCarousel = () => {
                     );
                 }}
             >
-                <Box>
-                    <CardEvent />
-                </Box>
-                <Box>
-                    <CardEvent />
-                </Box>
-                <Box>
-                    <CardEvent />
-                </Box>
-
-                <Box>
-                    <CardEvent />
-                </Box>
-                <Box>
-                    <CardEvent />
-                </Box>
-                <Box>
-                    <CardEvent />
-                </Box>
-                <Box>
-                    <CardEvent />
-                </Box>
-                <Box>
-                    <CardEvent />
-                </Box>
-                <Box>
-                    <CardEvent />
-                </Box>
+                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
+                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
+                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
+                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
+                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
+                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
+                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />            
             </Carousel >
         </>
 

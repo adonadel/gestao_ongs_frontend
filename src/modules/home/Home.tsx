@@ -7,6 +7,7 @@ import { CardTransparency } from '../../shared/components/card/CardTransparency'
 import { CardAdoption } from '../../shared/components/card/CardAdoption';
 import { CardDonate } from '../../shared/components/card/CardDonate';
 import { AnimalCarousel } from '../../shared/components/carousel/AnimalCarousel';
+import { GridAnimalsForAdoption } from '../../shared/components/animals/GridAnimalsForAdoption';
 
 const Home: React.FC = () => {
     const apiUrl = import.meta.env.VITE_API_URL;
@@ -80,14 +81,18 @@ const Home: React.FC = () => {
                     </Grid>
                 </Grid>
 
+                <Grid container>
+                    <Grid item xs={12}>
+                        <GridAnimalsForAdoption />
+                    </Grid>
+                </Grid>
+
 
 
                 <br />
                 <br />
                 <br /><br /><br /><br /><br /><br /><br /><br />
             </Container>
-
-
 
         </>
     );
