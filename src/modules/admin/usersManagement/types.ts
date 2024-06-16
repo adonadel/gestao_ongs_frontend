@@ -3,6 +3,11 @@ export enum UserStatus {
   DISABLED = "DISABLED",
 }
 
+export enum UserType {
+  EXTERNAL = "EXTERNAL",
+  INTERNAL = "INTERNAL",
+}
+
 export type ProfilePicture = {
   filename_id: string;
 }
@@ -38,6 +43,19 @@ export type User = {
   id: number;
   people_id: number;
   password: string;
+  person: Person;
+  role_id: number;
+  role: Role;
+  status: UserStatus;
+  created_at: string;
+  type: UserType;
+};
+
+export type ExternalUser = {
+  id: number;
+  people_id: number;
+  password: string;
+  confirm_password?: string;
   person: Person;
   role_id: number;
   role: Role;

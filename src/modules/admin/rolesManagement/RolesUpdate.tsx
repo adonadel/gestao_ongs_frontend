@@ -1,14 +1,13 @@
-import {Button, Stack, TextField} from '@mui/material';
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {PermissionValues, RoleValues} from './types';
-import baseApi from '../../../lib/api';
+import { Button, Stack, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from '../../../lib/api';
 import PermissionsList from './PermissionsList';
+import { PermissionValues, RoleValues } from './types';
 
 const RolesUpdate: React.FC = () => {
     const navigate = useNavigate();
-    const apiUrl = import.meta.env.VITE_API_URL;
     const { id } = useParams<{ id: string }>();
     const [role, setRole] = useState<RoleValues | null>(null);
     const [permissions, setPermissions] = useState<PermissionValues[]>([]);
@@ -104,4 +103,4 @@ const RolesUpdate: React.FC = () => {
     }
 };
 
-export default RolesUpdate;
+export default RolesUpdate;

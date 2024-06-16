@@ -5,7 +5,7 @@ interface AuthState {
   token: string;
 }
 
-const baseApi: AxiosInstance = axios.create({
+export const baseApi: AxiosInstance = axios.create({
   baseURL: "http://localhost:80",
 });
 
@@ -23,5 +23,3 @@ baseApi.defaults.withCredentials = false;
 baseApi.defaults.headers.post["Content-Type"] =
   "application/json;charset=utf-8";
 baseApi.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
-
-export default baseApi;

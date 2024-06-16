@@ -13,10 +13,10 @@ import {
   TableRow,
   Typography
 } from "@mui/material";
-import {AxiosResponse} from "axios";
-import {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import baseApi from '../../../lib/api';
+import { AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { baseApi } from '../../../lib/api';
 
 interface Role {
   id: number;
@@ -93,4 +93,4 @@ function RolesList() {
   )
 }
 
-export default RolesList;
+export default RolesList;

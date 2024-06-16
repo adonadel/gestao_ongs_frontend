@@ -17,10 +17,9 @@ import UserUpdate from "../modules/admin/usersManagement/UserUpdate";
 import ErrorPage from "../modules/error/Error";
 import Home from "../modules/home/Home";
 import Login from "../modules/login/Login";
-import {DefaultLayout} from "../shared/layout/Default";
-import {WebLayout} from "../shared/layout/Web";
-import EventList from "../modules/admin/eventsManagement/EventList.tsx";
-import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
+import Register from "../modules/register/Register";
+import { DefaultLayout } from "../shared/layout/Default";
+import { WebLayout } from "../shared/layout/Web";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -28,6 +27,9 @@ export const router = createBrowserRouter(
             <Route element={<WebLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/user" element={<UserManagement />} />
+                <Route path="*" element={<ErrorPage />} />
             </Route>
             <Route element={<DefaultLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
@@ -65,10 +67,6 @@ export const router = createBrowserRouter(
                 <Route path="/givers" element={<GiverList />} />
                 <Route path="/givers/new" element={<GiverUpdate />} />
                 <Route path="/givers/:id" element={<GiverUpdate />} />
-
-            /* Auth */
-                <Route path="/user" element={<UserManagement />} />
-                <Route path="*" element={<ErrorPage />} />
             </Route>
         </Fragment>
 
