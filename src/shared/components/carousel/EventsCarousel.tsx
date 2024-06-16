@@ -5,9 +5,42 @@ import { CardEvent } from "../cardEvent/CardEvent";
 import { ChevronLeft, ChevronRight, EventAvailable } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import TagTitle from "../tagTitle/TagTitle";
+import axios from "axios";
 
 
-export const AnimalCarousel = () => {
+export const EventsCarousel = () => {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const [events, setEvents] = useState<EventsWithDetails[]>([]);
+
+    interface Medias {
+        id: number;
+        filaname_id: string;
+    }
+
+    interface EventsWithDetails {
+        id: number;
+        name: string;
+        description: string;
+        location: string;
+        event_date: string;
+        medias: Medias[];
+    }
+
+    interface ApiResponse {
+        current_page: number;
+        data: EventsWithDetails[];
+        first_page_url: string;
+        from: number;
+        last_page: number;
+        last_page_url: string;
+        links: { url: string | null; label: string; active: boolean }[];
+        next_page_url: string | null;
+        path: string;
+        per_page: number;
+        prev_page_url: string | null;
+        to: number;
+        total: number;
+    }
 
     const getCenterSlidePercentage = () => {
         if (window.innerWidth < 400) {
@@ -31,6 +64,18 @@ export const AnimalCarousel = () => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        try {
+            axios.get<ApiResponse>(`${apiUrl}/api/events`)
+                .then(response => {                    
+                    setEvents(response.data.data);
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }, []);
+
 
 
     const arrowStyles = {
@@ -64,13 +109,13 @@ export const AnimalCarousel = () => {
                 fontSize: { xs: '1.2rem', sm: '1.5rem' }
             }}>
                 <TagTitle backgroundColor="#15b6b125" icon={EventAvailable} iconColor="secondary.light" />
-                
+
                 Eventos
             </Typography>
 
             <Typography variant="body1" color="grey.600" mt={2} sx={{
-                fontSize: { xs: '0.8rem', sm: '1rem'},
-                mb: {xs: '1rem', sm: '2rem'}
+                fontSize: { xs: '0.8rem', sm: '1rem' },
+                mb: { xs: '1rem', sm: '2rem' }
 
             }}>
                 Fique por dentro de todos nossos eventos, lives, sorteios e feirinhas!
@@ -136,13 +181,13 @@ export const AnimalCarousel = () => {
                     );
                 }}
             >
-                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
-                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
-                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
-                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
-                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
-                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />
-                <CardEvent location="Braço do Norte - SC" schedule="17 de julho - 10h" srcImage="public\background-header-mobile.png" />            
+                {events &&
+
+                    events.map((event: any) => (
+                        <CardEvent location={event.location} schedule={event.event_date} srcImage={event.medias[0].filename_id} />
+                    ))
+
+                }
             </Carousel >
         </>
 

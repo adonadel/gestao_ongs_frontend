@@ -1,17 +1,15 @@
-import { Grid, CircularProgress, Typography, TextField, Button, InputLabel, MenuItem, Select, FormControl, FormLabel, FormHelperText, Box, Modal } from "@mui/material";
+import { Grid, CircularProgress, Typography, TextField, Button, InputLabel, MenuItem, Select, FormControl, Box, Modal } from "@mui/material";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { CardAnimalForAdoption } from "./CardAnimalForAdoption";
-import { Close, EventAvailable, Favorite, Filter, FilterAltOutlined, HeartBroken, Search, SentimentVeryDissatisfied } from "@mui/icons-material";
+import { Close, Favorite, FilterAltOutlined, Search, SentimentVeryDissatisfied } from "@mui/icons-material";
 import TagTitle from "../tagTitle/TagTitle";
-import { set } from "react-hook-form";
 
 interface Media {
     filename_id: string;
     pivot: {
         is_cover: string;
     }
-    // Adicione outras propriedades conforme necessário
 }
 
 interface AnimalWithDetails {
@@ -94,13 +92,15 @@ export const GridAnimalsForAdoption = () => {
     return (
         <Grid container>
             <Grid item xs={12}>
-                <Typography variant="h2" color="secondary.dark" fontWeight={600} display={'flex'} alignItems={'center'} gap={2} sx={{
-                    fontSize: { xs: '1.2rem', sm: '1.5rem' }
-                }}>
-                    <TagTitle backgroundColor="#FABEC025" icon={Favorite} iconColor="#ff4222" />
 
-                    Adote um pet
-                </Typography>
+                <Box display={'flex'} alignItems={'center'} gap={2}>
+                    <TagTitle backgroundColor="#FABEC025" icon={Favorite} iconColor="#ff4222" />
+                    <Typography variant="h2" color="secondary.dark" fontWeight={600}  sx={{
+                        fontSize: { xs: '1.2rem', sm: '1.5rem' }
+                    }}>
+                        Adote um pet
+                    </Typography>
+                </Box>
 
                 <Typography variant="body1" color="grey.600" mt={2} sx={{
                     fontSize: { xs: '0.8rem', sm: '1rem' },
@@ -130,7 +130,7 @@ export const GridAnimalsForAdoption = () => {
                         left: '50%',
                         transform: 'translate(-50%, -50%)',
                         width: { xs: '70%', sm: '50%' },
-                        
+
                         bgcolor: 'background.paper',
                         border: '2px solid #e0e0e0',
                         borderRadius: '1rem',
@@ -226,7 +226,7 @@ export const GridAnimalsForAdoption = () => {
                 </Modal>
 
                 <Grid item xs={8} sx={{
-                    display: { xs: 'none', lg: 'flex' },               
+                    display: { xs: 'none', lg: 'flex' },
                     justifyContent: 'center',
                     gap: '1rem',
                 }}>
@@ -298,18 +298,18 @@ export const GridAnimalsForAdoption = () => {
 
                 <Grid item xs={12} lg={4} sx={{
                     display: 'flex',
-                    justifyContent: {xs: 'space-between', lg: 'flex-end'},                    
-                }}>                    
-                   
+                    justifyContent: { xs: 'space-between', lg: 'flex-end' },
+                }}>
+
                     <Button variant="outlined" color="secondary" startIcon={<FilterAltOutlined sx={{ color: 'secondary' }} />} sx={{
                         padding: '0.5rem 1rem',
                         display: { xs: 'flex', lg: 'none' },
                         justifyContent: 'center',
                     }} onClick={handleOpen}>
                         <Typography variant="h4" color="secondary" fontWeight={500} sx={{
-                            fontSize: { xs: '0.6rem', sm: '0.8rem'}
+                            fontSize: { xs: '0.6rem', sm: '0.8rem' }
                         }}>
-                           Filtros de busca
+                            Filtros de busca
                         </Typography>
                     </Button>
 
@@ -390,7 +390,7 @@ export const GridAnimalsForAdoption = () => {
                     ) : (
 
                         animals.map(animal => (
-                            <Grid item xs={12} sm={6} md={4} lg={3} key={animal.id}>
+                            <Grid item xs={12} sm={6} md={4} lg={3} >
                                 <CardAnimalForAdoption animal={animal} />
                             </Grid>
                         ))
