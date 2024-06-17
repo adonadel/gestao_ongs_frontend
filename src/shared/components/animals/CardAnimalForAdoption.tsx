@@ -40,8 +40,7 @@ export const CardAnimalForAdoption = (props: CardAnimalForAdoptionProps) => {
                 setMedia(`${apiImage}${media.filename_id}`);
                 return;
             } else {
-                const media = medias.find(media => media.filename_id);
-                setMedia(`${apiImage}${media}`);
+                setMedia(`${apiImage}${medias[0].filename_id}`);
             }
 
         }

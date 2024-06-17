@@ -60,6 +60,7 @@ export default function StepAddress() {
                             inputComponent: TextMaskCep as unknown as React.ElementType<InputBaseComponentProps>,
                         }}
                         required
+                        onBlur={searchCEP}
                         sx={{ mr: 1 }}
                     />
                     <IconButton
