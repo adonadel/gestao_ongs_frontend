@@ -1,9 +1,9 @@
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, Container, Grid, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getToken } from '../../../shared/utils/getToken';
+import { Link } from "react-router-dom";
+import { baseApi } from '../../../lib/api';
 
 interface Animal {
     id: number;
@@ -21,27 +21,17 @@ interface PaginatedAnimalResponse {
 }
 
 function AnimalList() {
-    const navigate = useNavigate();
-    const apiUrl = import.meta.env.VITE_API_URL;
-
     const [animals, setAnimals] = useState<Animal[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchAnimals = async () => {
         try {
-            const token = getToken();
-
-            const response: AxiosResponse<PaginatedAnimalResponse> = await axios.get<PaginatedAnimalResponse>(`${apiUrl}/api/animals`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+            const response: AxiosResponse<PaginatedAnimalResponse> = await baseApi.get<PaginatedAnimalResponse>(`/api/animals`)
             setAnimals(response.data.data);
             setIsLoading(false);
         } catch (error) {
             console.error('Error fetching animals:', error);
             setIsLoading(false);
-            navigate('/login')
         }
     };
 

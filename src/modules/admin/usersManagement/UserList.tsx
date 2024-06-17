@@ -1,5 +1,4 @@
 import { AddCircleOutlineOutlined } from '@mui/icons-material';
-import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
@@ -114,6 +113,7 @@ function UserList() {
                 <TableCell>Nome</TableCell>
                 <TableCell>E-mail</TableCell>
                 <TableCell>Nível</TableCell>
+                <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -140,16 +140,21 @@ function UserList() {
                   <TableCell>{user.person.email}</TableCell>
                   <TableCell>{user.role.name}</TableCell>
                   <TableCell>
-                    <IconButton component={Link} to={`${user.id}`}><EditIcon color="warning" /></IconButton>
-                    <IconButton onClick={() => changeStatus(user.id)}><DeleteIcon color="error" /></IconButton>
+                    <IconButton size='small' component={Link} to={`${user.id}`}><EditIcon color="warning" /></IconButton>
+                    <Button color='error' onClick={() => changeStatus(user.id)} sx={{ marginLeft: 2 }}>
+                      <Typography sx={{ fontSize: '12px' }}>
+                        {user.status === UserStatus.ENABLED ? 'Desativar' : 'Ativar'}
+                      </Typography>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-      )}
-    </Container>
+      )
+      }
+    </Container >
   )
 }
 

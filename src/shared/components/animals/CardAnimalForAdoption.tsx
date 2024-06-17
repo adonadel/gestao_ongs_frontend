@@ -1,5 +1,5 @@
-import { Cake, Favorite, HeartBroken, Height, Pets, ViewAgenda } from "@mui/icons-material";
-import { Card, CardActionArea, CardMedia, CardContent, Typography, Button, Box } from "@mui/material";
+import { Cake, Favorite, Height, Pets } from "@mui/icons-material";
+import { Box, Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
 interface Media {
@@ -36,7 +36,6 @@ export const CardAnimalForAdoption = (props: CardAnimalForAdoptionProps) => {
     useEffect(() => {
         if (medias && medias.length > 0) {
             const media = medias.find(media => media.pivot && media.pivot.is_cover);
-            console.log(media?.filename_id);
             if (media) {
                 setMedia(`${apiImage}${media.filename_id}`);
                 return;
@@ -60,7 +59,7 @@ export const CardAnimalForAdoption = (props: CardAnimalForAdoptionProps) => {
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div" fontWeight={600} sx={{
                     color: 'secondary.dark',
-                    fontSize: { xs: '1.2rem', sm: '1.5rem'}
+                    fontSize: { xs: '1.2rem', sm: '1.5rem' }
                 }}>
                     {name}
                 </Typography>
