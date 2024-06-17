@@ -17,6 +17,7 @@ import { UserManagement } from "../modules/admin/userManagement/UserManagement";
 import UserList from "../modules/admin/usersManagement/UserList";
 import UserUpdate from "../modules/admin/usersManagement/UserUpdate";
 import ErrorPage from "../modules/error/Error";
+import { ExternalUser } from "../modules/externalUser/ExternalUser";
 import Home from "../modules/home/Home";
 import Login from "../modules/login/Login";
 import Register from "../modules/register/Register";
@@ -30,7 +31,7 @@ export const router = createBrowserRouter(
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/user" element={<UserManagement />} />
+                <Route path="/external" element={<ExternalUser />} />
                 <Route path="*" element={<ErrorPage />} />
             </Route>
             <Route element={<DefaultLayout />}>
@@ -69,6 +70,9 @@ export const router = createBrowserRouter(
                 <Route path="/givers" element={<GiverList />} />
                 <Route path="/givers/new" element={<GiverUpdate />} />
                 <Route path="/givers/:id" element={<GiverUpdate />} />
+
+            /* User Management */
+                <Route path="/user" element={<UserManagement />} />
             </Route>
         </Fragment>
 

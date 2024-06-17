@@ -37,10 +37,11 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const IsLogged = ({ user }: { user: User | null }) => {
+    const userType = user?.type;
 
     return (
         user ? (
-            <IconButton component={Link} to="/user" sx={{ marginLeft: 'auto' }}>
+            <IconButton component={Link} to={userType === 'INTERNAL' ? "/user" : "/external"} sx={{ marginLeft: 'auto' }}>
                 <Typography sx={{ fontSize: '1rem', marginRight: '16px', color: 'common.black' }}>Minha conta</Typography> <Avatar src={`https://drive.google.com/thumbnail?id=${user?.person.profile_picture?.filename_id}`} />
             </IconButton>
         ) : (

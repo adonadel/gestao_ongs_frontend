@@ -433,6 +433,7 @@ const UserUpdate: React.FC = () => {
                             InputProps={{
                                 inputComponent: TextMaskCep as unknown as React.ElementType<InputBaseComponentProps>,
                             }}
+                            onBlur={searchCEP}
                             fullWidth
                         />
                         <IconButton
@@ -499,7 +500,9 @@ const UserUpdate: React.FC = () => {
                                     <TextField
                                         label='Número da residência'
                                         type='text'
-                                        {...register('person.address.number')}
+                                        {...register('person.address.number', { maxLength: { value: 10, message: 'Número deve ter no máximo 10 dígitos' } })}
+                                        error={!!formState.errors.person?.address?.number}
+                                        helperText={formState.errors.person?.address?.number?.message}
                                         defaultValue={isEditMode ? user?.person?.address?.number : ''}
                                         variant='outlined'
                                         fullWidth />

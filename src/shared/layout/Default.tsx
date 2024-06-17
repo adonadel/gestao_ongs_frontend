@@ -12,6 +12,8 @@ export function DefaultLayout() {
     const isLogged = useAuthStore(state => state.isLogged);
     const userType = useAuthStore(state => state.userData?.type);
 
+    console.log("isLogged", isLogged);
+
     return (
         <Fragment>
             <ThemeProvider theme={theme}>
