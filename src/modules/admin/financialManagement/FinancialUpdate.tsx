@@ -21,6 +21,8 @@ const FinancialUpdate: React.FC = () => {
 	const [dateError, setDateError] = useState('');
 	const [formattedMoney, setFormattedMoney] = useState('');
 	const [money, setMoney] = useState(0);
+  const [selectedAnimalId, setSelectedAnimalId] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
 	const handleClose = () => {
 		setOpenMessage(false);
@@ -36,10 +38,15 @@ const FinancialUpdate: React.FC = () => {
 			const fetchFinancial = async () => {
 				try {
 					const response = await baseApi.get(`/api/finances/${id}`);
+					
 					const finance = response.data;
 					const formatted = formatDate(finance.date, true);
 					finance.date = formatted;
-					setSelectedDate(dayjs(formatted));
+					setSelectedDate(dayjs(formatted, 'DD/MM/YYYY'));
+					setValue('value', money);
+					setValue('user_id', finance.user_id);
+					setValue('animal_id', finance.animal_id);
+					setFormattedMoney(finance.value.replace('.', ','));
 					setFinance(finance);
 				} catch (error) {
 					setTextMessage('Ocorreu um erro ao acessar essa página!');
@@ -66,6 +73,7 @@ const FinancialUpdate: React.FC = () => {
 		try {
 			const date = formatDate(data.date);
 			data.date = date;
+			
 			if (isEditMode) {
 				await baseApi.put(`/api/finances/${id}`, data);
 			} else {
@@ -78,10 +86,6 @@ const FinancialUpdate: React.FC = () => {
 			setOpenMessage(true);
 		}
 	};
-
-	if (isEditMode && !finance) {
-		return <div>Loading...</div>;
-	}
 	
 	useEffect(() => {
 		const cleaned = formattedMoney.replace(/[^0-9\,]/g, '');
@@ -103,25 +107,38 @@ const FinancialUpdate: React.FC = () => {
 		setFormattedMoney(formatted)
 	}, [formattedMoney]);
 
+	useEffect(() => {
+		setValue('value', money);
+	}, [money]);
+
+	useEffect(() => {
+		setValue('user_id', selectedUserId)
+	}, [selectedUserId]);
+
+	useEffect(() => {
+		setValue('animal_id', selectedAnimalId)
+	}, [selectedAnimalId]);
+	
+	if (isEditMode && !finance) {
+		return <div>Loading...</div>;
+	}
+
 	return (
 		<>
 			<form onSubmit={handleSubmit(onSubmit)} noValidate>
 				<TextField
 					type="hidden"
 					{...register('user_id')}
-					defaultValue={isEditMode ? finance?.user_id : ''}
 					sx={{ display: 'none' }}
 				/>
 				<TextField
 					type="hidden"
 					{...register('animal_id')}
-					defaultValue={isEditMode ? finance?.animal_id : ''}
 					sx={{ display: 'none' }}
 				/>
 				<TextField
 					type="hidden"
 					{...register('value')}
-					value={money}
 					sx={{ display: 'none' }}
 				/>
 				<Grid
@@ -184,36 +201,49 @@ const FinancialUpdate: React.FC = () => {
 						<AutoComplete
 							origin= 'users'
 							objectToGetName='person'
+							objectToGetId=''
 							labelForAutoComplete='Usuário'
+							onChange={(id) => {
+								setSelectedUserId(id);
+							}}
 						/>
 					</Grid>
 					<Grid item xs={12}>
 						<AutoComplete
 							origin= 'animals'
 							objectToGetName=''
+							objectToGetId=''
 							labelForAutoComplete='Animal'
+							onChange={(id) => {
+								setSelectedAnimalId(id);
+							}}
 						/>
 					</Grid>
 					<Grid item xs={12}>
-						<LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-BR">
+						<LocalizationProvider dateAdapter={AdapterDayjs} >
 							<DatePicker
-								label='Data da finança'
-								value={selectedDate}
-								onChange={(newValue) => setSelectedDate(newValue)}
-								slotProps={{ textField: {
-										...register('date'),
-										error: Boolean (dateError && dateError === 'minDate'),
-										helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
-									}
-								}}
-								onError={(err) => {
-									setDateError(err);
-								}}
-								onAccept={() => {
-									setDateError('');
-								}}
+									label='Data da finança'
+									value={selectedDate}
+									format='DD/MM/YYYY'
+									onChange={(date) => {
+											if (date) {
+													const formattedDate = date.format('DD/MM/YYYY');
+													setSelectedDate(date);
+													setValue('date', formattedDate);
+											} else {
+													setSelectedDate(null);
+											}
+									}}
+									slotProps={{
+											textField: {
+													...register('date'),
+													error: dateError && dateError === 'minDate' ? true : undefined,
+													helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
+											}
+									}}
+									minDate={dayjs(new Date())}
 							/>
-						</LocalizationProvider>
+					</LocalizationProvider>
 					</Grid>
 					<Grid item xs={12} sx={{ marginTop: '2rem' }}>
 						<Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>

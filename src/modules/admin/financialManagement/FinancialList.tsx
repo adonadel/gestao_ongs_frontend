@@ -114,7 +114,7 @@ function FinancialList() {
                         }}
                       />
                   }</TableCell>
-                  <TableCell>{`R$ ${formatMoney(finance.value)}`}</TableCell>
+                  <TableCell>{`${formatMoney(finance.value)}`}</TableCell>
                   <TableCell>{finance.description}</TableCell>
                   <TableCell>{formatDate(finance.date, true)}</TableCell>
                   <TableCell>
