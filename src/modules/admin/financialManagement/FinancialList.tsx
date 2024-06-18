@@ -17,10 +17,63 @@ import {AxiosResponse} from "axios";
 import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {Financial} from './types';
-import {AddCircleOutlineOutlined, ArrowDownward, ArrowUpward} from '@mui/icons-material';
+import {AddCircleOutlineOutlined, ArrowDownward, ArrowUpward, AttachMoney} from '@mui/icons-material';
 import {grey} from '@mui/material/colors';
 import baseApi from '../../../lib/api';
 
+const IncomeIcon = () => {
+  return (
+    <span
+      style={{
+        display: "flex",
+        justifyContent: "Center",
+        alignItems: "Center",
+        marginLeft: "5px"
+      }}
+    >
+      <>
+        <AttachMoney
+          style={{
+            color: '#4caf50'
+          }}
+        />
+        <ArrowUpward
+          style={{
+          marginLeft: '-5px',
+            color: '#4caf50'
+          }}
+        /> 
+      </>
+    </span>
+  );
+}
+
+const ExpenseIcon = () => {
+  return (
+    <span
+      style={{
+        display: "flex",
+        justifyContent: "Center",
+        alignItems: "Center",
+      }}
+    >
+    <>
+      <AttachMoney
+        style={{
+          color: '#f44336'
+        }}
+      />
+      <ArrowDownward
+        style={{
+          marginLeft: '-5px',
+          color: '#f44336'
+          
+        }}
+      />
+    </>
+    </span>
+  );
+}
 
 function FinancialList() {
   const [finances, setFinancials] = useState<Financial[]>([]);
@@ -86,13 +139,7 @@ function FinancialList() {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>                
-                <TableCell
-                  style={{
-                    maxWidth: '2rem'
-                  }}
-                >
-                  Tipo
-                </TableCell>
+                <TableCell width='10px' align='center'>Tipo</TableCell>
                 <TableCell>Valor</TableCell>
                 <TableCell>Descrição</TableCell>
                 <TableCell>Data</TableCell>
@@ -101,25 +148,17 @@ function FinancialList() {
             <TableBody>
               {finances.map((finance) => (
                 <TableRow key={finance.id}>
-                  <TableCell>{
-                    finance.type === 'INCOME' ? 
-                      <ArrowUpward
-                        style={{
-                          color: '#4caf50'
-                        }}
-                      /> :
-                      <ArrowDownward
-                        style={{
-                          color: '#f44336'
-                        }}
-                      />
-                  }</TableCell>
+                  <TableCell width='10px'>
+                    {
+                    finance.type === 'INCOME' ?
+                      <IncomeIcon/>:
+                      <ExpenseIcon/>
+                      
+                  }
+                  </TableCell>
                   <TableCell>{`${formatMoney(finance.value)}`}</TableCell>
                   <TableCell>{finance.description}</TableCell>
                   <TableCell>{formatDate(finance.date, true)}</TableCell>
-                  <TableCell>
-                    <IconButton component={Link} to={`${finance.id}`}><EditIcon color="warning" /></IconButton>
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
