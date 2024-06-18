@@ -2,15 +2,11 @@ import { createBrowserRouter, createRoutesFromElements, Route } from "react-rout
 import { Fragment } from "react/jsx-runtime";
 import AnimalList from "../modules/admin/animalsManagement/AnimalList";
 import AnimalUpdate from "../modules/admin/animalsManagement/AnimalUpdate";
-import { Dashboard } from "../modules/admin/dashboard/Dashboard";
-import { DonationList } from "../modules/admin/donationsManagement/DonationList";
-import { DonationUpdate } from "../modules/admin/donationsManagement/DonationUpdate";
-import EventList from "../modules/admin/eventsManagement/EventList";
-import EventUpdate from "../modules/admin/eventsManagement/EventUpdate";
-import { FinancialList } from "../modules/admin/financialManagement/FinancialList";
-import { FinancialUpdate } from "../modules/admin/financialManagement/FinancialUpdate";
-import { GiverList } from "../modules/admin/giversManagement/GiverList";
-import { GiverUpdate } from "../modules/admin/giversManagement/GiverUpdate";
+import {Dashboard} from "../modules/admin/dashboard/Dashboard";
+import FinancialList from "../modules/admin/financialManagement/FinancialList";
+import FinancialUpdate from "../modules/admin/financialManagement/FinancialUpdate";
+import {GiverList} from "../modules/admin/giversManagement/GiverList";
+import {GiverUpdate} from "../modules/admin/giversManagement/GiverUpdate";
 import RolesList from "../modules/admin/rolesManagement/RolesList";
 import RolesUpdate from "../modules/admin/rolesManagement/RolesUpdate";
 import { UserManagement } from "../modules/admin/userManagement/UserManagement";
@@ -53,11 +49,6 @@ export const router = createBrowserRouter(
                 <Route path="/events" element={<EventList />} />
                 <Route path="/events/new" element={<EventUpdate />} />
                 <Route path="/events/:id" element={<EventUpdate />} />
-
-            /* Donations Management */
-                <Route path="/donations" element={<DonationList />} />
-                <Route path="/donations/new" element={<DonationUpdate />} />
-                <Route path="/donations/:id" element={<DonationUpdate />} />
 
             /* Financial Management */
                 <Route path="/financial" element={<FinancialList />} />

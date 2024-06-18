@@ -1,7 +1,6 @@
 import {AdminPanelSettings, AttachMoney, Diversity1, EventAvailable, Groups2, Home} from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import {Avatar, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -95,11 +94,6 @@ export const DefaultDrawer = (props: IDrawerProps) => {
             icon: <EventAvailable />,
             text: 'Eventos',
             to: '/events',
-        },
-        {
-            icon: <VolunteerActivismIcon />,
-            text: 'Doações',
-            to: '/donations',
         },
         {
             icon: <AttachMoney />,
