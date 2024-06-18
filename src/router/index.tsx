@@ -19,6 +19,8 @@ import Login from "../modules/login/Login";
 import Register from "../modules/register/Register";
 import { DefaultLayout } from "../shared/layout/Default";
 import { WebLayout } from "../shared/layout/Web";
+import EventList from "../modules/admin/eventsManagement/EventList.tsx";
+import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
