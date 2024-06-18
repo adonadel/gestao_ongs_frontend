@@ -1,5 +1,5 @@
-import {createBrowserRouter, createRoutesFromElements, Route} from "react-router-dom";
-import {Fragment} from "react/jsx-runtime";
+import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 import AnimalList from "../modules/admin/animalsManagement/AnimalList";
 import AnimalUpdate from "../modules/admin/animalsManagement/AnimalUpdate";
 import {Dashboard} from "../modules/admin/dashboard/Dashboard";
@@ -9,16 +9,16 @@ import {GiverList} from "../modules/admin/giversManagement/GiverList";
 import {GiverUpdate} from "../modules/admin/giversManagement/GiverUpdate";
 import RolesList from "../modules/admin/rolesManagement/RolesList";
 import RolesUpdate from "../modules/admin/rolesManagement/RolesUpdate";
-import {UserManagement} from "../modules/admin/userManagement/UserManagement";
+import { UserManagement } from "../modules/admin/userManagement/UserManagement";
 import UserList from "../modules/admin/usersManagement/UserList";
 import UserUpdate from "../modules/admin/usersManagement/UserUpdate";
 import ErrorPage from "../modules/error/Error";
+import { ExternalUser } from "../modules/externalUser/ExternalUser";
 import Home from "../modules/home/Home";
 import Login from "../modules/login/Login";
-import {DefaultLayout} from "../shared/layout/Default";
-import {WebLayout} from "../shared/layout/Web";
-import EventList from "../modules/admin/eventsManagement/EventList.tsx";
-import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
+import Register from "../modules/register/Register";
+import { DefaultLayout } from "../shared/layout/Default";
+import { WebLayout } from "../shared/layout/Web";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -26,6 +26,9 @@ export const router = createBrowserRouter(
             <Route element={<WebLayout />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/external" element={<ExternalUser />} />
+                <Route path="*" element={<ErrorPage />} />
             </Route>
             <Route element={<DefaultLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
@@ -59,9 +62,8 @@ export const router = createBrowserRouter(
                 <Route path="/givers/new" element={<GiverUpdate />} />
                 <Route path="/givers/:id" element={<GiverUpdate />} />
 
-            /* Auth */
+            /* User Management */
                 <Route path="/user" element={<UserManagement />} />
-                <Route path="*" element={<ErrorPage />} />
             </Route>
         </Fragment>
 

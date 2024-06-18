@@ -1,4 +1,4 @@
-import DeleteIcon from '@mui/icons-material/Delete';
+import { AddCircleOutlineOutlined } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
@@ -15,45 +15,62 @@ import {
   TableRow,
   Typography
 } from "@mui/material";
-import {AxiosResponse} from "axios";
-import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
-import {User, UserStatus} from './types';
-import {AddCircleOutlineOutlined} from '@mui/icons-material';
-import {grey} from '@mui/material/colors';
-import baseApi from '../../../lib/api';
-
+import { grey } from '@mui/material/colors';
+import { AxiosResponse } from "axios";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { baseApi } from '../../../lib/api';
+import useAuthStore from '../../../shared/store/authStore';
+import { User, UserStatus } from './types';
 
 function UserList() {
-  const apiUrl = import.meta.env.VITE_API_URL;
   const imageUrl = import.meta.env.VITE_URL_IMAGE;
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user, setToken } = useAuthStore(state => ({
+    user: state.userData,
+    setToken: state.setToken
+  }));
+  const navigate = useNavigate();
+  const isTokenRefreshed = useRef(false);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     try {
       const response: AxiosResponse = await baseApi.get(`/api/users`);
       const users = response.data.data;
       setUsers(users);
-      console.log(users);
-    } catch (error) {
-      console.error('Error fetching users:', error);
+    } catch (error: any) {
+      if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+        console.log("Refreshing token...");
+        try {
+          isTokenRefreshed.current = true;
+          const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+          const refreshToken = responseRefreshToken.data.newToken;
+          setToken(refreshToken);
+          fetchUsers();
+        } catch (error) {
+          navigate('/login');
+        }
+      } else {
+        console.error("Failed to fetch users:", error);
+      }
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  };
+  }, [user, setToken, navigate]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const disableUser = async (id: number) => {
     await baseApi.patch(`/api/users/${id}/disable`, null);
-  }
+  };
 
   const enableUser = async (id: number) => {
     await baseApi.patch(`/api/users/${id}/enable`, null);
-  }
+  };
 
   const changeStatus = async (id: number) => {
     try {
@@ -63,16 +80,16 @@ function UserList() {
       } else {
         await enableUser(id);
       }
+      fetchUsers();
     } catch (error) {
-      // logout();
+      console.error("Failed to change user status:", error);
     }
-    fetchUsers();
-  }
+  };
 
   return (
-     <Container maxWidth="xl">
+    <Container maxWidth="xl">
       <Grid container justifyContent="space-between" alignItems="center" marginBottom={"1rem"}>
-        <Grid item> 
+        <Grid item>
           {
             users.length <= 1 &&
             <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'} color={grey[500]}>Usuário</Typography>
@@ -86,16 +103,17 @@ function UserList() {
         </Grid>
       </Grid>
 
-      {isLoading ?
+      {isLoading ? (
         <p>Carregando...</p>
-        :
-        <TableContainer component={Paper} sx={{border: '1px solid #d6d6d6'}}>
+      ) : (
+        <TableContainer component={Paper} sx={{ border: '1px solid #d6d6d6' }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
-              <TableRow>                
+              <TableRow>
                 <TableCell>Nome</TableCell>
                 <TableCell>E-mail</TableCell>
                 <TableCell>Nível</TableCell>
+                <TableCell>Ações</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -122,17 +140,21 @@ function UserList() {
                   <TableCell>{user.person.email}</TableCell>
                   <TableCell>{user.role.name}</TableCell>
                   <TableCell>
-                    <IconButton component={Link} to={`${user.id}`}><EditIcon color="warning" /></IconButton>
-                    <IconButton onClick={() => changeStatus(user.id)}><DeleteIcon color="error" /></IconButton>
+                    <IconButton size='small' component={Link} to={`${user.id}`}><EditIcon color="warning" /></IconButton>
+                    <Button color='error' onClick={() => changeStatus(user.id)} sx={{ marginLeft: 2 }}>
+                      <Typography sx={{ fontSize: '12px' }}>
+                        {user.status === UserStatus.ENABLED ? 'Desativar' : 'Ativar'}
+                      </Typography>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+      )
       }
-      </Container>
-
+    </Container >
   )
 }
 

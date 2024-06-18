@@ -1,11 +1,11 @@
-import { Person } from '@mui/icons-material';
 import LoginIcon from '@mui/icons-material/Login';
-import { Avatar, Box, Typography } from '@mui/material';
+import { Avatar, Typography } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import { User } from '../../../modules/admin/usersManagement/types';
 import useAuthStore from '../../store/authStore';
 
 export interface IHeaderProps {
@@ -36,13 +36,13 @@ const AppBar = styled(MuiAppBar, {
     }),
 }));
 
-const IsLogged = () => {
-    const user = useAuthStore(state => state.userData);
+const IsLogged = ({ user }: { user: User | null }) => {
+    const userType = user?.type;
 
     return (
         user ? (
-            <IconButton component={Link} to="/user" sx={{ marginLeft: 'auto' }}>
-                <Person />
+            <IconButton component={Link} to={userType === 'INTERNAL' ? "/user" : "/external"} sx={{ marginLeft: 'auto' }}>
+                <Typography sx={{ fontSize: '1rem', marginRight: '16px', color: 'common.black' }}>Minha conta</Typography> <Avatar src={`https://drive.google.com/thumbnail?id=${user?.person.profile_picture?.filename_id}`} />
             </IconButton>
         ) : (
             <IconButton component={Link} to="/login" sx={{ marginLeft: 'auto' }}>
@@ -53,10 +53,10 @@ const IsLogged = () => {
 }
 
 const DefaultHeader = (props: IHeaderProps) => {
+    const user = useAuthStore(state => state.userData);
 
     return (
         <>
-
             <AppBar position="sticky" open={props.open} >
                 <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     {!props.open && (
@@ -73,9 +73,10 @@ const DefaultHeader = (props: IHeaderProps) => {
                             EBAA Patinhas
                         </Typography>
                     )}
-                    <IsLogged />
+                    <IsLogged user={user} />
                 </Toolbar>
-            </AppBar>            
+            </AppBar>
+
         </>
     );
 };

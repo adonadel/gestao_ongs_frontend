@@ -1,4 +1,4 @@
-import {AddPhotoAlternateOutlined, Delete, Filter, Search} from '@mui/icons-material';
+import { AddPhotoAlternateOutlined, Delete, Search } from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -7,23 +7,22 @@ import {
     Grid,
     IconButton,
     InputBaseComponentProps,
-    styled,
     TextField,
-    Typography
+    Typography,
+    styled
 } from '@mui/material';
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Loading} from '../../../shared/components/loading/Loading';
-import {Message} from '../../../shared/components/message/Message';
-import {CustomProps, Event} from './types';
-import baseApi from '../../../lib/api';
-import {IMaskInput} from "react-imask";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import axios from "axios";
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from 'dayjs'; 
-
+import dayjs, { Dayjs } from 'dayjs';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { IMaskInput } from "react-imask";
+import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from '../../../lib/api';
+import { Loading } from '../../../shared/components/loading/Loading';
+import { Message } from '../../../shared/components/message/Message';
+import { CustomProps, Event } from './types';
 
 const EventUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -83,7 +82,7 @@ const EventUpdate: React.FC = () => {
     const [textMessage, setTextMessage] = useState('Mensagem padrão');
     const [typeMessage, setTypeMessage] = useState('warning');
     const [openMessage, setOpenMessage] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(null);
 
     const postImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -114,7 +113,7 @@ const EventUpdate: React.FC = () => {
             });
 
             const media = response.data;
-            
+
             setImage(media.id.toString());
             setSrcImage(`${imageUrl + media.filename_id}`);
             setValue('medias', media.id.toString());
@@ -185,10 +184,11 @@ const EventUpdate: React.FC = () => {
             const fetchEvent = async () => {
                 try {
                     const response = await baseApi.get(`/api/events/${id}`);
+
                     const event = response.data;
                     const formatted = formatDate(event.event_date, true);
                     event.event_date = formatted;
-                    setSelectedDate(dayjs(formatted));
+                    setSelectedDate(dayjs(formatted, 'DD/MM/YYYY'));
                     setEvent(event);
                     const eventMedia = event.medias[0];
                     setImage(eventMedia.id.toString());
@@ -203,9 +203,8 @@ const EventUpdate: React.FC = () => {
             fetchEvent();
         }
     }, [id, isEditMode, navigate]);
-    
-    function formatDate(date:string, usToBr:boolean = false)
-    {
+
+    function formatDate(date: string, usToBr: boolean = false) {
         let splitted;
         if (usToBr) {
             splitted = date.split('-')
@@ -231,11 +230,11 @@ const EventUpdate: React.FC = () => {
             setOpenMessage(true);
         }
     };
-    
+
     if (isEditMode && !event) {
         return <div>Loading...</div>;
     }
-    
+
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -346,26 +345,30 @@ const EventUpdate: React.FC = () => {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-BR">
+                        <LocalizationProvider dateAdapter={AdapterDayjs} >
                             <DatePicker
                                 label='Data do Evento'
                                 value={selectedDate}
-                                onChange={(newValue) => setSelectedDate(newValue)}
-                                slotProps={{ textField: {
+                                format='DD/MM/YYYY'
+                                onChange={(date) => {
+                                    if (date) {
+                                        const formattedDate = date.format('DD/MM/YYYY');
+                                        setSelectedDate(date);
+                                        setValue('event_date', formattedDate);
+                                    } else {
+                                        setSelectedDate(null);
+                                    }
+                                }}
+                                slotProps={{
+                                    textField: {
                                         ...register('event_date'),
-                                        error: dateError && dateError === 'minDate',
+                                        error: dateError && dateError === 'minDate' ? true : undefined,
                                         helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
-                                    } 
-                                }}
-                                onError={(err) => {
-                                    setDateError(err);
-                                }}
-                                onAccept={() => {
-                                    setDateError('');
+                                    }
                                 }}
                                 minDate={dayjs(new Date())}
                                 disablePast={true}
-                            />                            
+                            />
                         </LocalizationProvider>
                     </Grid>
                     <Grid item xs={12}>
@@ -392,9 +395,9 @@ const EventUpdate: React.FC = () => {
 
                             }}
                         >
-                           
+
                             <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
-                            
+
                             {(image !== '' || srcImage !== '') && <Avatar
                                 alt="Imagem"
                                 src={srcImage !== '' ? `${srcImage}` : ''}
@@ -405,7 +408,7 @@ const EventUpdate: React.FC = () => {
                                     height: '100%',
                                     zIndex: '1',
                                 }}
-                                
+
                             />}
                             {srcImage !== '' && !isLoading && <IconButton
                                 color="error"
@@ -424,8 +427,8 @@ const EventUpdate: React.FC = () => {
 
                                 }} />
                             </IconButton>}
-                            <Box 
-                                 onClick={openImagePicker}
+                            <Box
+                                onClick={openImagePicker}
                                 sx={{
                                     display: 'flex',
                                     justifyContent: 'center',
@@ -452,8 +455,8 @@ const EventUpdate: React.FC = () => {
                                     }
                                 />
                             </Box>
-                            
-                            
+
+
                         </Box>
                     </Grid>
                     <Grid item xs={12}>

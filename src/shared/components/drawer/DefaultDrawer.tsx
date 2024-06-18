@@ -4,10 +4,10 @@ import PetsIcon from '@mui/icons-material/Pets';
 import {Avatar, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import {CSSObject, styled, Theme} from '@mui/material/styles';
-import {Fragment, useEffect, useRef, useState} from 'react';
-import {ListItemDrawer} from './ListItemDrawer';
+import { CSSObject, Theme, styled } from '@mui/material/styles';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import useAuthStore from '../../store/authStore';
+import { ListItemDrawer } from './ListItemDrawer';
 
 export interface IDrawerProps {
     open: boolean;
@@ -125,7 +125,7 @@ export const DefaultDrawer = (props: IDrawerProps) => {
     useEffect(() => {
         const index = drawerList.findIndex(item => item.to === location.pathname);
         if (index !== -1) setSelectedItem(index);
-    }, [location.pathname, drawerList]);
+    }, [location.pathname]);
 
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {

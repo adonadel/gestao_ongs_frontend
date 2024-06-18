@@ -1,8 +1,8 @@
 import { Avatar, Box, Grid, Paper, TextField } from "@mui/material";
-import useAuthStore from "../../../shared/store/authStore";
-import { Logout } from "../../logout/Logout";
+import useAuthStore from "../../shared/store/authStore";
+import { Logout } from "../logout/Logout";
 
-export const UserManagement = () => {
+export const ExternalUser = () => {
     const { userData } = useAuthStore((state) => ({
         userData: state.userData,
     }));

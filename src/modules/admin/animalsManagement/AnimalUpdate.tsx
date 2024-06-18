@@ -1,12 +1,12 @@
-import { Button, TextField, Grid, Avatar, Box, IconButton, Radio, FormControl, RadioGroup, FormControlLabel, InputLabel, Select, MenuItem, FormLabel, FormHelperText, TextareaAutosize } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { set, useForm, useFormState } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Animal } from './types';
-import { Loading } from '../../../shared/components/loading/Loading';
 import { Delete, Filter } from '@mui/icons-material';
+import { Avatar, Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from "../../../lib/api.ts";
 import FullLoader from '../../../shared/components/loading/FullLoader';
-import baseApi from "../../../lib/api.ts";
+import { Loading } from '../../../shared/components/loading/Loading';
+import { Animal } from './types';
 
 const AnimalUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -79,7 +79,7 @@ const AnimalUpdate: React.FC = () => {
         if (isEditMode) {
             formData.append('animal_id', id);
         }
-        
+
         setIsLoading(true);
 
         try {

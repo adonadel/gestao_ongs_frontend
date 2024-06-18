@@ -1,3 +1,4 @@
+import { AddCircleOutlineOutlined } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Button,
@@ -13,13 +14,12 @@ import {
   TableRow,
   Typography
 } from "@mui/material";
-import {AxiosResponse} from "axios";
-import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
-import {Event} from './types';
-import {AddCircleOutlineOutlined} from '@mui/icons-material';
-import {grey} from '@mui/material/colors';
-import baseApi from '../../../lib/api';
+import { grey } from '@mui/material/colors';
+import { AxiosResponse } from "axios";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { baseApi } from '../../../lib/api';
+import { Event } from './types';
 
 
 function EventList() {
@@ -32,7 +32,6 @@ function EventList() {
       const response: AxiosResponse = await baseApi.get(`/api/events`);
       const events = response.data.data;
       setEvents(events);
-      console.log(events);
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -42,22 +41,21 @@ function EventList() {
   useEffect(() => {
     fetchEvents();
   }, []);
-    
-  function formatDate(date:string, usToBr:boolean = false)
-  {
-      let splitted;
-      if (usToBr) {
-          splitted = date.split('-')
-          return splitted.reverse().join('/');
-      }
-      splitted = date.split('/');
-      return splitted.reverse().join('-');
+
+  function formatDate(date: string, usToBr: boolean = false) {
+    let splitted;
+    if (usToBr) {
+      splitted = date.split('-')
+      return splitted.reverse().join('/');
+    }
+    splitted = date.split('/');
+    return splitted.reverse().join('-');
   }
 
   return (
-     <Container maxWidth="xl">
+    <Container maxWidth="xl">
       <Grid container justifyContent="space-between" alignItems="center" marginBottom={"1rem"}>
-        <Grid item> 
+        <Grid item>
           {
             events.length <= 1 &&
             <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'} color={grey[500]}>Evento</Typography>
@@ -74,10 +72,10 @@ function EventList() {
       {isLoading ?
         <p>Carregando...</p>
         :
-        <TableContainer component={Paper} sx={{border: '1px solid #d6d6d6'}}>
+        <TableContainer component={Paper} sx={{ border: '1px solid #d6d6d6' }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
-              <TableRow>                
+              <TableRow>
                 <TableCell>Nome</TableCell>
                 <TableCell>Descrição</TableCell>
                 <TableCell>Data</TableCell>
@@ -104,7 +102,7 @@ function EventList() {
           </Table>
         </TableContainer>
       }
-      </Container>
+    </Container>
 
   )
 }

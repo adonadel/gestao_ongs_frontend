@@ -23,7 +23,7 @@ export const ListItemDrawer = (props: IListItemProps) => {
                 height: 54,
                 borderRadius: '10px',
                 marginLeft: "5px",
-                marginBottom: "16px",
+                marginBottom: "8px",
                 '&.Mui-selected': {
                     backgroundColor: props.open ? 'secondary.main' : 'transparent',
                 },
