@@ -1,21 +1,21 @@
-import axios from "axios";
 import { useForm } from "react-hook-form";
+import { baseApi } from "../../lib/api";
 
-export const Checkout = () => {
-    const apiUrl = import.meta.env.VITE_API_URL;
+export const Checkout = () => {    
     const { handleSubmit } = useForm();
 
     const onSubmit = async () => {
-        const data = {
+        const dto = {
             "user_id": 1,
             "value": 20.00,
             "type": "INCOME",
             "description": "Stubborn Attachments by Tyler Cowen",
         }
+
         try {
-            const response = await axios.post(`${apiUrl}/api/finances`, data);
-            console.log('Checkout successful');
+            const response = await baseApi.post('/api/finances', dto);            
             window.location.href = response.data.session.url;
+
         } catch (error) {
             console.error('Error during checkout:', error);
         }
