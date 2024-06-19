@@ -1,9 +1,7 @@
-import EditIcon from '@mui/icons-material/Edit';
 import {
   Button,
   Container,
   Grid,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -19,7 +17,7 @@ import {Link} from "react-router-dom";
 import {Financial} from './types';
 import {AddCircleOutlineOutlined, ArrowDownward, ArrowUpward, AttachMoney} from '@mui/icons-material';
 import {grey} from '@mui/material/colors';
-import baseApi from '../../../lib/api';
+import {baseApi} from '../../../lib/api';
 
 const IncomeIcon = () => {
   return (

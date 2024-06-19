@@ -5,7 +5,7 @@ import {useNavigate, useParams} from 'react-router-dom';
 import {Loading} from '../../../shared/components/loading/Loading';
 import {Message} from '../../../shared/components/message/Message';
 import {Financial} from './types';
-import baseApi from '../../../lib/api';
+import {baseApi} from '../../../lib/api';
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from 'dayjs';

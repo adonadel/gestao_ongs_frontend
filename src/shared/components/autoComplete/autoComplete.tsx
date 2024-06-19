@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import baseApi from "../../../lib/api.ts";
+import {baseApi} from "../../../lib/api.ts";
 
 const AutoComplete = ({ origin, objectToGetName, objectToGetId, labelForAutoComplete, onChange }) => {
   const [options, setOptions] = useState([]);
