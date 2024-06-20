@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { baseApi } from "../../lib/api.ts";
 import { Message } from "../../shared/components/message/Message.tsx";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { Container, Grid, Typography, TextField, FormControl, FormLabel, RadioGroup, FormHelperText } from "@mui/material";
+import { Container, Grid, Typography, TextField, FormControl, FormLabel, RadioGroup, FormHelperText, FormControlLabel, Radio, Box, Button } from "@mui/material";
 import { HeaderBanner } from "../../shared/headerBanner/HeaderBanner.tsx";
+import { ChevronRight } from "@mui/icons-material";
 
 
 export const Donate = () => {
@@ -15,15 +16,49 @@ export const Donate = () => {
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
     const [donateValue, setDonateValue] = useState("");
-    const otherValue : string = "";
+
+    const otherValue: string = "";
+
+    const presetedDonateValues = [
+        {
+            id: 1,
+            value: "1,00"
+        },
+        {
+            id: 2,
+            value: "2,00"
+        },
+        {
+            id: 3,
+            value: "5,00"
+        },
+        {
+            id: 4,
+            value: "10,00"
+        },
+        {
+            id: 5,
+            value: "25,00"
+        },
+        {
+            id: 6,
+            value: "50,00"
+        },
+    ]
 
 
     const handleClick = () => {
         console.log('fechou')
     };
 
-    const handleDonateValues = () => {
-        console.log("Clicou")
+    const handleOtherValue = () => {
+
+    };
+
+    const handleDonateValues = (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+        const value = event.target.value;
+        setDonateValue(value);        
+        //continuar
     }
 
     useEffect(() => {
@@ -80,20 +115,51 @@ export const Donate = () => {
 
     return (
         <>
-            <HeaderBanner />
+            {/* <HeaderBanner /> */}
             <Container maxWidth="lg">
-                <Grid container>
-                    <Grid>
+                <Grid container justifyContent={'center'}>
+                    <Grid item xs={6} justifyContent={'flex-end'} sx={{
+                        padding: '2rem',
+                        borderRadius: '1rem',
+                        boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                        border: '1px solid #E0E0E0',
+                        backgroundColor: 'white',
+                    }}>
                         <FormControl component="fieldset">
-                          <FormLabel component="legend">Com quanto você pode ajudar hoje?</FormLabel>
-                          <RadioGroup aria-label="Valor para doar" name="donateValue" value={donateValue} onChange={handleDonateValues}></RadioGroup>                          
+                            <RadioGroup aria-label="Valor para doar" name="donateValue">
+                                <Grid container>
+                                    {Array.isArray(presetedDonateValues) && presetedDonateValues.map((presetedValue) => (
+                                        <Grid item xs={6}>
+                                            <Box sx={{
+                                                backgroundColor: (presetedValue.id == donateValue) ? "secondary.main" : "grey.200",
+                                                margin: '1rem',
+                                                padding: '0.5rem 1.5rem',
+                                                borderRadius: '1rem',
+                                            }}>
+                                                <FormControlLabel value={presetedValue.id} control={<Radio color="primary" onChange={handleDonateValues} />} label={`R$ ${presetedValue.value}`} />
+                                            </Box>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            </RadioGroup>
                         </FormControl>
-
-                        <TextField
+                        <TextField                            
                             id="otherValue"
                             label="Outro valor"
                             value={otherValue}
+                            onChange={handleOtherValue}
                         />
+
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="secondary"     
+                            disabled={!donateValue ? true : false}                       
+                            startIcon={<ChevronRight fontSize='small' color='primary' />}                            
+                            sx={{ padding: '8px 16px', float: "right", marginTop: "1rem" }}
+                        >
+                            <Typography sx={{ fontSize: '.8125rem', color: 'primary.main' }}>Confirmar</Typography>
+                        </Button>
                     </Grid>
                 </Grid>
             </Container>
