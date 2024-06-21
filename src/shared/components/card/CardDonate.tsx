@@ -36,6 +36,7 @@ export const CardDonate = () => {
         fullWidth
         tabIndex={-1}
         startIcon={<VolunteerActivism sx={{ color: '#ffffff50' }} />}
+        href="/donate"
         sx={{
           borderRadius: '2rem',
           padding: '0.5rem 1.5rem',

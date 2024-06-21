@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, Typography, TextField, FormControl, FormControlLabel, RadioGroup, Radio, Button } from "@mui/material";
+import { Container, Grid, Typography, TextField, FormControl, FormControlLabel, RadioGroup, Radio, Button, InputBaseComponentProps } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { baseApi } from "../../lib/api.ts";
 import { HeaderBanner } from "../../shared/headerBanner/HeaderBanner.tsx";
 import { Message } from "../../shared/components/message/Message.tsx";
 import { ChevronRight } from "@mui/icons-material";
+import { CurrencyRealMask } from "../../shared/utils/masks.tsx";
 
 export const Donate = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
-
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
     const [donateId, setDonateId] = useState("");
@@ -55,7 +55,7 @@ export const Donate = () => {
             setMessageType("error");
             navigate("/");
         } catch (error) {
-            handleApiError("Erro ao cancelar a contribuição.");
+            handleApiError("Erro ao cancelar a contribuição. Teste novamente");
         }
     };
 
@@ -95,12 +95,12 @@ export const Donate = () => {
     const handleOtherValue = (event: any) => {
         const value = event.target.value;
         setOtherValue(value);
-        setDonateId(""); // Reset donateId when other value is changed
+        setDonateId("");
     };
 
     return (
         <>
-            <HeaderBanner />
+            {/* <HeaderBanner /> */}
             <Container maxWidth="lg">
                 <Grid container justifyContent="center">
 
@@ -161,20 +161,24 @@ export const Donate = () => {
                                 }}>
                                     Ou insira outro valor
                                 </Typography>
+                                
                                 <TextField
                                     id="otherValue"
                                     label="Outro valor"
                                     value={otherValue}
                                     onChange={handleOtherValue}
                                     fullWidth
-                                    type="number"
-                                    size="large"
+                                    type="text"
+                                    size="medium"
                                     InputLabelProps={{
-                                        shrink: true,
+                                        shrink: true,                                        
                                     }}
+                                    InputProps={{
+                                        inputComponent: CurrencyRealMask as unknown as React.ElementType<InputBaseComponentProps>,
+                                    }}                                    
                                 />
-                            </Grid>
 
+                            </Grid>
                         </Grid>
 
                         <Grid container>
