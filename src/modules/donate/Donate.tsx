@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, Typography, TextField, FormControl, FormControlLabel, RadioGroup, Radio, Button, InputBaseComponentProps } from "@mui/material";
+import { Container, Grid, Typography, TextField, FormControl, FormControlLabel, RadioGroup, Radio, Button, InputAdornment } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { baseApi } from "../../lib/api.ts";
 import { HeaderBanner } from "../../shared/headerBanner/HeaderBanner.tsx";
 import { Message } from "../../shared/components/message/Message.tsx";
 import { ChevronRight } from "@mui/icons-material";
-import { CurrencyRealMask } from "../../shared/utils/masks.tsx";
 
 export const Donate = () => {
     const location = useLocation();
@@ -13,7 +12,7 @@ export const Donate = () => {
     const { id } = useParams<{ id: string }>();
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
-    const [donateId, setDonateId] = useState("");
+    const [donateId, setDonateId] = useState("");    
     const [otherValue, setOtherValue] = useState("");
 
     const presetedDonateValues = [
@@ -65,9 +64,9 @@ export const Donate = () => {
     };
 
     const handleSubmit = async () => {
-        const value = parseFloat(donateId) || parseFloat(otherValue.replace(',', '.')) || 0;
-
-        if (value <= 0) {
+        const value = presetedDonateValues.find((item) => item.id === parseInt(donateId))?.value.replace(',', '.') || parseFloat(otherValue.replace(',', '.')) || 0;
+        
+        if (Number(value) <= 0) {
             handleApiError("Por favor, selecione ou insira um valor válido.");
             return;
         }
@@ -75,7 +74,7 @@ export const Donate = () => {
         try {
             const response = await baseApi.post('/api/finances', {
                 user_id: 1,
-                value: value,
+                value: Number(value),
                 type: "INCOME",
                 description: "Doação",
             });
@@ -87,20 +86,29 @@ export const Donate = () => {
         }
     };
 
-    const handleDonateValues = (event: any) => {
-        const value = event.target.value;
-        setDonateId(value);
-    };
+    useEffect(() => {
+        const cleaned = otherValue.replace(/[^0-9\,]/g, '');
+        const parts = cleaned.split(',');
+        const integerPart = parts[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        let decimalPart = '';
+        let onlyComma = false;
 
-    const handleOtherValue = (event: any) => {
-        const value = event.target.value;
-        setOtherValue(value);
+        if (parts.length > 1) {
+            decimalPart = parts[1].slice(0, 2);
+            if (decimalPart.length === 0) {
+                onlyComma = true;
+            }
+        }
+
+        const formatted = `${integerPart}${decimalPart || onlyComma ? `,${decimalPart}` : ''}`;
+        
+        setOtherValue(formatted);
         setDonateId("");
-    };
+    }, [otherValue]);
 
     return (
         <>
-            {/* <HeaderBanner /> */}
+            <HeaderBanner />
             <Container maxWidth="lg">
                 <Grid container justifyContent="center">
 
@@ -120,7 +128,7 @@ export const Donate = () => {
                             Com quanto você pode nos ajudar hoje?
                         </Typography>
                         <FormControl component="fieldset">
-                            <RadioGroup aria-label="Valor para doar" name="donateValue" value={donateId} onChange={handleDonateValues}>
+                            <RadioGroup aria-label="Valor para doar" name="donateValue" value={donateId} onChange={(e) => { setDonateId(e.target.value) }}>
                                 <Grid container spacing={{
                                     xs: "0.5rem",
                                     sm: "2rem"
@@ -161,21 +169,16 @@ export const Donate = () => {
                                 }}>
                                     Ou insira outro valor
                                 </Typography>
-                                
+
                                 <TextField
-                                    id="otherValue"
+                                    id="outlined-adornment-amount"
                                     label="Outro valor"
-                                    value={otherValue}
-                                    onChange={handleOtherValue}
-                                    fullWidth
-                                    type="text"
                                     size="medium"
-                                    InputLabelProps={{
-                                        shrink: true,                                        
-                                    }}
                                     InputProps={{
-                                        inputComponent: CurrencyRealMask as unknown as React.ElementType<InputBaseComponentProps>,
-                                    }}                                    
+                                        startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                                    }}
+                                    value={otherValue}
+                                    onChange={(e) => setOtherValue(e.target.value)}
                                 />
 
                             </Grid>

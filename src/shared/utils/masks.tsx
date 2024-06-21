@@ -36,43 +36,6 @@ export const TextMaskCpfCnpj = React.forwardRef<HTMLInputElement, CustomProps>(
     },
 );
 
-export const CurrencyRealMask = React.forwardRef<HTMLInputElement, CustomProps>(
-    function CurrencyRealMask(props, ref) {
-        const { onChange, ...other } = props;
-        const [mask, setMask] = useState('');
-
-        const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-            const inputValue = event.target.value.replace(/[^\d]/g, '');
-            const formattedValue = Number(inputValue).toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-            });
-            setMask(inputValue ? formattedValue : '');
-            onChange({ target: { name: props.name, value: inputValue } });
-        }
-
-        const handleBlur = () => {
-            const inputValue = mask.replace(/[^\d]/g, '');
-            onChange({ target: { name: props.name, value: inputValue } });
-        }
-
-        return (
-            <IMaskInput
-                {...other}
-                mask={mask}
-                definitions={{
-                    '#': /[1-9]/,
-                }}
-                inputRef={ref}
-                onAccept={(value: string) => onChange({ target: { name: props.name, value } })}
-                overwrite
-                onChange={handleChange}
-                onBlur={handleBlur}
-            />
-        );
-    }
-);
-
 export const TextMaskCep = React.forwardRef<HTMLInputElement, CustomProps>(
     function TextMaskCustom(props, ref) {
         const { onChange, ...other } = props;
