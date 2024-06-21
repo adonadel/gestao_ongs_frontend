@@ -10,6 +10,7 @@ function Dashboard() {
   const [totalAnimals, setTotalAnimals] = useState(null);
   const [totalAnimalsCastration, setTotalAnimalsCastration] = useState(null);
   const [dashboardType, setDashboardType] = useState('yearly');
+  const [seriesData, setSeriesData] = useState(null);
   
   const fetchDashboardData = async () => {
     setIsLoading(true);
@@ -37,6 +38,11 @@ function Dashboard() {
   useEffect(() => {
     fetchDashboardData();
   }, [dashboardType]);
+
+  useEffect(() => {
+    console.log('atualizou')
+      setSeriesData(totalFinances?.chart);
+  }, [totalFinances]);
 
   return (
     <Container maxWidth="xl" style={{marginTop: '4rem'}}>
@@ -68,9 +74,11 @@ function Dashboard() {
             </Grid>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={6}>
-                <LineChart
-                  bottomType={dashboardType}
-                />
+                {seriesData && <LineChart
+                  footerType={dashboardType}
+                  seriesData={seriesData}
+                  chartTitle='Relação de entradas e saídas'
+                />}
               </Grid>
               <Grid item xs={4} sm={4} md={2} lg={2}>
                 <Box sx={

@@ -1,9 +1,58 @@
 import React, {useEffect, useRef} from 'react';
 import * as echarts from 'echarts';
 
-const LineChart: React.FC = () => {
+const LineChart: React.FC = ({chartTitle, footerType, seriesData}) => {
   const chartRef = useRef<HTMLDivElement | null>(null);
-
+  let footerData: string[];
+  switch (footerType) {
+    case 'yearly':
+      footerData = [
+        'Jan',
+        'Fev',
+        'Mar',
+        'Abr',
+        'Mai',
+        'Jun',
+        'Jul',
+        'Ago',
+        'Set',
+        'Out',
+        'Nov',
+        'Dez',
+      ];
+      break;
+    case 'monthly':
+      if (seriesData[0].data.length === 4) { 
+        footerData = [
+          '1ª sem',
+          '2ª sem',
+          '3ª sem',
+          '4ª sem'
+        ];
+      }else { 
+        footerData = [
+          '1ª sem',
+          '2ª sem',
+          '3ª sem',
+          '4ª sem',
+          '5ª sem'
+        ];        
+      }
+      break;
+    case 'weekly':
+      footerData = [
+        'Seg',
+        'Ter',
+        'Qua',
+        'Qui',
+        'Sex',
+        'Sáb',
+        'Dom',
+      ];
+      break;
+  }
+  const legendData: string[] = seriesData.map(obj => obj.name);
+  
   useEffect(() => {
     if (chartRef.current) {
       const myChart = echarts.init(chartRef.current, null, {
@@ -13,13 +62,13 @@ const LineChart: React.FC = () => {
 
       const option = {
         title: {
-          text: 'Stacked Line',
+          text: chartTitle,
         },
         tooltip: {
           trigger: 'axis',
         },
         legend: {
-          data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine'],
+          data: legendData,
         },
         grid: {
           left: '3%',
@@ -35,43 +84,12 @@ const LineChart: React.FC = () => {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          data: footerData,
         },
         yAxis: {
           type: 'value',
         },
-        series: [
-          {
-            name: 'Email',
-            type: 'line',
-            stack: 'Total',
-            data: [120, 132, 101, 134, 90, 230, 210],
-          },
-          {
-            name: 'Union Ads',
-            type: 'line',
-            stack: 'Total',
-            data: [220, 182, 191, 234, 290, 330, 310],
-          },
-          {
-            name: 'Video Ads',
-            type: 'line',
-            stack: 'Total',
-            data: [150, 232, 201, 154, 190, 330, 410],
-          },
-          {
-            name: 'Direct',
-            type: 'line',
-            stack: 'Total',
-            data: [320, 332, 301, 334, 390, 330, 320],
-          },
-          {
-            name: 'Search Engine',
-            type: 'line',
-            stack: 'Total',
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-          },
-        ],
+        series: seriesData,
       };
 
       myChart.setOption(option);
