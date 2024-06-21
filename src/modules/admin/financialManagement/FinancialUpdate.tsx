@@ -9,7 +9,7 @@ import {baseApi} from '../../../lib/api';
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from 'dayjs';
-import AutoComplete from "../../../shared/components/autoComplete/autoComplete.tsx";
+import AutoComplete from "../../../shared/components/autoComplete/AutoComplete.tsx";
 
 const FinancialUpdate: React.FC = () => {
 	const navigate = useNavigate();
