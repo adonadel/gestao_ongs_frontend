@@ -15,6 +15,7 @@ function Dashboard() {
   
   const fetchDashboardData = async () => {
     setIsLoading(true);
+    setSeriesData(null);
     try {
       const financeResponse = await baseApi.get(`/api/dashboards/finances?type=${dashboardType}`);
       const animalsResponse = await baseApi.get(`/api/dashboards/animals?type=${dashboardType}`);
@@ -94,18 +95,13 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'} color={'#15B6B1'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'} color={'#15B6B1'}>
+                    Caixa atual
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} color={'#15B6B1'}>
                     {
                       formatMoney(parseFloat(totalFinances?.total))
                     }
-                  </Typography>
-                  <Typography variant="caption">
-                    Caixa atual
                   </Typography>                  
                 </Box>
               </Grid>
@@ -122,18 +118,13 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                    Total arrecadado
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
                     {
                       formatMoney(parseFloat(totalFinances?.totalIncome))
                     }
-                  </Typography>
-                  <Typography variant="caption">
-                    Total arrecadado
                   </Typography>
                 </Box>
               </Grid>
@@ -150,23 +141,18 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                    Total gasto
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
                     {
                       formatMoney(parseFloat(totalFinances?.totalExpense))
                     }
                   </Typography>
-                  <Typography variant="caption">
-                    Total gasto
-                  </Typography>
                 </Box>
               </Grid>
             </Grid>
-            <Grid item> 
+            <Grid item style={{marginTop: '4rem'}}> 
               <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'} marginBottom={'1rem'}>Relação de animais</Typography>
             </Grid>
             <Grid container spacing={2}>
@@ -182,18 +168,13 @@ function Dashboard() {
                         backgroundColor: 'white',
                     }
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'} color={'#15B6B1'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'} color={'#15B6B1'}>
+                    Animais resgatados
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} color={'#15B6B1'}>
                     {
                       totalAnimals?.total
                     }
-                  </Typography>
-                  <Typography variant="caption">
-                    Animais resgatados
                   </Typography>                  
                 </Box>
               </Grid>
@@ -210,19 +191,14 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                    Adotados
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
                     {
                       totalAnimals?.totalAdopted
                     }
                   </Typography>
-                  <Typography variant="caption">
-                    Adotados
-                  </Typography>
                 </Box>
               </Grid>
               <Grid item xs={6} sm={4} md={2} lg={2}>
@@ -238,19 +214,14 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                    Não adotados
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
                     {
                       totalAnimals?.totalNotAdopted
                     }
                   </Typography>
-                  <Typography variant="caption">
-                    Não adotados
-                  </Typography>
                 </Box>
               </Grid>
               <Grid item xs={6} sm={4} md={2} lg={2}>
@@ -266,19 +237,14 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                    Animais castrados
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
                     {
                       totalAnimalsCastration?.totalCastrated
                     }
                   </Typography>
-                  <Typography variant="caption">
-                    Animais castrados
-                  </Typography>
                 </Box>
               </Grid>
               <Grid item xs={6} sm={4} md={2} lg={2}>
@@ -294,19 +260,14 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                    Não castrados
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
                     {
                       totalAnimalsCastration?.totalNotCastrated
                     }
                   </Typography>
-                  <Typography variant="caption">
-                    Não castrados
-                  </Typography>
                 </Box>
               </Grid>
               <Grid item xs={6} sm={4} md={2} lg={2}>
@@ -322,18 +283,13 @@ function Dashboard() {
                     }
         
                 }>
-                  <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    {
-                      new Date().getFullYear()
-                    }
+                  <Typography  variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                    Aguardando castração
                   </Typography>
                   <Typography  variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
                     {
                       totalAnimalsCastration?.totalAwaitingCastration
                     }
-                  </Typography>
-                  <Typography variant="caption">
-                    Aguardando castração
                   </Typography>
                 </Box>
               </Grid>

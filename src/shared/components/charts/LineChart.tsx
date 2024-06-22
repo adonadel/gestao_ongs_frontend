@@ -58,6 +58,7 @@ const LineChart: React.FC = ({chartTitle, footerType, seriesData}) => {
       
       break;
     case 'all':
+      footerData = seriesData[0].footerData
       break;
   }
   const legendData: string[] = seriesData.map(obj => obj.name);
