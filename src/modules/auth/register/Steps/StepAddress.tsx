@@ -3,8 +3,8 @@ import { Box, Grid, IconButton, InputBaseComponentProps, TextField } from "@mui/
 import axios from "axios";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { TextMaskCep } from "../../../shared/utils/masks";
-import { ExternalUser } from "../../admin/usersManagement/types";
+import { TextMaskCep } from "../../../../shared/utils/masks";
+import { ExternalUser } from "../../../admin/usersManagement/types";
 
 export default function StepAddress() {
     const { register, setValue } = useFormContext<ExternalUser>();

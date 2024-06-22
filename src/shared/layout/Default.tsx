@@ -1,7 +1,7 @@
 import { Box, ThemeProvider, Typography } from "@mui/material";
 import { Fragment, useState } from "react";
 import { Outlet } from "react-router-dom";
-import LoginModal from "../../modules/login/LoginModal";
+import LoginModal from "../../modules/auth/login/LoginModal";
 import { DefaultDrawer } from "../components/drawer/DefaultDrawer";
 import DefaultHeader from "../components/header/DefaultHeader";
 import useAuthStore from "../store/authStore";
