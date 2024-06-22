@@ -76,6 +76,7 @@ const FinancialUpdate: React.FC = () => {
 			if (isEditMode) {
 				await baseApi.put(`/api/finances/${id}`, data);
 			} else {
+				data.status = 'PAID';
 				await baseApi.post(`/api/finances`, data);
 			}
 			navigate('/admin/financial');
