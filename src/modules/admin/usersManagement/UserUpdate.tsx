@@ -173,7 +173,7 @@ const UserUpdate: React.FC = () => {
             } else {
                 await baseApi.post(`/api/users`, data);
             }
-            navigate('/users');
+            navigate('/admin/users');
         } catch (error) {
             setTextMessage('Ocorreu um erro ao salvar o usuário!');
             setTypeMessage('error');

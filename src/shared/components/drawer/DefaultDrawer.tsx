@@ -1,7 +1,7 @@
-import {AdminPanelSettings, AttachMoney, Diversity1, EventAvailable, Groups2, Home} from '@mui/icons-material';
+import { AdminPanelSettings, AttachMoney, Diversity1, EventAvailable, Groups2, Home } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
-import {Avatar, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography} from '@mui/material';
+import { Avatar, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import { CSSObject, Theme, styled } from '@mui/material/styles';
@@ -83,37 +83,37 @@ export const DefaultDrawer = (props: IDrawerProps) => {
         {
             icon: <Home />,
             text: 'Início',
-            to: '/dashboard',
+            to: '/admin/dashboard',
         },
         {
             icon: <PetsIcon />,
             text: 'Animais',
-            to: '/animals',
+            to: '/admin/animals',
         },
         {
             icon: <EventAvailable />,
             text: 'Eventos',
-            to: '/events',
+            to: '/admin/events',
         },
         {
             icon: <AttachMoney />,
             text: 'Financeiro',
-            to: '/financial',
+            to: '/admin/financial',
         },
         {
             icon: <Diversity1 />,
             text: 'Doadores',
-            to: '/givers',
+            to: '/admin/givers',
         },
         {
             icon: <AdminPanelSettings />,
             text: 'Níveis de permissão',
-            to: '/roles',
+            to: '/admin/roles',
         },
         {
             icon: <Groups2 />,
             text: 'Usuários',
-            to: '/users',
+            to: '/admin/users',
         },
     ];
 

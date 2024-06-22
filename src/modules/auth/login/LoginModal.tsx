@@ -5,9 +5,9 @@ import { Avatar, Box, Button, CircularProgress, Dialog, DialogActions, DialogCon
 import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import PatinhasLogo from '../../assets/images/patinhas-carentes.png';
-import { baseApi } from '../../lib/api';
-import useAuthStore from '../../shared/store/authStore';
+import PatinhasLogo from '../../../assets/images/patinhas-carentes.png';
+import { baseApi } from '../../../lib/api';
+import useAuthStore from '../../../shared/store/authStore';
 
 function LoginModal() {
     const navigate = useNavigate();

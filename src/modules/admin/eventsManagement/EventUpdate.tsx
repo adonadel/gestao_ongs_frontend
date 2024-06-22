@@ -223,7 +223,7 @@ const EventUpdate: React.FC = () => {
             } else {
                 await baseApi.post(`/api/events`, data);
             }
-            navigate('/events');
+            navigate('/admin/events');
         } catch (error) {
             setTextMessage('Ocorreu um erro ao salvar o evento!');
             setTypeMessage('error');

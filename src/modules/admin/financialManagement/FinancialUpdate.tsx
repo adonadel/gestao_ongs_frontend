@@ -1,15 +1,15 @@
-import {Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField} from '@mui/material';
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {Loading} from '../../../shared/components/loading/Loading';
-import {Message} from '../../../shared/components/message/Message';
-import {Financial} from './types';
-import {baseApi} from '../../../lib/api';
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from 'dayjs';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from '../../../lib/api';
 import AutoComplete from "../../../shared/components/autoComplete/autoComplete.tsx";
+import { Loading } from '../../../shared/components/loading/Loading';
+import { Message } from '../../../shared/components/message/Message';
+import { Financial } from './types';
 
 const FinancialUpdate: React.FC = () => {
 	const navigate = useNavigate();
@@ -21,8 +21,8 @@ const FinancialUpdate: React.FC = () => {
 	const [dateError, setDateError] = useState('');
 	const [formattedMoney, setFormattedMoney] = useState('');
 	const [money, setMoney] = useState(0);
-  const [selectedAnimalId, setSelectedAnimalId] = useState(null);
-  const [selectedUserId, setSelectedUserId] = useState(null);
+	const [selectedAnimalId, setSelectedAnimalId] = useState(null);
+	const [selectedUserId, setSelectedUserId] = useState(null);
 
 	const handleClose = () => {
 		setOpenMessage(false);
@@ -38,7 +38,7 @@ const FinancialUpdate: React.FC = () => {
 			const fetchFinancial = async () => {
 				try {
 					const response = await baseApi.get(`/api/finances/${id}`);
-					
+
 					const finance = response.data;
 					const formatted = formatDate(finance.date, true);
 					finance.date = formatted;
@@ -58,8 +58,7 @@ const FinancialUpdate: React.FC = () => {
 		}
 	}, [id, isEditMode, navigate]);
 
-	function formatDate(date:string, usToBr:boolean = false)
-	{
+	function formatDate(date: string, usToBr: boolean = false) {
 		let splitted;
 		if (usToBr) {
 			splitted = date.split('-')
@@ -73,34 +72,34 @@ const FinancialUpdate: React.FC = () => {
 		try {
 			const date = formatDate(data.date);
 			data.date = date;
-			
+
 			if (isEditMode) {
 				await baseApi.put(`/api/finances/${id}`, data);
 			} else {
 				await baseApi.post(`/api/finances`, data);
 			}
-			navigate('/financial');
+			navigate('/admin/financial');
 		} catch (error) {
 			setTextMessage('Ocorreu um erro ao salvar o financeo!');
 			setTypeMessage('error');
 			setOpenMessage(true);
 		}
 	};
-	
+
 	useEffect(() => {
 		const cleaned = formattedMoney.replace(/[^0-9\,]/g, '');
 		const parts = cleaned.split(',');
 		const integerPart = parts[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 		let decimalPart = '';
 		let onlyComma = false;
-		
+
 		if (parts.length > 1) {
 			decimalPart = parts[1].slice(0, 2);
 			if (decimalPart.length === 0) {
 				onlyComma = true;
 			}
 		}
-		
+
 		const formatted = `${integerPart}${decimalPart || onlyComma ? `,${decimalPart}` : ''}`;
 
 		setMoney(cleaned.replace(',', '.'));
@@ -118,7 +117,7 @@ const FinancialUpdate: React.FC = () => {
 	useEffect(() => {
 		setValue('animal_id', selectedAnimalId)
 	}, [selectedAnimalId]);
-	
+
 	if (isEditMode && !finance) {
 		return <div>Loading...</div>;
 	}
@@ -155,25 +154,25 @@ const FinancialUpdate: React.FC = () => {
 						padding: '20px',
 						borderRadius: '10px'
 					}}>
-					
+
 
 					<Grid item xs={12}>
-							<FormControl fullWidth>
-									<InputLabel id="type-label">Tipo da finança</InputLabel>
-									<Select
-											labelId="type-label"
-											label="Tipo da finança"
-											id="type"
-											{...register('type', { required: 'Tipo é necessário' })}
-											defaultValue={isEditMode ? finance?.type : ''}
-									>
-											<MenuItem value="" disabled>
-													Selecione o tipo de finança
-											</MenuItem>
-											<MenuItem value="EXPENSE">Despesa</MenuItem>
-											<MenuItem value="INCOME">Entrada</MenuItem>
-									</Select>
-							</FormControl>
+						<FormControl fullWidth>
+							<InputLabel id="type-label">Tipo da finança</InputLabel>
+							<Select
+								labelId="type-label"
+								label="Tipo da finança"
+								id="type"
+								{...register('type', { required: 'Tipo é necessário' })}
+								defaultValue={isEditMode ? finance?.type : ''}
+							>
+								<MenuItem value="" disabled>
+									Selecione o tipo de finança
+								</MenuItem>
+								<MenuItem value="EXPENSE">Despesa</MenuItem>
+								<MenuItem value="INCOME">Entrada</MenuItem>
+							</Select>
+						</FormControl>
 					</Grid>
 					<Grid item xs={12}>
 						<TextField
@@ -199,7 +198,7 @@ const FinancialUpdate: React.FC = () => {
 					</Grid>
 					<Grid item xs={12}>
 						<AutoComplete
-							origin= 'users'
+							origin='users'
 							objectToGetName='person'
 							objectToGetId=''
 							labelForAutoComplete='Usuário'
@@ -210,7 +209,7 @@ const FinancialUpdate: React.FC = () => {
 					</Grid>
 					<Grid item xs={12}>
 						<AutoComplete
-							origin= 'animals'
+							origin='animals'
 							objectToGetName=''
 							objectToGetId=''
 							labelForAutoComplete='Animal'
@@ -222,28 +221,28 @@ const FinancialUpdate: React.FC = () => {
 					<Grid item xs={12}>
 						<LocalizationProvider dateAdapter={AdapterDayjs} >
 							<DatePicker
-									label='Data da finança'
-									value={selectedDate}
-									format='DD/MM/YYYY'
-									onChange={(date) => {
-											if (date) {
-													const formattedDate = date.format('DD/MM/YYYY');
-													setSelectedDate(date);
-													setValue('date', formattedDate);
-											} else {
-													setSelectedDate(null);
-											}
-									}}
-									slotProps={{
-											textField: {
-													...register('date'),
-													error: dateError && dateError === 'minDate' ? true : undefined,
-													helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
-											}
-									}}
-									minDate={dayjs(new Date())}
+								label='Data da finança'
+								value={selectedDate}
+								format='DD/MM/YYYY'
+								onChange={(date) => {
+									if (date) {
+										const formattedDate = date.format('DD/MM/YYYY');
+										setSelectedDate(date);
+										setValue('date', formattedDate);
+									} else {
+										setSelectedDate(null);
+									}
+								}}
+								slotProps={{
+									textField: {
+										...register('date'),
+										error: dateError && dateError === 'minDate' ? true : undefined,
+										helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
+									}
+								}}
+								minDate={dayjs(new Date())}
 							/>
-					</LocalizationProvider>
+						</LocalizationProvider>
 					</Grid>
 					<Grid item xs={12} sx={{ marginTop: '2rem' }}>
 						<Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>

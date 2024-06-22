@@ -136,7 +136,7 @@ const AnimalUpdate: React.FC = () => {
             } else {
                 await baseApi.post(`/api/animals`, data);
             }
-            navigate('/animals');
+            navigate('admin/animals');
         } catch (error) {
             // navigate('/login');
         }

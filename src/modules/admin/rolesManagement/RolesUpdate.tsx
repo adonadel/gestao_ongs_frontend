@@ -63,7 +63,7 @@ const RolesUpdate: React.FC = () => {
             } else {
                 await baseApi.post('/api/roles', data);
             }
-            navigate('/roles');
+            navigate('/admin/roles');
         } catch (error) {
             console.log(error);
         }
@@ -89,7 +89,7 @@ const RolesUpdate: React.FC = () => {
                             defaultValue={isEditMode ? role?.name : ''}
                         />
                         {permissions.length > 0 && <PermissionsList permissions={permissions} permissionsToSave={permissionsToSave}
-                                          setPermissionsToSave={setPermissionsToSave}/>}
+                            setPermissionsToSave={setPermissionsToSave} />}
                         <Button type='button' variant='contained' color="primary" onClick={() => navigate(-1)}>
                             Voltar
                         </Button>
