@@ -166,6 +166,9 @@ function Dashboard() {
                 </Box>
               </Grid>
             </Grid>
+            <Grid item> 
+              <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'} marginBottom={'1rem'}>Relação de animais</Typography>
+            </Grid>
             <Grid container spacing={2}>
               <Grid item xs={6} sm={4} md={2} lg={2}>
                 <Box sx={

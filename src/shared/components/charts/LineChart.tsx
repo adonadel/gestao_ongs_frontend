@@ -40,15 +40,24 @@ const LineChart: React.FC = ({chartTitle, footerType, seriesData}) => {
       }
       break;
     case 'weekly':
-      footerData = [
-        'Seg',
-        'Ter',
-        'Qua',
-        'Qui',
-        'Sex',
-        'Sáb',
-        'Dom',
-      ];
+      const today = new Date();
+      const last7Days = [];
+      
+      for (let i = 0; i < 7; i++) {
+        let day = new Date(today);
+        day.setDate(today.getDate() - i);
+        last7Days.push(day);
+      }
+      
+      const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      
+      footerData = last7Days.reverse().map(date => {
+        const dayOfWeek = date.getDay();
+        return dayNames[dayOfWeek];
+      });
+      
+      break;
+    case 'all':
       break;
   }
   const legendData: string[] = seriesData.map(obj => obj.name);
