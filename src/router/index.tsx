@@ -2,7 +2,7 @@ import { createBrowserRouter, createRoutesFromElements, Route } from "react-rout
 import { Fragment } from "react/jsx-runtime";
 import AnimalList from "../modules/admin/animalsManagement/AnimalList";
 import AnimalUpdate from "../modules/admin/animalsManagement/AnimalUpdate";
-import { Dashboard } from "../modules/admin/dashboard/Dashboard";
+import Dashboard from "../modules/admin/dashboard/Dashboard.tsx";
 import EventList from "../modules/admin/eventsManagement/EventList.tsx";
 import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
 import FinancialList from "../modules/admin/financialManagement/FinancialList";
@@ -19,14 +19,12 @@ import ForgotPassword from "../modules/auth/forgotPassword/ForgotPassword.tsx";
 import Login from "../modules/auth/login/Login.tsx";
 import Register from "../modules/auth/register/Register.tsx";
 import ResetPassword from "../modules/auth/resetPassword/ResetPassword.tsx";
+import { Donate } from "../modules/donate/Donate.tsx";
+import Success from "../modules/donate/Success.tsx";
 import ErrorPage from "../modules/error/Error";
 import Home from "../modules/home/Home";
 import { DefaultLayout } from "../shared/layout/Default";
 import { WebLayout } from "../shared/layout/Web";
-import EventList from "../modules/admin/eventsManagement/EventList.tsx";
-import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
-import { Donate } from "../modules/donate/Donate.tsx";
-import Success from "../modules/donate/Success.tsx";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -44,13 +42,13 @@ export const router = createBrowserRouter(
                 <Route path="*" element={<ErrorPage />} />
 
                 /* Donate */
-                <Route path="/donate" element={<Donate/>} />
+                <Route path="/donate" element={<Donate />} />
                 <Route path="/donate/success/:id" element={<Donate />} />
                 <Route path="/donate/cancel/:id" element={<Donate />} />
                 <Route path="/donate/thanks" element={<Success />} />
 
             </Route>
-            
+
             <Route element={<DefaultLayout />}>
                 <Route path="/admin/dashboard" element={<Dashboard />} />
             /* Users Management */
