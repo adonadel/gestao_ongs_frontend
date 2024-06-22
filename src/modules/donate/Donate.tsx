@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, Typography, TextField, FormControl, FormControlLabel, RadioGroup, Radio, Button, InputAdornment } from "@mui/material";
+import { Container, Grid, Typography, TextField, FormControl, FormControlLabel, RadioGroup, Radio, Button, InputAdornment, CircularProgress } from "@mui/material";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { baseApi } from "../../lib/api.ts";
 import { HeaderBanner } from "../../shared/headerBanner/HeaderBanner.tsx";
 import { Message } from "../../shared/components/message/Message.tsx";
 import { ChevronRight } from "@mui/icons-material";
+import useAuthStore from "../../shared/store/authStore.ts";
 
 export const Donate = () => {
     const location = useLocation();
@@ -12,8 +13,12 @@ export const Donate = () => {
     const { id } = useParams<{ id: string }>();
     const [message, setMessage] = useState("");
     const [messageType, setMessageType] = useState("");
-    const [donateId, setDonateId] = useState("");    
+    const [donateId, setDonateId] = useState("");
     const [otherValue, setOtherValue] = useState("");
+    const [isLoading, setIsLoading] = useState(false);    
+    const { userData } = useAuthStore((state) => ({
+        userData: state.userData,
+    }));
 
     const presetedDonateValues = [
         { id: 1, value: "1,00" },
@@ -39,7 +44,7 @@ export const Donate = () => {
             });
             setMessage("Contribuição feita com sucesso.");
             setMessageType("success");
-            navigate("/");
+            navigate("/donate/thanks");
         } catch (error) {
             handleApiError("Erro ao fazer a contribuição.");
         }
@@ -52,7 +57,6 @@ export const Donate = () => {
             });
             setMessage("Contribuição cancelada.");
             setMessageType("error");
-            navigate("/");
         } catch (error) {
             handleApiError("Erro ao cancelar a contribuição. Teste novamente");
         }
@@ -64,26 +68,47 @@ export const Donate = () => {
     };
 
     const handleSubmit = async () => {
+        setIsLoading(true);
         const value = presetedDonateValues.find((item) => item.id === parseInt(donateId))?.value.replace(',', '.') || parseFloat(otherValue.replace(',', '.')) || 0;
-        
+
         if (Number(value) <= 0) {
             handleApiError("Por favor, selecione ou insira um valor válido.");
             return;
         }
 
-        try {
-            const response = await baseApi.post('/api/finances', {
-                user_id: 1,
-                value: Number(value),
-                type: "INCOME",
-                description: "Doação",
-            });
-            window.location.href = response.data.session.url;
+        if (userData){
+            try {
+                const response = await baseApi.post('/api/finances', {
+                    user_id: userData.id,
+                    value: Number(value),
+                    type: "INCOME",
+                    description: "Doação",
+                });
 
-        } catch (error) {
-            console.error('Ocorreu um erro durante o checkout:', error);
-            handleApiError("Ocorreu um erro durante o checkout.");
+                setIsLoading(false);
+                window.location.href = response.data.session.url;
+    
+            } catch (error) {
+                console.error('Ocorreu um erro durante o checkout:', error);
+                handleApiError("Ocorreu um erro durante o checkout.");
+            }
+        } else {
+            try {
+                const response = await baseApi.post('/api/finances', {                    
+                    value: Number(value),
+                    type: "INCOME",
+                    description: "Doação",
+                });
+                
+                setIsLoading(false);
+                window.location.href = response.data.session.url;
+    
+            } catch (error) {
+                console.error('Ocorreu um erro durante o checkout:', error);
+                handleApiError("Ocorreu um erro durante o checkout.");
+            }
         }
+
     };
 
     useEffect(() => {
@@ -101,7 +126,7 @@ export const Donate = () => {
         }
 
         const formatted = `${integerPart}${decimalPart || onlyComma ? `,${decimalPart}` : ''}`;
-        
+
         setOtherValue(formatted);
         setDonateId("");
     }, [otherValue]);
@@ -110,7 +135,23 @@ export const Donate = () => {
         <>
             <HeaderBanner />
             <Container maxWidth="lg">
-                <Grid container justifyContent="center">
+                <Grid container justifyContent={"center"} alignItems={"center"}>
+                    <Grid item xs={6} sx={{ display: { xs: "none", md: "block" } }}>
+                        <Typography variant="h3" color="initial" sx={{
+                            fontSize: '1.2rem',
+                            fontWeight: 500,
+                            marginBottom: '2rem',
+                        }}>
+                            Sua ajuda é muito importante pra gente.
+                        </Typography>
+                        <img src="/image-checkout-donate.svg" alt="Doação" style={{
+                            width: '70%',
+                            height: 'auto',
+                            marginTop: '2rem',
+
+
+                        }} />
+                    </Grid>
 
                     <Grid item xs={12} md={6} sx={{
                         padding: '2rem',
@@ -149,7 +190,7 @@ export const Donate = () => {
 
                                                 }}
                                                 value={`${presetedValue.id}`}
-                                                control={<Radio color="secondary" />}
+                                                control={<Radio size="small" color="secondary" />}
                                                 label={`R$ ${presetedValue.value}`}
                                             />
                                         </Grid>
@@ -188,12 +229,15 @@ export const Donate = () => {
                             <Grid xs={12} display={'flex'} justifyContent={'center'} mt={4}>
                                 <Button
                                     type="button"
+                                    fullWidth
                                     variant="contained"
                                     color="secondary"
                                     size="large"
                                     disabled={!donateId && !otherValue}
                                     onClick={handleSubmit}
-                                    startIcon={<ChevronRight fontSize='small' color='primary' />}
+                                    startIcon={
+                                        isLoading ? <CircularProgress size={20} color="primary" /> : <ChevronRight fontSize='small' color='primary' />
+                                    }
                                 >
                                     <Typography sx={{ fontSize: '.8125rem', color: 'primary.main' }}>Confirmar</Typography>
                                 </Button>
