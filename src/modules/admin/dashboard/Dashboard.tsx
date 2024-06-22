@@ -2,10 +2,11 @@ import {Box, Container, FormControl, Grid, InputLabel, MenuItem, Select, Typogra
 import {useEffect, useState} from "react";
 import LineChart from "../../../shared/components/charts/LineChart.tsx";
 import {baseApi} from "../../../lib/api.ts";
+import {Loading} from "../../../shared/components/loading/Loading.tsx";
 
 
 function Dashboard() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [totalFinances, setTotalFinances] = useState(null);
   const [totalAnimals, setTotalAnimals] = useState(null);
   const [totalAnimalsCastration, setTotalAnimalsCastration] = useState(null);
@@ -21,6 +22,7 @@ function Dashboard() {
       setTotalFinances(financeResponse.data);
       setTotalAnimals(animalsResponse.data);
       setTotalAnimalsCastration(castrationResponse.data);
+      setSeriesData(financeResponse.data.chart);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
@@ -38,11 +40,6 @@ function Dashboard() {
   useEffect(() => {
     fetchDashboardData();
   }, [dashboardType]);
-
-  useEffect(() => {
-    console.log('atualizou')
-      setSeriesData(totalFinances?.chart);
-  }, [totalFinances]);
 
   return (
     <Container maxWidth="xl" style={{marginTop: '4rem'}}>
@@ -74,11 +71,15 @@ function Dashboard() {
             </Grid>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={6}>
-                {seriesData && <LineChart
+                {(isLoading && seriesData) ? (
+                  <Loading /> 
+                ) : (
+                  <LineChart
                   footerType={dashboardType}
                   seriesData={seriesData}
                   chartTitle='Relação de entradas e saídas'
-                />}
+                />
+                ) }
               </Grid>
               <Grid item xs={4} sm={4} md={2} lg={2}>
                 <Box sx={
