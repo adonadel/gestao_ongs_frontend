@@ -83,7 +83,6 @@ function FinancialList() {
       const response: AxiosResponse = await baseApi.get(`/api/finances`);
       const finances = response.data.data;
       setFinancials(finances);
-      console.log(finances);
     } catch (error) {
       console.error('Error fetching finances:', error);
     }

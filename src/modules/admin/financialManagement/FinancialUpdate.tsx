@@ -9,7 +9,7 @@ import {baseApi} from '../../../lib/api';
 import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from 'dayjs';
-import AutoComplete from "../../../shared/components/autoComplete/autoComplete.tsx";
+import AutoComplete from "../../../shared/components/autoComplete/AutoComplete.tsx";
 
 const FinancialUpdate: React.FC = () => {
 	const navigate = useNavigate();
@@ -77,6 +77,7 @@ const FinancialUpdate: React.FC = () => {
 			if (isEditMode) {
 				await baseApi.put(`/api/finances/${id}`, data);
 			} else {
+				data.status = 'PAID';
 				await baseApi.post(`/api/finances`, data);
 			}
 			navigate('/financial');

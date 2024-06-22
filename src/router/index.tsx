@@ -2,7 +2,7 @@ import { createBrowserRouter, createRoutesFromElements, Route } from "react-rout
 import { Fragment } from "react/jsx-runtime";
 import AnimalList from "../modules/admin/animalsManagement/AnimalList";
 import AnimalUpdate from "../modules/admin/animalsManagement/AnimalUpdate";
-import {Dashboard} from "../modules/admin/dashboard/Dashboard";
+import Dashboard from "../modules/admin/dashboard/Dashboard";
 import FinancialList from "../modules/admin/financialManagement/FinancialList";
 import FinancialUpdate from "../modules/admin/financialManagement/FinancialUpdate";
 import {GiverList} from "../modules/admin/giversManagement/GiverList";
