@@ -21,6 +21,8 @@ import { DefaultLayout } from "../shared/layout/Default";
 import { WebLayout } from "../shared/layout/Web";
 import EventList from "../modules/admin/eventsManagement/EventList.tsx";
 import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
+import { Donate } from "../modules/donate/Donate.tsx";
+import Success from "../modules/donate/Success.tsx";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -31,7 +33,15 @@ export const router = createBrowserRouter(
                 <Route path="/register" element={<Register />} />
                 <Route path="/external" element={<ExternalUser />} />
                 <Route path="*" element={<ErrorPage />} />
+
+                /* Donate */
+                <Route path="/donate" element={<Donate/>} />
+                <Route path="/donate/success/:id" element={<Donate />} />
+                <Route path="/donate/cancel/:id" element={<Donate />} />
+                <Route path="/donate/thanks" element={<Success />} />
+
             </Route>
+            
             <Route element={<DefaultLayout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
             /* Users Management */
@@ -55,9 +65,7 @@ export const router = createBrowserRouter(
             /* Financial Management */
                 <Route path="/financial" element={<FinancialList />} />
                 <Route path="/financial/new" element={<FinancialUpdate />} />
-                <Route path="/financial/:id" element={<FinancialUpdate />} />
-                <Route path="payment/success/:id" element={<Home />} />
-                <Route path="payment/cancel/:id" element={<Home />} />
+                <Route path="/financial/:id" element={<FinancialUpdate />} />                
 
             /* Givers Management */
                 <Route path="/givers" element={<GiverList />} />
