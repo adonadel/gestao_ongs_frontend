@@ -23,6 +23,7 @@ import EventList from "../modules/admin/eventsManagement/EventList.tsx";
 import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
 import { Donate } from "../modules/donate/Donate.tsx";
 import Success from "../modules/donate/Success.tsx";
+import { AnimalAdoption } from "../modules/animal/Animal.tsx";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -40,6 +41,9 @@ export const router = createBrowserRouter(
                 <Route path="/donate/cancel/:id" element={<Donate />} />
                 <Route path="/donate/thanks" element={<Success />} />
 
+                /* Animal */
+
+                <Route path="/animal/:id" element={<AnimalAdoption />} />
             </Route>
             
             <Route element={<DefaultLayout />}>

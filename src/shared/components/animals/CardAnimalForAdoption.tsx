@@ -30,7 +30,7 @@ interface CardAnimalForAdoptionProps {
 export const CardAnimalForAdoption = (props: CardAnimalForAdoptionProps) => {
     const { animal } = props;
     const apiImage = import.meta.env.VITE_URL_IMAGE;
-    const { id, name, size, gender, age_type, castrate_type, description, location, tags, animal_type, created_at, adoption_status, medias } = animal;
+    const { name, size, gender, age_type, medias } = animal;
     const [media, setMedia] = useState<string>("");
 
     useEffect(() => {
@@ -122,7 +122,7 @@ export const CardAnimalForAdoption = (props: CardAnimalForAdoptionProps) => {
                 </Box>
 
 
-                <Button fullWidth variant="contained" color="secondary" startIcon={<Favorite sx={{ color: '#FABEC0' }} />} sx={{
+                <Button href={`/animal/${animal.id}`} fullWidth variant="contained" color="secondary" startIcon={<Favorite sx={{ color: '#FABEC0' }} />} sx={{
                     borderRadius: '100px',
                     py: '0.5rem',
                     boxShadow: 'none'
