@@ -1,13 +1,13 @@
-import { AdminPanelSettings, AttachMoney, Diversity1, EventAvailable, Groups2, Home } from '@mui/icons-material';
+import {AdminPanelSettings, AttachMoney, Diversity1, EventAvailable, Groups2, Home} from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 import PetsIcon from '@mui/icons-material/Pets';
-import { Avatar, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import {Avatar, Divider, Grid, ListItemButton, ListItemIcon, ListItemText, Typography} from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import { CSSObject, Theme, styled } from '@mui/material/styles';
-import { Fragment, useEffect, useRef, useState } from 'react';
+import {CSSObject, styled, Theme} from '@mui/material/styles';
+import {Fragment, useEffect, useRef, useState} from 'react';
 import useAuthStore from '../../store/authStore';
-import { ListItemDrawer } from './ListItemDrawer';
+import {ListItemDrawer} from './ListItemDrawer';
 
 export interface IDrawerProps {
     open: boolean;
@@ -102,8 +102,8 @@ export const DefaultDrawer = (props: IDrawerProps) => {
         },
         {
             icon: <Diversity1 />,
-            text: 'Doadores',
-            to: '/admin/givers',
+            text: 'Adoções',
+            to: '/admin/adoptions',
         },
         {
             icon: <AdminPanelSettings />,
