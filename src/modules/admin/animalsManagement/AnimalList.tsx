@@ -1,14 +1,30 @@
-import { AddCircleOutlineOutlined, Close, Search } from '@mui/icons-material';
+import {AddCircleOutlineOutlined, Close, Search} from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
-import { Button, Container, Grid, IconButton, OutlinedInput, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
-import { AxiosResponse } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { baseApi } from '../../../lib/api';
+import {
+    Button,
+    Container,
+    Grid,
+    IconButton,
+    OutlinedInput,
+    Pagination,
+    Paper,
+    Stack,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Typography
+} from "@mui/material";
+import {AxiosResponse} from "axios";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
 import useAuthStore from '../../../shared/store/authStore';
-import { Paginate } from '../../../shared/types';
-import { Animal } from './types';
+import {Paginate} from '../../../shared/types';
+import {Animal} from './types';
 
 function AnimalList() {
     const navigate = useNavigate();
@@ -26,7 +42,7 @@ function AnimalList() {
     const fetchAnimals = useCallback(async (page = 1) => {
         setIsLoading(true);
         try {
-            const response: AxiosResponse = await baseApi.get(`/api/animals/?search=${search}&page=${page}`);
+            const response: AxiosResponse = await baseApi.get(`/api/animals/?search=${search}&page=${page}&for-adoption=false`);
             setPaginate(response.data);
             setAnimals(response.data.data);
         } catch (error: any) {

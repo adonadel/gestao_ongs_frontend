@@ -1,5 +1,5 @@
-import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
-import { Fragment } from "react/jsx-runtime";
+import {createBrowserRouter, createRoutesFromElements, Route} from "react-router-dom";
+import {Fragment} from "react/jsx-runtime";
 import AnimalList from "../modules/admin/animalsManagement/AnimalList";
 import AnimalUpdate from "../modules/admin/animalsManagement/AnimalUpdate";
 import Dashboard from "../modules/admin/dashboard/Dashboard.tsx";
@@ -7,24 +7,24 @@ import EventList from "../modules/admin/eventsManagement/EventList.tsx";
 import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
 import FinancialList from "../modules/admin/financialManagement/FinancialList";
 import FinancialUpdate from "../modules/admin/financialManagement/FinancialUpdate";
-import { GiverList } from "../modules/admin/giversManagement/GiverList";
-import { GiverUpdate } from "../modules/admin/giversManagement/GiverUpdate";
+import AdoptionsList from "../modules/admin/adoptionsManagement/AdoptionsList.tsx";
+import AdoptionsUpdate from "../modules/admin/adoptionsManagement/AdoptionsUpdate.tsx";
 import RolesList from "../modules/admin/rolesManagement/RolesList";
 import RolesUpdate from "../modules/admin/rolesManagement/RolesUpdate";
-import { UserManagement } from "../modules/admin/userManagement/UserManagement";
+import {UserManagement} from "../modules/admin/userManagement/UserManagement";
 import UserList from "../modules/admin/usersManagement/UserList";
 import UserUpdate from "../modules/admin/usersManagement/UserUpdate";
-import { ExternalUser } from "../modules/auth/externalUser/ExternalUser.tsx";
+import {ExternalUser} from "../modules/auth/externalUser/ExternalUser.tsx";
 import ForgotPassword from "../modules/auth/forgotPassword/ForgotPassword.tsx";
 import Login from "../modules/auth/login/Login.tsx";
 import Register from "../modules/auth/register/Register.tsx";
 import ResetPassword from "../modules/auth/resetPassword/ResetPassword.tsx";
-import { Donate } from "../modules/donate/Donate.tsx";
+import {Donate} from "../modules/donate/Donate.tsx";
 import Success from "../modules/donate/Success.tsx";
 import ErrorPage from "../modules/error/Error";
 import Home from "../modules/home/Home";
-import { DefaultLayout } from "../shared/layout/Default";
-import { WebLayout } from "../shared/layout/Web";
+import {DefaultLayout} from "../shared/layout/Default";
+import {WebLayout} from "../shared/layout/Web";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -77,9 +77,9 @@ export const router = createBrowserRouter(
                 <Route path="payment/cancel/:id" element={<Home />} />
 
             /* Givers Management */
-                <Route path="/admin/givers" element={<GiverList />} />
-                <Route path="/admin/givers/new" element={<GiverUpdate />} />
-                <Route path="/admin/givers/:id" element={<GiverUpdate />} />
+                <Route path="/admin/adoptions" element={<AdoptionsList />} />
+                <Route path="/admin/adoptions/new" element={<AdoptionsUpdate />} />
+                <Route path="/admin/adoptions/:id" element={<AdoptionsUpdate />} />
 
             /* User Management */
                 <Route path="/admin/user" element={<UserManagement />} />
