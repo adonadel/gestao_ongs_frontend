@@ -19,8 +19,6 @@ export type Animal = {
   medias: string;
 };
 
-
-
 export type PaginatedAnimalResponse = {
   data: Animal[];
 };

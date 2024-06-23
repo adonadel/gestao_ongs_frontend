@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { baseApi } from '../../../lib/api';
-import AutoComplete from "../../../shared/components/autoComplete/autoComplete.tsx";
+import AutoComplete from "../../../shared/components/autoComplete/AutoComplete.tsx";
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
 import { Financial } from './types';
