@@ -40,7 +40,6 @@ const AnimalUpdate: React.FC = () => {
 
     }
 
-
     const handleImageSelect = async (imageId: number) => {
         const updateImageCoverStatus = async (id: number, isCover: boolean) => {
             try {
@@ -53,7 +52,6 @@ const AnimalUpdate: React.FC = () => {
                 console.log("Error:", error);
             }
         };
-
 
         await updateImageCoverStatus(imageId, true);
         const updatePromises = images
@@ -108,9 +106,7 @@ const AnimalUpdate: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-
     }
-
 
     useEffect(() => {
         if (isEditMode) {
@@ -136,7 +132,7 @@ const AnimalUpdate: React.FC = () => {
             } else {
                 await baseApi.post(`/api/animals`, data);
             }
-            navigate('admin/animals');
+            navigate('/admin/animals');
         } catch (error) {
             // navigate('/login');
         }
