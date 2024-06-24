@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { baseApi } from "../../lib/api";
 import { GridAnimalsForAdoption } from "../../shared/components/animals/GridAnimalsForAdoption";
-import { Box, Container, Grid, Typography, Button } from "@mui/material";
+import { Box, Container, Grid, Typography, Button, CircularProgress } from "@mui/material";
 import { AnimalProfileCarousel } from "../../shared/components/carousel/AnimalProfileCarousel";
 import { Cake, Favorite, Height, Pets } from "@mui/icons-material";
 
@@ -11,7 +11,6 @@ interface Medias {
     id: number;
     filaname_id: string;
 }
-
 interface Animal {
     id: number;
     name: string;
@@ -33,25 +32,21 @@ export const AnimalAdoption = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-
         try {
             baseApi.get(`/api/animals/${id}`).then((response) => {
-
                 setAnimal(response.data);
             });
-
         } catch (error) {
             console.log(error);
             navigate('/');
         }
-
     }, [id]);
 
     return (
 
         <Container>
             <Grid container spacing={4} sx={{
-                marginTop: { xs: '0rem', sm: '2rem'}
+                marginTop: { xs: '0rem', sm: '2rem' }
             }}>
 
                 <Grid item xs={12} md={4}>
@@ -80,7 +75,6 @@ export const AnimalAdoption = () => {
                                     display: 'flex',
                                     gap: '0.5rem',
                                     alignItems: 'center'
-
                                 }}>
                                     {
                                         animal.gender === 'MALE' ? <Pets sx={{ color: '#4690FF', width: '1rem' }} /> : <Pets sx={{ color: '#FF46CB', width: '1rem' }} />
@@ -131,12 +125,12 @@ export const AnimalAdoption = () => {
                             }}>
                                 {animal.description}
                             </Typography>
-                      
+
                             <Button onClick={() => navigate(`/adoption/${animal.id}`)} size="large" variant="contained" color="secondary" startIcon={<Favorite color="primary" />} sx={{
                                 marginRight: '1rem',
                                 borderRadius: '2rem',
                                 boxShadow: 'none',
-                                width: { xs: '100%', sm: 'auto'}
+                                width: { xs: '100%', sm: 'auto' }
                             }}>
                                 <Typography variant="body1" color="primary" sx={{
                                     fontWeight: 600,
@@ -150,7 +144,14 @@ export const AnimalAdoption = () => {
 
                         </Box>
                     ) : (
-                        <p>Loading...</p>
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            height: '50vh'
+                        }}>
+                            <CircularProgress />
+                        </Box>
                     )}
                 </Grid>
             </Grid>
@@ -159,7 +160,5 @@ export const AnimalAdoption = () => {
                 <GridAnimalsForAdoption />
             </Grid>
         </Container>
-
-
     )
 }

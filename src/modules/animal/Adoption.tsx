@@ -1,24 +1,33 @@
-import { KeyboardBackspace, ChevronRight } from "@mui/icons-material";
+import { ChevronRight } from "@mui/icons-material";
 import { Box, Button, Container, Grid, Step, StepLabel, Stepper, Typography, useTheme } from "@mui/material";
 import { StepConfirm } from "./steps/StepConfirm";
 import { StepResponse } from "./steps/StepResponse";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useAuthStore from "../../shared/store/authStore";
+import { baseApi } from "../../lib/api";
+import { Message } from "../../shared/components/message/Message";
 
 const steps = [
     'Confirmação',
     'Próximos passos',
 ];
 
-
 export const Adoption = () => {
+    const { id } = useParams<{ id: string }>();
     const theme = useTheme();
     const navigate = useNavigate();
     const { userData } = useAuthStore((state) => ({
         userData: state.userData,
     }));
-   
+
+    const handleClose = () => {
+        setOpenMessage(false);
+    }
+    const [textMessage, setTextMessage] = useState('Mensagem padrão');
+    const [typeMessage, setTypeMessage] = useState('warning');
+    const [openMessage, setOpenMessage] = useState(false);
+
     const [activeStep, setActiveStep] = useState(0);
 
     function getStepContent(step: number) {
@@ -34,23 +43,41 @@ export const Adoption = () => {
 
     useEffect(() => {
         if (!userData) {
-            navigate('/login');
+            setTextMessage('Você precisa estar logado para acessar essa página!');
+            setTypeMessage('error');
+            setOpenMessage(true);
+
+            setTimeout(() => {
+                navigate('/login');
+            }, 10000);
         }
     }, [userData, navigate]);
 
+    const postAdoption = async () => {
+        try {
+            baseApi.post(`/api/adoptions`, {
+                user_id: userData?.id,
+                animal_id: id,
+            });
+            setTextMessage('Solicitação enviada!');
+            setTypeMessage('success');
+            setOpenMessage(true);
+        } catch (error) {
+            console.log(error);
+            setTextMessage('Ocorreu um erro ao enviar a solicitação de adoção!');
+            setTypeMessage('error');
+            setOpenMessage(true);
+        }
+    }
 
     const handleNext = async () => {
         if (activeStep === steps.length - 1) {
-            navigate('/');
+            navigate(`/animal/${id}`);
         } else {
             setActiveStep((prev) => prev + 1);
+            postAdoption();
         }
     };
-
-    const handleBack = () => {
-        setActiveStep(activeStep - 1);
-    };
-
 
     return (
         <Container>
@@ -86,9 +113,9 @@ export const Adoption = () => {
                 <Grid item xs={12} sm={10} md={6} lg={6} mt={4} >
 
                     {getStepContent(activeStep)}
-                    
-                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>                        
-                        <Button onClick={handleNext} color='secondary' variant="contained" startIcon={activeStep === steps.length - 1 ? "" : <ChevronRight color="primary" /> } sx={{
+
+                    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                        <Button onClick={handleNext} color='secondary' variant="contained" startIcon={activeStep === steps.length - 1 ? "" : <ChevronRight color="primary" />} sx={{
                             borderRadius: '2rem',
                             padding: '0.5rem 1rem',
                         }}>
@@ -97,11 +124,15 @@ export const Adoption = () => {
                             </Typography>
                         </Button>
                     </Box>
-
-
                 </Grid>
             </Grid>
-        </Container>
 
+            <Message
+                message={textMessage}
+                type={typeMessage}
+                open={openMessage}
+                onClose={handleClose}
+            />
+        </Container>
     );
 };

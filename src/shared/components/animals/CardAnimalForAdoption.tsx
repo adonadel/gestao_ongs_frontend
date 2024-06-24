@@ -2,13 +2,13 @@ import { Cake, Favorite, Height, Pets } from "@mui/icons-material";
 import { Box, Button, Card, CardContent, CardMedia, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 
-interface Media {
+export interface Media {
     filename_id: string;
     pivot: {
         is_cover: string;
     }    
 }
-interface CardAnimalForAdoptionProps {
+export interface Animal {
     animal: {
         id: number;
         name: string
@@ -30,7 +30,7 @@ interface CardAnimalForAdoptionProps {
     scaleCard?: string
 }
 
-export const CardAnimalForAdoption = (props: CardAnimalForAdoptionProps) => {
+export const CardAnimalForAdoption = (props: Animal) => {
     const { animal } = props;
     const apiImage = import.meta.env.VITE_URL_IMAGE;
     const { name, size, gender, age_type, medias } = animal;
