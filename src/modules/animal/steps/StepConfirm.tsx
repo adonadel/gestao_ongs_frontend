@@ -9,12 +9,11 @@ import { Add, East, Favorite } from "@mui/icons-material";
 export const StepConfirm = () => {
     const { id } = useParams<{ id: string }>();
     const [animal, setAnimal] = useState<Animal | null>(null);
+    const urlImageApi = import.meta.env.VITE_URL_IMAGE;
     const { userData } = useAuthStore((state) => ({
         userData: state.userData,
     }));
-    const [animalProfileImage, setAnimalProfileImage] = useState<string>('');
-    const userProfileImage = userData?.person?.profile_picture?.filename_id || '';
-    const urlImageApi = import.meta.env.VITE_URL_IMAGE;
+    const [animalProfileImage, setAnimalProfileImage] = useState<string>('');    
 
     useEffect(() => {
         const fetchAnimal = async () => {
@@ -65,8 +64,7 @@ export const StepConfirm = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '1rem',
-                    }}>
-                        <Avatar src={urlImageApi + userProfileImage} />
+                    }}>                
                         <Typography variant="h4" color="grey.700" sx={{
                             fontSize: { xs: '0.8rem', sm: '1rem' },
                             fontWeight: 500,

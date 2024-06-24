@@ -54,8 +54,7 @@ export const StepResponse = () => {
         <Grid container display={'flex'} alignItems={'center'} spacing={4}>
             <Grid item xs={7}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', }}>
-                        <Avatar src={urlImageApi + userProfileImage} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', }}>                        
                         <Typography variant="h4" color="grey.700" sx={{ fontSize: { xs: '0.8rem', sm: '1rem' }, fontWeight: 500, }}>{userData?.person.name}</Typography>
                     </Box>
 
