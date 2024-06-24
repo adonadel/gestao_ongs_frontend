@@ -59,7 +59,7 @@ function LoginModal() {
                     logged();
                     await getUserData();
                     setOpen(false);
-                    navigate('/dashboard');
+                    navigate('/admin/dashboard');
                 }
             }
         } catch (error) {
@@ -124,6 +124,11 @@ function LoginModal() {
                                             </IconButton>
                                         </InputAdornment>
                                     ),
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSubmit(e);
+                                    }
                                 }}
                                 sx={{
                                     'fieldset': { borderRadius: '6px' },

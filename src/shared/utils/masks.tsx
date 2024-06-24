@@ -62,3 +62,32 @@ export const TextMaskCep = React.forwardRef<HTMLInputElement, CustomProps>(
         );
     },
 );
+
+export const TextMaskTelephone = React.forwardRef<HTMLInputElement, CustomProps>(
+    function TextMaskCustom(props, ref) {
+        const { onChange, ...other } = props;
+        const [mask, setMask] = useState('');
+
+        const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+            const inputValue = event.target.value.replace(/[^\d]/g, '');
+
+            setMask('(00)00000-0000');
+
+            onChange({ target: { name: props.name, value: inputValue } });
+        }
+
+        return (
+            <IMaskInput
+                {...other}
+                mask={mask}
+                definitions={{
+                    '#': /[1-9]/,
+                }}
+                inputRef={ref}
+                onAccept={(value: string) => onChange({ target: { name: props.name, value } })}
+                overwrite
+                onChange={handleChange}
+            />
+        );
+    },
+);

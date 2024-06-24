@@ -13,22 +13,30 @@ import {
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import dayjs, { Dayjs } from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IMaskInput } from "react-imask";
 import { useNavigate, useParams } from 'react-router-dom';
 import { baseApi } from '../../../lib/api';
+import FullLoader from '../../../shared/components/loading/FullLoader';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
+import useAuthStore from '../../../shared/store/authStore';
 import { CustomProps, Event } from './types';
 
 const EventUpdate: React.FC = () => {
     const navigate = useNavigate();
     const imageUrl = import.meta.env.VITE_URL_IMAGE;
     const apiCepUrl = import.meta.env.VITE_API_CEP;
+    const isTokenRefreshed = useRef(false);
+
     const { id } = useParams<{ id: string }>();
+    const { user, setToken } = useAuthStore(state => ({
+        user: state.userData,
+        setToken: state.setToken
+    }));
     const [event, setEvent] = useState<Event | null>(null);
     const isEditMode = !!id;
     const VisuallyHiddenInput = styled('input')({
@@ -118,11 +126,24 @@ const EventUpdate: React.FC = () => {
             setSrcImage(`${imageUrl + media.filename_id}`);
             setValue('medias', media.id.toString());
 
-        } catch (error) {
-            setTextMessage('Ocorreu um erro com o upload da imagem, tente novamente!');
-            setTypeMessage('error');
-            setOpenMessage(true);
-            console.error(error);
+        } catch (error: any) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    postImage(event);
+                } catch (error) {
+                    setTextMessage('Ocorreu um erro ao salvar o evento!');
+                    setTypeMessage('error');
+                    setOpenMessage(true);
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to fetch users:", error);
+            }
         } finally {
             setTextMessage('Upload de imagem concluído!');
             setTypeMessage('info');
@@ -137,13 +158,30 @@ const EventUpdate: React.FC = () => {
         input.click();
     }
 
-    const handleDeleteImage = (id: number) => {
+    const handleDeleteImage = async (id: number) => {
         try {
             baseApi.delete(`/api/medias/${id}`);
-        } catch (error) {
-            console.log("Error:", error);
+        } catch (error: any) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    handleDeleteImage(id);
+                } catch (error) {
+                    setTextMessage('Ocorreu um erro ao salvar o evento!');
+                    setTypeMessage('error');
+                    setOpenMessage(true);
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to fetch users:", error);
+            }
+        } finally {
+            setIsLoading(false);
         }
-
         setImage('');
         setSrcImage('');
     }
@@ -194,10 +232,26 @@ const EventUpdate: React.FC = () => {
                     setImage(eventMedia.id.toString());
                     setSrcImage(`${imageUrl + eventMedia.filename_id}`);
                     setValue('medias', eventMedia.id.toString());
-                } catch (error) {
-                    setTextMessage('Ocorreu um erro ao acessar essa página!');
-                    setTypeMessage('error');
-                    setOpenMessage(true);
+                } catch (error: any) {
+                    if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                        console.log("Refreshing token...");
+                        try {
+                            isTokenRefreshed.current = true;
+                            const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                            const refreshToken = responseRefreshToken.data.newToken;
+                            setToken(refreshToken);
+                            fetchEvent();
+                        } catch (error) {
+                            setTextMessage('Ocorreu um erro ao acessar essa página!');
+                            setTypeMessage('error');
+                            setOpenMessage(true);
+                            navigate('/login');
+                        }
+                    } else {
+                        console.error("Failed to fetch users:", error);
+                    }
+                } finally {
+                    setIsLoading(false);
                 }
             };
             fetchEvent();
@@ -215,6 +269,7 @@ const EventUpdate: React.FC = () => {
     }
 
     const onSubmit = async (data: Event) => {
+        setIsLoading(true);
         try {
             const eventDate = formatDate(data.event_date);
             data.event_date = eventDate;
@@ -224,15 +279,31 @@ const EventUpdate: React.FC = () => {
                 await baseApi.post(`/api/events`, data);
             }
             navigate('/admin/events');
-        } catch (error) {
-            setTextMessage('Ocorreu um erro ao salvar o evento!');
-            setTypeMessage('error');
-            setOpenMessage(true);
+        } catch (error: any) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    onSubmit(data);
+                } catch (error) {
+                    setTextMessage('Ocorreu um erro ao salvar o evento!');
+                    setTypeMessage('error');
+                    setOpenMessage(true);
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to fetch users:", error);
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
     if (isEditMode && !event) {
-        return <div>Loading...</div>;
+        return <FullLoader />
     }
 
     return (
