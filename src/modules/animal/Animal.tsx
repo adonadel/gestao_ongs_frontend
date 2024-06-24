@@ -4,7 +4,7 @@ import { baseApi } from "../../lib/api";
 import { GridAnimalsForAdoption } from "../../shared/components/animals/GridAnimalsForAdoption";
 import { Box, Container, Grid, Typography, Button } from "@mui/material";
 import { AnimalProfileCarousel } from "../../shared/components/carousel/AnimalProfileCarousel";
-import { Cake, Favorite, Height, Pets, VolunteerActivism } from "@mui/icons-material";
+import { Cake, Favorite, Height, Pets } from "@mui/icons-material";
 
 
 interface Medias {
@@ -50,7 +50,9 @@ export const AnimalAdoption = () => {
     return (
 
         <Container>
-            <Grid container spacing={2} mt={4}>
+            <Grid container spacing={4} sx={{
+                marginTop: { xs: '0rem', sm: '2rem'}
+            }}>
 
                 <Grid item xs={12} md={4}>
                     <AnimalProfileCarousel media={animal?.medias} />
@@ -129,27 +131,12 @@ export const AnimalAdoption = () => {
                             }}>
                                 {animal.description}
                             </Typography>
-
-                            <Button size="large" variant="outlined" color="secondary" startIcon={<VolunteerActivism color="secondary" />} sx={{
+                      
+                            <Button onClick={() => navigate(`/adoption/${animal.id}`)} size="large" variant="contained" color="secondary" startIcon={<Favorite color="primary" />} sx={{
                                 marginRight: '1rem',
                                 borderRadius: '2rem',
-                                boxShadow: 'none'
-
-                            }}>
-                                <Typography variant="body1" color="secondary" sx={{
-                                    fontWeight: 600,
-                                    fontSize: '0.8rem',
-                                    opacity: 0.8
-
-                                }}>
-                                    Doar para {animal.name}
-                                </Typography>
-                            </Button>
-
-                            <Button size="large" variant="contained" color="secondary" startIcon={<Favorite color="primary" />} sx={{
-                                marginRight: '1rem',
-                                borderRadius: '2rem',
-                                boxShadow: 'none'
+                                boxShadow: 'none',
+                                width: { xs: '100%', sm: 'auto'}
                             }}>
                                 <Typography variant="body1" color="primary" sx={{
                                     fontWeight: 600,
