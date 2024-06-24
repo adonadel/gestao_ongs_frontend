@@ -1,25 +1,33 @@
 import { AddPhotoAlternateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Avatar, Box, Button, Divider, FormControl, Grid, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
-import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import axios, { AxiosResponse } from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { baseApi } from '../../../lib/api';
+import FullLoader from '../../../shared/components/loading/FullLoader';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
-import { TextMaskCep, TextMaskCpfCnpj } from '../../../shared/utils/masks';
+import useAuthStore from '../../../shared/store/authStore';
+import { TextMaskCep, TextMaskCpfCnpj, TextMaskTelephone } from '../../../shared/utils/masks';
+import { isValidCNPJ, isValidCPF } from '../../../shared/utils/validate';
 import { Role, User, UserType } from './types';
 
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
     const apiCepUrl = import.meta.env.VITE_API_CEP;
     const imageUrl = import.meta.env.VITE_URL_IMAGE;
+    const isTokenRefreshed = useRef(false);
+
     const { id } = useParams<{ id: string }>();
     const [user, setUser] = useState<User | null>(null);
     const [roles, setRoles] = useState<Role[]>([]);
     const [showPassword, setShowPassword] = useState(false);
     const isEditMode = !!id;
-
+    const { userLogged, setToken } = useAuthStore(state => ({
+        user: state.userData,
+        setToken: state.setToken
+    }));
     const VisuallyHiddenInput = styled('input')({
         clip: 'rect(0 0 0 0)',
         clipPath: 'inset(50%)',
@@ -31,7 +39,7 @@ const UserUpdate: React.FC = () => {
         whiteSpace: 'nowrap',
         width: 1,
     });
-    const { register, handleSubmit, setValue, formState } = useForm<User>();
+    const { control, register, handleSubmit, setValue, formState } = useForm<User>();
     const [srcUserProfile, setSrcUserProfile] = useState<string | null>('');
     const [isLoading, setIsLoading] = useState(false);
     const [cepSearched, setCepSearched] = useState<boolean>(false);
@@ -77,6 +85,20 @@ const UserUpdate: React.FC = () => {
             setSrcUserProfile(`${imageUrl + media.filename_id}`);
 
         } catch (error) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    postImage(event);
+                } catch (error) {
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to fetch users:", error);
+            }
             setTextMessage('Ocorreu um erro com o upload da imagem, tente novamente!');
             setTypeMessage('error');
             setOpenMessage(true);
@@ -139,6 +161,20 @@ const UserUpdate: React.FC = () => {
                 const roles = response.data.data;
                 setRoles(roles);
             } catch (error) {
+                if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                    console.log("Refreshing token...");
+                    try {
+                        isTokenRefreshed.current = true;
+                        const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                        const refreshToken = responseRefreshToken.data.newToken;
+                        setToken(refreshToken);
+                        fetchRoles();
+                    } catch (error) {
+                        navigate('/login');
+                    }
+                } else {
+                    console.error("Failed to fetch users:", error);
+                }
                 setTextMessage('Ocorreu um erro ao acessar essa página!');
                 setTypeMessage('error');
                 setOpenMessage(true);
@@ -156,6 +192,20 @@ const UserUpdate: React.FC = () => {
                     setSrcUserProfile(`${imageUrl + user?.person?.profile_picture?.filename_id}`);
                     setUser(user);
                 } catch (error) {
+                    if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                        console.log("Refreshing token...");
+                        try {
+                            isTokenRefreshed.current = true;
+                            const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                            const refreshToken = responseRefreshToken.data.newToken;
+                            setToken(refreshToken);
+                            fetchUser();
+                        } catch (error) {
+                            navigate('/login');
+                        }
+                    } else {
+                        console.error("Failed to fetch users:", error);
+                    }
                     setTextMessage('Ocorreu um erro ao acessar essa página!');
                     setTypeMessage('error');
                     setOpenMessage(true);
@@ -175,14 +225,39 @@ const UserUpdate: React.FC = () => {
             }
             navigate('/admin/users');
         } catch (error) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    onSubmit(data);
+                } catch (error) {
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to fetch users:", error);
+            }
             setTextMessage('Ocorreu um erro ao salvar o usuário!');
             setTypeMessage('error');
             setOpenMessage(true);
         }
     };
 
+    const isValidCPFOrCNPJ = (input: string): boolean => {
+        const cleanedInput = input.replace(/[^\d]+/g, '');
+        if (cleanedInput.length === 11) {
+            return isValidCPF(cleanedInput);
+        } else if (cleanedInput.length === 14) {
+            return isValidCNPJ(cleanedInput);
+        }
+        return false;
+    };
+
+
     if (isEditMode && !user || !roles.length) {
-        return <div>Loading...</div>;
+        return <FullLoader />;
     }
 
     return (
@@ -295,16 +370,29 @@ const UserUpdate: React.FC = () => {
                         />
                     </Grid>
                     <Grid item xs={6}>
-                        <TextField
-                            label='CPF/CNPJ'
-                            type="text"
-                            fullWidth
-                            {...register('person.cpf_cnpj')}
-                            defaultValue={isEditMode ? user?.person.cpf_cnpj : ''}
-                            variant='outlined'
-                            InputProps={{
-                                inputComponent: TextMaskCpfCnpj as unknown as React.ElementType<InputBaseComponentProps>,
+                        <Controller
+                            name="person.cpf_cnpj"
+                            control={control}
+                            rules={{
+                                required: "CPF/CNPJ obrigatorios",
+                                validate: value => isValidCPFOrCNPJ(value) || "CPF/CNPJ inválido"
                             }}
+                            render={({ field }) => (
+                                <TextField
+                                    {...field}
+                                    label='CPF/CNPJ'
+                                    type="text"
+                                    fullWidth
+                                    {...register('person.cpf_cnpj')}
+                                    defaultValue={isEditMode ? user?.person.cpf_cnpj : ''}
+                                    variant='outlined'
+                                    InputProps={{
+                                        inputComponent: TextMaskCpfCnpj as unknown as React.ElementType<InputBaseComponentProps>,
+                                    }}
+                                    error={!!formState.errors.person?.cpf_cnpj}
+                                    helperText={formState.errors.person?.cpf_cnpj?.message}
+                                />
+                            )}
                         />
                     </Grid>
                     <Grid item xs={6}
@@ -338,12 +426,15 @@ const UserUpdate: React.FC = () => {
                         <TextField
                             label='Telefone'
                             type="text"
-                            {...register('person.phone', { required: 'Telefone necessário', pattern: { value: /^[0-9]/i, message: 'Telefone inválido' } })}
+                            {...register('person.phone', { required: 'Telefone necessário' })}
                             error={!!formState.errors.person?.phone}
                             helperText={formState.errors.person?.phone?.message}
                             defaultValue={isEditMode ? user?.person.phone : ''}
                             variant='outlined'
                             fullWidth
+                            InputProps={{
+                                inputComponent: TextMaskTelephone as unknown as React.ElementType<InputBaseComponentProps>,
+                            }}
                         />
                     </Grid>
 

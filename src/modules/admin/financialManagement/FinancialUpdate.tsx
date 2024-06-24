@@ -1,14 +1,17 @@
 import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { baseApi } from '../../../lib/api';
 import AutoComplete from "../../../shared/components/autoComplete/AutoComplete.tsx";
+import FullLoader from '../../../shared/components/loading/FullLoader.tsx';
 import { Loading } from '../../../shared/components/loading/Loading';
 import { Message } from '../../../shared/components/message/Message';
+import useAuthStore from '../../../shared/store/authStore.ts';
 import { Financial } from './types';
 
 const FinancialUpdate: React.FC = () => {
@@ -23,6 +26,11 @@ const FinancialUpdate: React.FC = () => {
 	const [money, setMoney] = useState(0);
 	const [selectedAnimalId, setSelectedAnimalId] = useState(null);
 	const [selectedUserId, setSelectedUserId] = useState(null);
+	const isTokenRefreshed = useRef(false);
+	const { user, setToken } = useAuthStore(state => ({
+		user: state.userData,
+		setToken: state.setToken
+	}));
 
 	const handleClose = () => {
 		setOpenMessage(false);
@@ -48,10 +56,23 @@ const FinancialUpdate: React.FC = () => {
 					setValue('animal_id', finance.animal_id);
 					setFormattedMoney(finance.value.replace('.', ','));
 					setFinance(finance);
-				} catch (error) {
-					setTextMessage('Ocorreu um erro ao acessar essa página!');
-					setTypeMessage('error');
-					setOpenMessage(true);
+				} catch (error: any) {
+					if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+						console.log("Refreshing token...");
+						try {
+							isTokenRefreshed.current = true;
+							const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+							const refreshToken = responseRefreshToken.data.newToken;
+							setToken(refreshToken);
+							fetchFinancial();
+						} catch (error) {
+							navigate('/login');
+						}
+					} else {
+						console.error("Failed to fetch users:", error);
+					}
+				} finally {
+					setIsLoading(false);
 				}
 			};
 			fetchFinancial();
@@ -80,10 +101,23 @@ const FinancialUpdate: React.FC = () => {
 				await baseApi.post(`/api/finances`, data);
 			}
 			navigate('/admin/financial');
-		} catch (error) {
-			setTextMessage('Ocorreu um erro ao salvar o financeo!');
-			setTypeMessage('error');
-			setOpenMessage(true);
+		} catch (error: any) {
+			if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+				console.log("Refreshing token...");
+				try {
+					isTokenRefreshed.current = true;
+					const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+					const refreshToken = responseRefreshToken.data.newToken;
+					setToken(refreshToken);
+					onSubmit(data);
+				} catch (error) {
+					navigate('/login');
+				}
+			} else {
+				console.error("Failed to fetch users:", error);
+			}
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -120,7 +154,7 @@ const FinancialUpdate: React.FC = () => {
 	}, [selectedAnimalId]);
 
 	if (isEditMode && !finance) {
-		return <div>Loading...</div>;
+		return <FullLoader />;
 	}
 
 	return (
