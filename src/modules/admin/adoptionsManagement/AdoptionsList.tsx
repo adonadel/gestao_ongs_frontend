@@ -131,7 +131,6 @@ function AdoptionsList() {
     try {
       const response: AxiosResponse = await baseApi.get(`/api/adoptions/?search=${search}&page=${page}`);
       const adoptions = response.data.data;
-      console.log(adoptions)
       setAdoptions(adoptions);
       setPaginate(response.data);
     } catch (error: any) {

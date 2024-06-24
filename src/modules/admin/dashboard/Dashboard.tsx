@@ -72,7 +72,7 @@ function Dashboard() {
             </Grid>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={12} md={6} lg={6}>
-                {(isLoading && seriesData) ? (
+                {(isLoading && seriesData && seriesData?.chart[0]?.data) ? (
                   <Loading /> 
                 ) : (
                   <LineChart
