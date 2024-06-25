@@ -1,5 +1,6 @@
 import { VolunteerActivism } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material"
+import { Link } from "react-router-dom";
 
 export const CardDonate = () => {
   return (
@@ -28,19 +29,20 @@ export const CardDonate = () => {
       }} />
       <Typography variant="body1" color="initial">Faça uma doação e ajude a salvar mais patinhas!</Typography>
 
-      <Button
-        component="label"
+      <Button        
+        type="button"
         role={undefined}
         variant="contained"
         color="secondary"
         fullWidth
         tabIndex={-1}
         startIcon={<VolunteerActivism sx={{ color: '#ffffff50' }} />}
-        href="/donate"
         sx={{
           borderRadius: '2rem',
           padding: '0.5rem 1.5rem',
         }}
+        component={Link}
+        to="/donate"
       >
         <Typography variant="body1" color="primary" fontWeight={'600'}>Doar</Typography>
       </Button>

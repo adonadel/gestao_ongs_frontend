@@ -1,5 +1,6 @@
 import { Troubleshoot } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material"
+import { Link } from "react-router-dom";
 
 export const CardTransparency = () => {
   return (
@@ -26,7 +27,6 @@ export const CardTransparency = () => {
       <Typography variant="body1" color="initial">Veja como seu dinheiro está sendo investido.</Typography>
 
       <Button
-        component="label"
         role={undefined}
         variant="contained"
         color="secondary"
@@ -37,6 +37,8 @@ export const CardTransparency = () => {
           borderRadius: '2rem',
           padding: '0.5rem 1.5rem',
         }}
+        component={Link}
+        to="/transparency"
       >
         <Typography variant="body1" color="primary" fontWeight={'600'}>Consultar</Typography>
       </Button>

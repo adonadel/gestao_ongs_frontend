@@ -109,7 +109,9 @@ export default function Register() {
 
     return (
         <FormProvider {...methods}>
-            <Grid container justifyContent='center'>
+            <Grid container justifyContent='center' sx={{
+                marginTop: '2rem',
+            }}>
                 <Grid item xs={12}>
                     <Stepper alternativeLabel activeStep={activeStep}>
                         {steps.map((label) => (

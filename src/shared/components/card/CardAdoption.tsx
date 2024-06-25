@@ -1,5 +1,6 @@
 import { Favorite } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material"
+import { Link } from "react-router-dom";
 
 export const CardAdoption = () => {
     return (
@@ -30,7 +31,6 @@ export const CardAdoption = () => {
             <Typography variant="body1" color="initial">Candidate-se para adoção responsável</Typography>
 
             <Button
-                component="label"
                 role={undefined}
                 variant="contained"
                 color="secondary"
@@ -41,6 +41,8 @@ export const CardAdoption = () => {
                     borderRadius: '2rem',
                     padding: '0.5rem 1.5rem',
                 }}
+                component={Link}
+                to="/#adoption"
             >
                 <Typography variant="body1" color="primary" fontWeight={'600'}>ADOTAR</Typography>
             </Button>
