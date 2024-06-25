@@ -72,7 +72,7 @@ export const Adoption = () => {
 
     const handleNext = async () => {
         if (activeStep === steps.length - 1) {
-            navigate(`/animal/${id}`);
+            navigate('/');
         } else {
             setActiveStep((prev) => prev + 1);
             postAdoption();

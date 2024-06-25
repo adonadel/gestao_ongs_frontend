@@ -54,7 +54,7 @@ export const StepConfirm = () => {
     useEffect(() => {
         const setAnimalImageProfile = () => {
             if (animal && animal.medias && animal.medias.length > 0) {
-                const coverImage = animal.medias.find((media) => media.pivot.is_cover == "true");
+                const coverImage = animal.medias.find((media) => media.pivot.is_cover === "true");      
                 if (coverImage) {
                     setAnimalProfileImage(coverImage.filename_id);
                 } else {
@@ -73,24 +73,42 @@ export const StepConfirm = () => {
 
     return (
         <Grid container display={'flex'} alignItems={'center'} spacing={0} justifyContent={"center"} sx={{
-            marginBottom: { xs: '2rem', sm: '0rem'}
+            marginBottom: { xs: '2rem', sm: '0rem' }
         }}>
-            <Grid item xs={10} sm={5} justifyContent={"center"} sx={{
+            <Grid item sm={5} justifyContent={"center"} sx={{
                 marginTop: { xs: '-2rem', sm: '0rem' },
+                display: { xs: 'none', sm: 'block' },
             }}>
                 <CardAnimalForAdoption showButton={false} animal={animal} heightImage="160" scaleCard="0.7" />
             </Grid>
-            <Grid item xs={8} sm={7}>
-                <Typography variant="body1" color="initial" sx={{
+
+            <Grid item xs={8} sm={7} sx={{
+                marginBottom: { xs: '2rem', sm: '0rem' }
+            }}>
+                <Box sx={{
+                    display: { xs: 'flex', sm: 'none' },
+                    alignItems: 'center',
+                    justifyContent: { xs: 'center', sm: 'flex-start' },
+                    gap: '1rem',
+                    marginTop: '2rem',
                     marginBottom: '1rem',
-                    marginTop: { xs: '-2rem', sm: '0rem' },
-                    
+                }}>
+                    <Avatar src={urlImageApi + animalProfileImage} />
+                    <Typography variant="h4" color="secondary.main" sx={{
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                    }}>{animal.name}</Typography>
+                </Box>
+
+                <Typography variant="body1" color="initial" sx={{
+                    marginBottom: '1.2rem',
+                    textAlign: { xs: 'center', sm: 'left' }
                 }}>
                     Olá {userData?.person?.name}, muito obrigado pelo interesse em dar um lar para {animal.gender == 'MALE' ? "o nosso amiguinho" : "a nossa amiguinha"} <strong>{animal.name}</strong>!
                 </Typography>
 
                 <Typography variant="body2" color="initial" sx={{
-                    
+                    textAlign: { xs: 'center', sm: 'left' }
                 }}>
                     Só precisamos que você confirme. Vale destacar que a solicitação não garante a adoção do animal.
                 </Typography>
