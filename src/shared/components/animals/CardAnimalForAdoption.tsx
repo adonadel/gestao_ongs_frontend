@@ -11,7 +11,7 @@ export interface Media {
 export interface Animal {
     animal: {
         id: number;
-        name: string
+        name: string;
         gender: string;
         size: string;
         age_type: string;

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { baseApi } from "../../lib/api";
 import { GridAnimalsForAdoption } from "../../shared/components/animals/GridAnimalsForAdoption";
-import { Box, Container, Grid, Typography, Button, CircularProgress } from "@mui/material";
+import { Box, Container, Grid, Typography, Button, CircularProgress, Divider } from "@mui/material";
 import { AnimalProfileCarousel } from "../../shared/components/carousel/AnimalProfileCarousel";
 import { Cake, Favorite, Height, Pets } from "@mui/icons-material";
 
@@ -156,7 +156,14 @@ export const AnimalAdoption = () => {
                 </Grid>
             </Grid>
 
-            <Grid container mt={10}>
+            <Grid item xs={12}>
+                <Divider sx={{
+                    marginTop: '4rem',
+                    marginBottom: '0rem'
+                }}/>
+            </Grid>
+
+            <Grid container mt={4}>
                 <GridAnimalsForAdoption />
             </Grid>
         </Container>

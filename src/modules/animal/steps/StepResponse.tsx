@@ -4,7 +4,7 @@ import useAuthStore from "../../../shared/store/authStore";
 import { useEffect, useState } from "react";
 import { baseApi } from "../../../lib/api";
 import { useParams } from "react-router-dom";
-import { Animal } from "../../../shared/components/animals/CardAnimalForAdoption";
+import { Animal } from "./StepConfirm";
 
 export const StepResponse = () => {
     const { id } = useParams<{ id: string }>();
@@ -32,12 +32,12 @@ export const StepResponse = () => {
 
     useEffect(() => {
         const setAnimalImageProfile = () => {
-            if (animal && animal.animal.medias && animal.animal.medias.length > 0) {
-                const coverImage = animal.animal.medias.find((media) => media.pivot.is_cover == "true");
+            if (animal && animal.medias && animal.medias.length > 0) {
+                const coverImage = animal.medias.find((media) => media.pivot.is_cover == "true");
                 if (coverImage) {
                     setAnimalProfileImage(coverImage.filename_id);
                 } else {
-                    setAnimalProfileImage(animal.animal.medias[0].filename_id);
+                    setAnimalProfileImage(animal.medias[0].filename_id);
                 }
             }
         };
@@ -51,11 +51,12 @@ export const StepResponse = () => {
     }
 
     return (
-        <Grid container display={'flex'} alignItems={'center'} spacing={4}>
-            <Grid item xs={7}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', }}>
+        <Grid container display={'flex'} alignItems={'center'} spacing={4} justifyContent={"center"} mt={2}>
+            <Grid item xs={7} justifyContent={"center"}>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem'}}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem', }}>                        
-                        <Typography variant="h4" color="grey.700" sx={{ fontSize: { xs: '0.8rem', sm: '1rem' }, fontWeight: 500, }}>{userData?.person.name}</Typography>
+                        <Typography variant="h4" color="grey.700" sx={{ fontSize: { xs: '0.8rem', sm: '1rem' }, fontWeight: 500, }}>Você</Typography>
                     </Box>
 
                     <Add color="secondary" sx={{
@@ -71,7 +72,7 @@ export const StepResponse = () => {
                         <Typography variant="h4" color="grey.700" sx={{
                             fontSize: { xs: '0.8rem', sm: '1rem' },
                             fontWeight: 500,
-                        }}>{animal.animal.name}</Typography>
+                        }}>{animal.name}</Typography>
                     </Box>
 
                     <East color="secondary" sx={{
@@ -84,19 +85,19 @@ export const StepResponse = () => {
                 </Box>
 
                 <Typography variant="body1" color="initial" sx={{
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
+                    marginTop: '2rem',
+                    marginBottom: '2rem',
                 }}>
-                    {userData?.person?.name}, agrademos a sua candidatura para adoção de <strong>{animal.animal.name}</strong>, estamos muito animados com isso.
+                    {userData?.person?.name}, agrademos a sua candidatura para a adoção de <strong>{animal.name}</strong>, nós estamos muito animados e vamos analisar a sua solicitação com muito carinho.
                 </Typography>                
 
                 <Paper elevation={1} sx={{
                     padding: '1rem',
                     marginTop: '1rem',
-                    backgroundColor: 'grey.100'
+                    backgroundColor: 'info.main'
                 }}>
-                    <Typography variant="body2" color="initial">
-                        Nossa equipe precisa de um tempinho para analisar sua solicitação. Enviaremos um E-mail para {userData?.person.email} dentro de alguns dias com a resposta sobre a adoção.
+                    <Typography variant="body2" color="primary">
+                        Dentro de alguns dia enviaremos um E-mail para <strong>{userData?.person.email}</strong> com a resposta sobre a adoção.
                     </Typography>
                 </Paper>
 
