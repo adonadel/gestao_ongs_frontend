@@ -2,7 +2,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { ExternalUser } from "../../admin/usersManagement/types";
+import { ExternalUser } from "../../../admin/usersManagement/types";
 
 export default function StepUser() {
     const { register, formState } = useFormContext<ExternalUser>();

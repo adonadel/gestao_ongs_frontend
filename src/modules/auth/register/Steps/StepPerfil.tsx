@@ -1,7 +1,7 @@
 import { InputBaseComponentProps, TextField } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
-import { TextMaskCpfCnpj } from '../../../shared/utils/masks';
-import { ExternalUser } from '../../admin/usersManagement/types';
+import { TextMaskCpfCnpj } from '../../../../shared/utils/masks';
+import { ExternalUser } from '../../../admin/usersManagement/types';
 
 export default function StepPerfil() {
     const { register, formState } = useFormContext<ExternalUser>();

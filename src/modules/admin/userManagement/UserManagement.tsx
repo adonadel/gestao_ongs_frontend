@@ -1,6 +1,6 @@
 import { Avatar, Box, Grid, Paper, TextField } from "@mui/material";
 import useAuthStore from "../../../shared/store/authStore";
-import { Logout } from "../../logout/Logout";
+import { Logout } from "../../auth/logout/Logout";
 
 export const UserManagement = () => {
     const { userData } = useAuthStore((state) => ({
@@ -8,7 +8,7 @@ export const UserManagement = () => {
     }));
 
     return (
-        <Grid container justifyContent="center" alignItems="center" >
+        <Grid container justifyContent="center" alignItems="center" marginTop={4}>
             <Grid item xs={10} sm={8} md={6} lg={4} >
                 <Paper elevation={3} sx={{ padding: '40px', borderRadius: '20px' }}>
                     <Box display="flex" flexDirection="column" alignItems="center">

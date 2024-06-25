@@ -1,7 +1,7 @@
 import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import useAuthStore from "../../shared/store/authStore";
+import useAuthStore from "../../../shared/store/authStore";
 
 interface ILogoutModalProps {
   open: boolean;

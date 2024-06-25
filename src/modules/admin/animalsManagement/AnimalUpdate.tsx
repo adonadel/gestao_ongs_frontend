@@ -1,15 +1,33 @@
-import { Delete, Filter } from '@mui/icons-material';
-import { Avatar, Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { baseApi } from "../../../lib/api.ts";
+import {Delete, Filter} from '@mui/icons-material';
+import {
+    Avatar,
+    Box,
+    Button,
+    FormControl,
+    FormControlLabel,
+    Grid,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Radio,
+    RadioGroup,
+    Select,
+    TextField
+} from '@mui/material';
+import {AxiosResponse} from 'axios';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {baseApi} from "../../../lib/api.ts";
 import FullLoader from '../../../shared/components/loading/FullLoader';
-import { Loading } from '../../../shared/components/loading/Loading';
-import { Animal } from './types';
+import {Loading} from '../../../shared/components/loading/Loading';
+import useAuthStore from '../../../shared/store/authStore.ts';
+import {Animal} from './types';
 
 const AnimalUpdate: React.FC = () => {
     const navigate = useNavigate();
+    const isTokenRefreshed = useRef(false);
+
     const { id } = useParams<{ id: string }>();
     const [animal, setAnimal] = useState<Animal | null>(null);
     const { register, handleSubmit, setValue, formState } = useForm<Animal>();
@@ -18,18 +36,36 @@ const AnimalUpdate: React.FC = () => {
     const [images, setImages] = useState<any>();
     const imageUrl = import.meta.env.VITE_URL_IMAGE;
     const [imagesId, setImagesId] = useState<string>("");
+    const { user, setToken } = useAuthStore(state => ({
+        user: state.userData,
+        setToken: state.setToken
+    }));
 
     const openImagePicker = () => {
         document.getElementById('imagePicker')?.click();
     }
 
-    const handleDeleteImage = (id: number) => {
+    const handleDeleteImage = async (id: number) => {
         try {
             baseApi.delete(`/api/medias/${id}`);
-        } catch (error) {
-            console.log("Error:", error);
+        } catch (error: any) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    handleDeleteImage(id);
+                } catch (error) {
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to submit animals:", error);
+            }
+        } finally {
+            setIsLoading(false);
         }
-
         const updatedImages = images.filter((image: any) => image.id !== id);
 
         const updatedImagesId = updatedImages.map((image: any) => image.id).join(",");
@@ -37,9 +73,7 @@ const AnimalUpdate: React.FC = () => {
         setImages(updatedImages);
         setImagesId(updatedImagesId);
         setValue(`medias`, updatedImagesId);
-
     }
-
 
     const handleImageSelect = async (imageId: number) => {
         const updateImageCoverStatus = async (id: number, isCover: boolean) => {
@@ -48,12 +82,25 @@ const AnimalUpdate: React.FC = () => {
                     `/api/medias/${id}`,
                     { is_cover: isCover, origin: 'animal' }
                 );
-                console.log(`Updated image ${id} with is_cover: ${isCover}`, response.data);
-            } catch (error) {
-                console.log("Error:", error);
+            } catch (error: any) {
+                if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                    console.log("Refreshing token...");
+                    try {
+                        isTokenRefreshed.current = true;
+                        const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                        const refreshToken = responseRefreshToken.data.newToken;
+                        setToken(refreshToken);
+                        handleImageSelect(imageId);
+                    } catch (error) {
+                        navigate('/login');
+                    }
+                } else {
+                    console.error("Failed to submit animals:", error);
+                }
+            } finally {
+                setIsLoading(false);
             }
         };
-
 
         await updateImageCoverStatus(imageId, true);
         const updatePromises = images
@@ -103,14 +150,25 @@ const AnimalUpdate: React.FC = () => {
 
             setValue(`medias`, updatedImagesId);
 
-        } catch (error) {
-            console.log("Error:", error);
+        } catch (error: any) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    handleImageChange(e);
+                } catch (error) {
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to submit animals:", error);
+            }
         } finally {
             setIsLoading(false);
         }
-
     }
-
 
     useEffect(() => {
         if (isEditMode) {
@@ -120,8 +178,23 @@ const AnimalUpdate: React.FC = () => {
                     const animal = response.data;
                     setAnimal(animal);
                     setImages(animal.medias);
-                } catch (error) {
-                    navigate('/login');
+                } catch (error: any) {
+                    if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                        console.log("Refreshing token...");
+                        try {
+                            isTokenRefreshed.current = true;
+                            const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                            const refreshToken = responseRefreshToken.data.newToken;
+                            setToken(refreshToken);
+                            fetchAnimal();
+                        } catch (error) {
+                            navigate('/login');
+                        }
+                    } else {
+                        console.error("Failed to fetch animal:", error);
+                    }
+                } finally {
+                    setIsLoading(false);
                 }
             };
             fetchAnimal();
@@ -136,9 +209,24 @@ const AnimalUpdate: React.FC = () => {
             } else {
                 await baseApi.post(`/api/animals`, data);
             }
-            navigate('/animals');
-        } catch (error) {
-            // navigate('/login');
+            navigate('/admin/animals');
+        } catch (error: any) {
+            if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
+                console.log("Refreshing token...");
+                try {
+                    isTokenRefreshed.current = true;
+                    const responseRefreshToken: AxiosResponse = await baseApi.post(`/api/auth/refresh`);
+                    const refreshToken = responseRefreshToken.data.newToken;
+                    setToken(refreshToken);
+                    onSubmit(data);
+                } catch (error) {
+                    navigate('/login');
+                }
+            } else {
+                console.error("Failed to submit animals:", error);
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 

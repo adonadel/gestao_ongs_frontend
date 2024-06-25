@@ -5,9 +5,9 @@ import { Avatar, Box, Button, CircularProgress, FormControl, Grid, IconButton, I
 import axios, { AxiosResponse } from "axios";
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import PatinhasLogo from '../../assets/images/patinhas-carentes.png';
-import { baseApi } from '../../lib/api';
-import useAuthStore from '../../shared/store/authStore';
+import PatinhasLogo from '../../../assets/images/patinhas-carentes.png';
+import { baseApi } from '../../../lib/api';
+import useAuthStore from '../../../shared/store/authStore';
 
 function Login() {
   const navigate = useNavigate();
@@ -39,9 +39,9 @@ function Login() {
       if (response.status === 200) {
         userMe(response.data)
         if (response.data.type === 'INTERNAL') {
-          navigate('/dashboard');
+          navigate('/admin/dashboard');
         } else {
-          navigate('/user');
+          navigate('/external');
         }
 
       }
@@ -74,7 +74,7 @@ function Login() {
   }
 
   return (
-    <Grid container justifyContent="center" alignItems="center" >
+    <Grid container justifyContent="center" alignItems="center" marginTop={4}>
       <Grid item xs={10} sm={8} md={6} lg={4} >
         <Paper elevation={3} sx={{ padding: '40px', borderRadius: '20px' }}>
           <Box display="flex" flexDirection="column" alignItems="center">
@@ -157,6 +157,7 @@ function Login() {
             <Grid item sx={{ marginTop: 2, textAlign: 'center' }}>
               <Button
                 variant="text"
+                onClick={() => navigate('/forgot-password')}
                 sx={{ textDecoration: 'underline', textTransform: 'initial', color: 'common.black' }}
               >
                 <Typography sx={{ fontSize: '.8125rem' }}>Esqueci minha senha</Typography>

@@ -4,13 +4,13 @@ import { AxiosResponse } from "axios";
 import { useState } from "react";
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from "react-router-dom";
-import { baseApi } from '../../lib/api';
-import { Message } from "../../shared/components/message/Message";
-import useAuthStore from "../../shared/store/authStore";
-import { ExternalUser } from '../admin/usersManagement/types';
-import StepAddress from './Steps/StepAddress';
-import StepPerfil from './Steps/StepPerfil';
-import StepUser from './Steps/StepUser';
+import { baseApi } from "../../../lib/api";
+import { Message } from "../../../shared/components/message/Message";
+import useAuthStore from "../../../shared/store/authStore";
+import { ExternalUser } from "../../admin/usersManagement/types";
+import StepAddress from "./Steps/StepAddress";
+import StepPerfil from "./Steps/StepPerfil";
+import StepUser from "./Steps/StepUser";
 
 const steps = [
     'Perfil',
