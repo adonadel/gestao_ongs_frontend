@@ -1,5 +1,5 @@
-import {createBrowserRouter, createRoutesFromElements, Route} from "react-router-dom";
-import {Fragment} from "react/jsx-runtime";
+import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 import AnimalList from "../modules/admin/animalsManagement/AnimalList";
 import AnimalUpdate from "../modules/admin/animalsManagement/AnimalUpdate";
 import Dashboard from "../modules/admin/dashboard/Dashboard.tsx";
@@ -9,10 +9,10 @@ import AdoptionsList from "../modules/admin/adoptionsManagement/AdoptionsList.ts
 import AdoptionsUpdate from "../modules/admin/adoptionsManagement/AdoptionsUpdate.tsx";
 import RolesList from "../modules/admin/rolesManagement/RolesList";
 import RolesUpdate from "../modules/admin/rolesManagement/RolesUpdate";
-import {UserManagement} from "../modules/admin/userManagement/UserManagement";
+import { UserManagement } from "../modules/admin/userManagement/UserManagement";
 import UserList from "../modules/admin/usersManagement/UserList";
 import UserUpdate from "../modules/admin/usersManagement/UserUpdate";
-import {ExternalUser} from "../modules/auth/externalUser/ExternalUser.tsx";
+import { ExternalUser } from "../modules/auth/externalUser/ExternalUser.tsx";
 import ForgotPassword from "../modules/auth/forgotPassword/ForgotPassword.tsx";
 import ResetPassword from "../modules/auth/resetPassword/ResetPassword.tsx";
 import ErrorPage from "../modules/error/Error";
@@ -27,6 +27,7 @@ import { AnimalAdoption } from "../modules/animal/Animal.tsx";
 import { Adoption } from "../modules/animal/Adoption.tsx";
 import Login from "../modules/auth/login/Login.tsx";
 import Register from "../modules/auth/register/Register.tsx";
+import { Transparency } from "../modules/transparency/Transparency.tsx";
 
 
 export const router = createBrowserRouter(
@@ -51,9 +52,11 @@ export const router = createBrowserRouter(
                 <Route path="/donate/thanks" element={<Success />} />
 
                 /* Animal */
-
                 <Route path="/animal/:id" element={<AnimalAdoption />} />
                 <Route path="/adoption/:id" element={<Adoption />} />
+
+                /* Transparência */
+                <Route path="/transparency" element={<Transparency />} />
 
             </Route>
 
