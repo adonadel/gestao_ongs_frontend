@@ -71,17 +71,21 @@ function Dashboard() {
               </Grid>
             </Grid>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={6} lg={6}>
                 {(isLoading && seriesData) ? (
-                  <Loading /> 
+                  <Grid item xs={12} sm={12} md={6} lg={6}>
+                    <Loading /> 
+                  </Grid>
                 ) : (
-                  <LineChart
-                  footerType={dashboardType}
-                  seriesData={seriesData}
-                  chartTitle='Relação de entradas e saídas'
-                />
+                    seriesData[0].data.length !== 0 && (
+                      <Grid item xs={12} sm={12} md={6} lg={6}>
+                        <LineChart
+                          footerType={dashboardType}
+                          seriesData={seriesData}
+                          chartTitle='Relação de entradas e saídas'
+                        />
+                      </Grid>
+                    )
                 ) }
-              </Grid>
               <Grid item xs={4} sm={4} md={2} lg={2}>
                 <Box sx={
                     {

@@ -1,14 +1,28 @@
-import { Delete, Filter } from '@mui/icons-material';
-import { Avatar, Box, Button, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
-import { AxiosResponse } from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { baseApi } from "../../../lib/api.ts";
+import {Delete, Filter} from '@mui/icons-material';
+import {
+    Avatar,
+    Box,
+    Button,
+    FormControl,
+    FormControlLabel,
+    Grid,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Radio,
+    RadioGroup,
+    Select,
+    TextField
+} from '@mui/material';
+import {AxiosResponse} from 'axios';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {baseApi} from "../../../lib/api.ts";
 import FullLoader from '../../../shared/components/loading/FullLoader';
-import { Loading } from '../../../shared/components/loading/Loading';
+import {Loading} from '../../../shared/components/loading/Loading';
 import useAuthStore from '../../../shared/store/authStore.ts';
-import { Animal } from './types';
+import {Animal} from './types';
 
 const AnimalUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -68,7 +82,6 @@ const AnimalUpdate: React.FC = () => {
                     `/api/medias/${id}`,
                     { is_cover: isCover, origin: 'animal' }
                 );
-                console.log(`Updated image ${id} with is_cover: ${isCover}`, response.data);
             } catch (error: any) {
                 if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
                     console.log("Refreshing token...");
