@@ -76,7 +76,7 @@ function Dashboard() {
                     <Loading /> 
                   </Grid>
                 ) : (
-                    seriesData?[0].data && (
+                    seriesData[0].data.length !== 0 && (
                       <Grid item xs={12} sm={12} md={6} lg={6}>
                         <LineChart
                           footerType={dashboardType}
@@ -84,7 +84,7 @@ function Dashboard() {
                           chartTitle='Relação de entradas e saídas'
                         />
                       </Grid>
-                    ) : <></>
+                    )
                 ) }
               <Grid item xs={4} sm={4} md={2} lg={2}>
                 <Box sx={
