@@ -3,6 +3,7 @@ import { Fragment, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { theme } from "../styles/theme";
 import DefaultHeader from "../components/header/DefaultHeader";
+import { DefaultFooter } from "../components/footer/DefaultFooter";
 
 export function WebLayout() {
     const [open] = useState(false);
@@ -14,6 +15,7 @@ export function WebLayout() {
                 <Box>
                     <Outlet />
                 </Box>
+                <DefaultFooter />
             </ThemeProvider>
         </Fragment>
 

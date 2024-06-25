@@ -142,7 +142,7 @@ export const Donate = () => {
                             fontWeight: 500,
                             marginBottom: '2rem',
                         }}>
-                            Sua ajuda é muito importante pra gente.
+                            Com quanto você pode nos ajudar hoje?
                         </Typography>
                         <img src="/image-checkout-donate.svg" alt="Doação" style={{
                             width: '70%',
@@ -166,7 +166,7 @@ export const Donate = () => {
                             marginBottom: '1.5rem',
 
                         }}>
-                            Com quanto você pode nos ajudar hoje?
+                            Selecione um valor
                         </Typography>
                         <FormControl component="fieldset">
                             <RadioGroup aria-label="Valor para doar" name="donateValue" value={donateId} onChange={(e) => { setDonateId(e.target.value) }}>

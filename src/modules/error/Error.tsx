@@ -1,5 +1,5 @@
-import { ChevronLeft, Home } from "@mui/icons-material";
-import { Container, Grid, Typography, Button, CardMedia, Card, CardContent, CardActions, Box } from "@mui/material";
+import { ChevronLeft } from "@mui/icons-material";
+import { Container, Grid, Typography, Button, Box } from "@mui/material";
 
 function ErrorPage() {
   return (
@@ -25,12 +25,12 @@ function ErrorPage() {
 
             <img src="/404_lost.svg" alt="Imagem de um cachorro sozinho" style={{
               width: "100%",
-              maxWidth: "400px",
+              maxWidth: "250px",
               margin: "0 auto",
               display: "block"
             }} />
             <Typography variant="h2" color="initial" sx={{
-              fontSize: "1.2rem",
+              fontSize: { xs: "1rem", md: "1.5rem" },
               fontWeight: "400",
               marginBottom: "1rem"
             }}>Ops! Parece que você se perdeu</Typography>
