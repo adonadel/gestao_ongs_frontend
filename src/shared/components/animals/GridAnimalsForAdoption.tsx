@@ -391,7 +391,7 @@ export const GridAnimalsForAdoption = () => {
 
                         animals.map(animal => (
                             <Grid item xs={12} sm={6} md={4} lg={3} >
-                                <CardAnimalForAdoption animal={animal} />
+                                <CardAnimalForAdoption showButton={true} animal={animal} />
                             </Grid>
                         ))
                     )

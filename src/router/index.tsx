@@ -23,8 +23,17 @@ import {Donate} from "../modules/donate/Donate.tsx";
 import Success from "../modules/donate/Success.tsx";
 import ErrorPage from "../modules/error/Error";
 import Home from "../modules/home/Home";
-import {DefaultLayout} from "../shared/layout/Default";
-import {WebLayout} from "../shared/layout/Web";
+import Login from "../modules/login/Login";
+import Register from "../modules/register/Register";
+import { DefaultLayout } from "../shared/layout/Default";
+import { WebLayout } from "../shared/layout/Web";
+import EventList from "../modules/admin/eventsManagement/EventList.tsx";
+import EventUpdate from "../modules/admin/eventsManagement/EventUpdate.tsx";
+import { Donate } from "../modules/donate/Donate.tsx";
+import Success from "../modules/donate/Success.tsx";
+import { AnimalAdoption } from "../modules/animal/Animal.tsx";
+import { StepConfirm } from "../modules/animal/steps/StepConfirm.tsx";
+import { Adoption } from "../modules/animal/Adoption.tsx";
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -46,6 +55,11 @@ export const router = createBrowserRouter(
                 <Route path="/donate/success/:id" element={<Donate />} />
                 <Route path="/donate/cancel/:id" element={<Donate />} />
                 <Route path="/donate/thanks" element={<Success />} />
+
+                /* Animal */
+
+                <Route path="/animal/:id" element={<AnimalAdoption />} />
+                <Route path="/adoption/:id" element={<Adoption />} />
 
             </Route>
 
