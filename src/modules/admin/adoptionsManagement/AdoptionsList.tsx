@@ -154,6 +154,9 @@ function AdoptionsList() {
   }, [search, navigate]);
 
   useEffect(() => {
+      if(!user?.role.permissions.filter(permission => permission.name === "adoption-view").length > 0) {
+          navigate('/admin/dashboard');
+      }
     fetchAdoptions();
   }, [fetchAdoptions]);
 
@@ -230,19 +233,23 @@ function AdoptionsList() {
               borderRadius: '10px',
             }}
           />
-          <Button
-            variant='contained'
-            color='success'
-            component={Link}
-            to="new"
-            endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
-            sx={{
-              padding: '10px',
-              borderRadius: '10px',
-            }}
-          >
-            <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
-          </Button>
+          {
+            user?.role.permissions.filter(permission => permission.name === "adoption-create").length > 0 ?
+              <Button
+                variant='contained'
+                color='success'
+                component={Link}
+                to="new"
+                endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
+                sx={{
+                  padding: '10px',
+                  borderRadius: '10px',
+                }}
+              >
+                <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
+              </Button>:
+              <></>
+          }
         </Grid>
       </Grid>
 
@@ -269,13 +276,17 @@ function AdoptionsList() {
                     <TableCell>{adoption.user.person.name}</TableCell>
                     <TableCell>{handleStatus(adoption.status)}</TableCell>
                     <TableCell>
-                      {(adoption.status.toLowerCase() === 'opened' || adoption.status.toLowerCase() === 'processing') && <>
-                        <IconButton onClick={() => handleOpenModal(adoption.id)}><EditIcon
-                          color="warning"/></IconButton><AdoptionStatusModal
-                        open={isModalOpen}
-                        handleClose={handleCloseModal}
-                        id={adoptionId}
-                        actualStatus={adoption.status}/></>
+                      {(
+                        adoption.status.toLowerCase() === 'opened' || adoption.status.toLowerCase() === 'processing') && 
+                        (user?.role.permissions.filter(permission => permission.name === "adoption-update-status").length > 0) && 
+                        <>
+                          <IconButton onClick={() => handleOpenModal(adoption.id)}><EditIcon
+                            color="warning"/></IconButton><AdoptionStatusModal
+                          open={isModalOpen}
+                          handleClose={handleCloseModal}
+                          id={adoptionId}
+                          actualStatus={adoption.status}/>
+                        </>
                       }
                     </TableCell>
                   </TableRow>

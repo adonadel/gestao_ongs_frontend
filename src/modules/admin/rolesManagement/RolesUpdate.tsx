@@ -1,13 +1,13 @@
-import { Button, Grid, Stack, TextField } from '@mui/material';
-import { AxiosResponse } from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { baseApi } from '../../../lib/api';
+import {Button, Grid, Stack, TextField} from '@mui/material';
+import {AxiosResponse} from 'axios';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
 import useAuthStore from '../../../shared/store/authStore';
 import PermissionsList from './PermissionsList';
-import { PermissionValues, RoleValues } from './types';
+import {PermissionValues, RoleValues} from './types';
 
 const RolesUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -52,6 +52,9 @@ const RolesUpdate: React.FC = () => {
     }, [])
 
     useEffect(() => {
+        if(!user?.role.permissions.filter(permission => permission.name === "role-update").length > 0) {
+            navigate('/admin/dashboard');
+        }
         setIsLoading(true);
         if (isEditMode) {
             const fetchRole = async () => {

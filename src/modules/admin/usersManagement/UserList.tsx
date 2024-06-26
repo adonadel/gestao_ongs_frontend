@@ -1,4 +1,4 @@
-import { AddCircleOutlineOutlined, Close, Search } from '@mui/icons-material';
+import {AddCircleOutlineOutlined, Close, Search} from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Avatar,
@@ -18,14 +18,14 @@ import {
   TableRow,
   Typography
 } from "@mui/material";
-import { AxiosResponse } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { baseApi } from '../../../lib/api';
+import {AxiosResponse} from "axios";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
 import useAuthStore from '../../../shared/store/authStore';
-import { Paginate } from '../../../shared/types';
-import { User, UserStatus } from './types';
+import {Paginate} from '../../../shared/types';
+import {User, UserStatus} from './types';
 
 function UserList() {
   const imageUrl = import.meta.env.VITE_URL_IMAGE;
@@ -69,6 +69,9 @@ function UserList() {
   }, [user, setToken, navigate, search]);
 
   useEffect(() => {
+    if(!user?.role.permissions.filter(permission => permission.name === "user-view").length > 0) {
+        navigate('/admin/dashboard');
+    }
     fetchUsers();
   }, [fetchUsers]);
 
@@ -146,19 +149,23 @@ function UserList() {
               borderRadius: '10px',
             }}
           />
-          <Button
-            variant='contained'
-            color='success'
-            component={Link}
-            to="new"
-            endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
-            sx={{
-              padding: '10px',
-              borderRadius: '10px',
-            }}
-          >
-            <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
-          </Button>
+          {
+            user?.role.permissions.filter(permission => permission.name === "user-create").length > 0 ?
+              <Button
+                variant='contained'
+                color='success'
+                component={Link}
+                to="new"
+                endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
+                sx={{
+                  padding: '10px',
+                  borderRadius: '10px',
+                }}
+              >
+                <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
+              </Button>:
+              <></>
+          }
         </Grid>
       </Grid>
 
@@ -190,12 +197,20 @@ function UserList() {
                     <TableCell>{user.person.email}</TableCell>
                     <TableCell>{user.role.name}</TableCell>
                     <TableCell>
-                      <IconButton size='small' component={Link} to={`${user.id}`}><EditIcon color="warning" /></IconButton>
-                      <Button color='error' onClick={() => changeStatus(user.id)} sx={{ marginLeft: 2 }}>
-                        <Typography sx={{ fontSize: '12px' }}>
-                          {user.status === UserStatus.ENABLED ? 'Desativar' : 'Ativar'}
-                        </Typography>
-                      </Button>
+                      {
+                        user?.role.permissions.filter(permission => permission.name === "user-update").length > 0 ? (
+                          <>
+                            <IconButton size='small' component={Link} to={`${user.id}`}>
+                              <EditIcon color="warning"/>
+                            </IconButton>
+                            <Button color='error' onClick={() => changeStatus(user.id)} sx={{ marginLeft: 2 }}>
+                              <Typography sx={{ fontSize: '12px' }}>
+                                {user.status === UserStatus.ENABLED ? 'Desativar' : 'Ativar'}
+                              </Typography>
+                            </Button>
+                          </>
+                        ) : <></>
+                      }
                     </TableCell>
                   </TableRow>
                 ))}

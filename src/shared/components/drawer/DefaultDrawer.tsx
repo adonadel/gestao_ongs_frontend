@@ -65,6 +65,7 @@ interface IListDrawerProps {
     icon: React.ReactNode;
     text: string;
     onClick?: () => void;
+    userHasPermissionToAccess: boolean;
 }
 
 export const DefaultDrawer = (props: IDrawerProps) => {
@@ -79,41 +80,49 @@ export const DefaultDrawer = (props: IDrawerProps) => {
             icon: <MenuIcon />,
             text: 'Menu',
             onClick: () => props.setOpen(!props.open),
+            userHasPermissionToAccess: true
         },
         {
             icon: <Home />,
             text: 'Início',
             to: '/admin/dashboard',
+            userHasPermissionToAccess: true
         },
         {
             icon: <PetsIcon />,
             text: 'Animais',
             to: '/admin/animals',
+            userHasPermissionToAccess: userData?.role.permissions.filter(permission => permission.name === "animal-view").length > 0
         },
         {
             icon: <EventAvailable />,
             text: 'Eventos',
             to: '/admin/events',
+            userHasPermissionToAccess: userData?.role.permissions.filter(permission => permission.name === "event-view").length > 0
         },
         {
             icon: <AttachMoney />,
             text: 'Financeiro',
             to: '/admin/financial',
+            userHasPermissionToAccess: userData?.role.permissions.filter(permission => permission.name === "finance-view").length > 0
         },
         {
             icon: <Diversity1 />,
             text: 'Adoções',
             to: '/admin/adoptions',
+            userHasPermissionToAccess: userData?.role.permissions.filter(permission => permission.name === "adoption-view").length > 0
         },
         {
             icon: <AdminPanelSettings />,
             text: 'Níveis de permissão',
             to: '/admin/roles',
+            userHasPermissionToAccess: userData?.role.permissions.filter(permission => permission.name === "role-view").length > 0
         },
         {
             icon: <Groups2 />,
             text: 'Usuários',
             to: '/admin/users',
+            userHasPermissionToAccess: userData?.role.permissions.filter(permission => permission.name === "user-view").length > 0
         },
     ];
 
@@ -197,16 +206,18 @@ export const DefaultDrawer = (props: IDrawerProps) => {
                         </ListItemButton>
                         <Divider />
                         {drawerList.map((item, index) => (
-                            <Fragment key={index} >
-                                <ListItemDrawer
-                                    open={props.open}
-                                    icon={item.icon}
-                                    text={item.text}
-                                    to={item.to}
-                                    selected={selectedItem === index}
-                                    onClick={item.onClick ? item.onClick : () => setSelectedItem(index)}
-                                />
-                            </ Fragment>
+                            item.userHasPermissionToAccess ? (
+                                <Fragment key={index}>
+                                    <ListItemDrawer
+                                        open={props.open}
+                                        icon={item.icon}
+                                        text={item.text}
+                                        to={item.to}
+                                        selected={selectedItem === index}
+                                        onClick={item.onClick ? item.onClick : () => setSelectedItem(index)}
+                                    />
+                                </Fragment>
+                            ) : <></>
                         ))}
                     </List>
                 </Drawer>

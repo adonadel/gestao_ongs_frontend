@@ -126,7 +126,6 @@ const PermissionsList: React.FC<PermissionsProps> = ({permissions, permissionsTo
     };
     
     useEffect(() => {
-        // @ts-ignore
         setPermissionsToSave(getSelectedPermissions());
         setIsAllCheckedUpdated(true);
         handleAllChecked()
@@ -258,7 +257,6 @@ const PermissionsList: React.FC<PermissionsProps> = ({permissions, permissionsTo
                                                     color="secondary"
                                                     onChange={handleChangePermission}
                                                     name={permission.name}
-                                                    // @ts-ignore
                                                     inputProps={{'data-module': module.name}}
                                                 />
                                             }

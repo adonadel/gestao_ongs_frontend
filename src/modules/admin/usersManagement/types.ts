@@ -27,6 +27,7 @@ export type Person = {
 export type Role = {
   id: number;
   name: string;
+  permissions: Permission[];
 };
 
 export type Address = {
@@ -49,6 +50,13 @@ export type User = {
   status: UserStatus;
   created_at: string;
   type: UserType;
+};
+
+export type Permission = {
+  type: string;
+  id: number;
+  name: string;
+  display_name: string;
 };
 
 export type ExternalUser = {

@@ -1,4 +1,4 @@
-import { AddCircleOutlineOutlined, Close, Search } from '@mui/icons-material';
+import {AddCircleOutlineOutlined, Close, Search} from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Button,
@@ -17,13 +17,13 @@ import {
   TableRow,
   Typography
 } from "@mui/material";
-import { AxiosResponse } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { baseApi } from '../../../lib/api';
+import {AxiosResponse} from "axios";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
 import useAuthStore from '../../../shared/store/authStore';
-import { Paginate } from '../../../shared/types';
+import {Paginate} from '../../../shared/types';
 
 interface Role {
   id: number;
@@ -70,6 +70,9 @@ function RolesList() {
   }, [search, navigate]);
 
   useEffect(() => {
+    if(!user?.role.permissions.filter(permission => permission.name === "role-view").length > 0) {
+        navigate('/admin/dashboard');
+    }
     fetchRoles();
   }, [fetchRoles]);
 
@@ -114,16 +117,20 @@ function RolesList() {
             }
             sx={{ marginRight: 1, borderRadius: '10px' }}
           />
-          <Button
-            variant='contained'
-            color='success'
-            component={Link}
-            to="new"
-            endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
-            sx={{ padding: '10px', borderRadius: '10px' }}
-          >
-            <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
-          </Button>
+          {
+            user?.role.permissions.filter(permission => permission.name === "role-create").length > 0 ?
+              <Button
+                variant='contained'
+                color='success'
+                component={Link}
+                to="new"
+                endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
+                sx={{ padding: '10px', borderRadius: '10px' }}
+              >
+                <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
+              </Button> : 
+              <></>
+          }
         </Grid>
       </Grid>
 
@@ -147,7 +154,11 @@ function RolesList() {
                     <TableCell>{role.id}</TableCell>
                     <TableCell>{role.name}</TableCell>
                     <TableCell>
-                      <IconButton component={Link} to={`${role.id}`}><EditIcon color="warning" /></IconButton>
+                      {
+                        user?.role.permissions.filter(permission => permission.name === "role-update").length > 0 ?
+                        <IconButton component={Link} to={`${role.id}`}><EditIcon color="warning"/></IconButton> :
+                        <></>
+                      }
                     </TableCell>
                   </TableRow>
                 ))}
