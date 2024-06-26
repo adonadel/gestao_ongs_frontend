@@ -1,5 +1,5 @@
-import { ChevronLeft } from "@mui/icons-material";
-import { Container, Grid, Typography, Button, Box } from "@mui/material";
+import {ChevronLeft} from "@mui/icons-material";
+import {Box, Button, Container, Grid, Typography} from "@mui/material";
 
 function Success() {
   return (
@@ -32,7 +32,7 @@ function Success() {
               fontSize: {xs: "1rem", md: "1.2rem"},
               fontWeight: "400",
               marginBottom: "1rem"
-            }}>Obrigado! agradeçemos sua ajuda!</Typography>
+            }}>Obrigado! Agradeçemos sua ajuda!</Typography>
 
             <Button href="/" size="large" variant="outlined" color="secondary" startIcon={<ChevronLeft />}>
               Voltar ao início
