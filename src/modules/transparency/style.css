@@ -1,0 +1,12 @@
+
+
+.imageAnnouncement{
+    width: 10rem;
+}
+
+
+@media screen and (max-width: 575px) {
+    .imageAnnouncement{
+        width: 6rem;
+    }
+}
