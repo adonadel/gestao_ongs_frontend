@@ -66,6 +66,9 @@ function AnimalList() {
     }, [search, navigate]);
 
     useEffect(() => {
+        if(!user?.role.permissions.filter(permission => permission.name === "animal-view").length > 0) {
+            navigate('/admin/dashboard');
+        }
         fetchAnimals();
     }, [fetchAnimals]);
 
@@ -121,19 +124,24 @@ function AnimalList() {
                             borderRadius: '10px',
                         }}
                     />
-                    <Button
-                        variant='contained'
-                        color='success'
-                        component={Link}
-                        to="new"
-                        endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
-                        sx={{
-                            padding: '10px',
-                            borderRadius: '10px',
-                        }}
-                    >
-                        <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
-                    </Button>
+                    {
+                        user?.role.permissions.filter(permission => permission.name === "animal-create").length > 0 ?
+                          (<Button
+                            variant='contained'
+                            color='success'
+                            component={Link}
+                            to="new"
+                            endIcon={<AddCircleOutlineOutlined fontSize="inherit"/>}
+                            sx={{
+                                padding: '10px',
+                                borderRadius: '10px',
+                            }}
+                          >
+                              <Typography fontSize="inherit" marginBottom={'0'}
+                                          sx={{textTransform: 'none'}}>Novo</Typography>
+                          </Button>) : 
+                          <></>
+                    }
                 </Grid>
             </Grid>
 
@@ -187,7 +195,10 @@ function AnimalList() {
                                     <TableCell>{animal.description}</TableCell>
                                     <TableCell>{animal.tags}</TableCell>
                                     <TableCell>
-                                        <IconButton component={Link} to={`${animal.id}`}><EditIcon color="warning" /></IconButton>
+                                        {user?.role.permissions.filter(permission => permission.name === "animal-update").length > 0 ?
+                                            <IconButton component={Link} to={`${animal.id}`}><EditIcon color="warning"/></IconButton> :
+                                          <></>
+                                        }
                                     </TableCell>
                                 </TableRow>
                             ))}

@@ -1,4 +1,4 @@
-import { AddPhotoAlternateOutlined, Delete, Search } from '@mui/icons-material';
+import {AddPhotoAlternateOutlined, Delete, Search} from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -7,24 +7,24 @@ import {
     Grid,
     IconButton,
     InputBaseComponentProps,
+    styled,
     TextField,
-    Typography,
-    styled
+    Typography
 } from '@mui/material';
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import axios, { AxiosResponse } from "axios";
-import dayjs, { Dayjs } from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { IMaskInput } from "react-imask";
-import { useNavigate, useParams } from 'react-router-dom';
-import { baseApi } from '../../../lib/api';
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import axios, {AxiosResponse} from "axios";
+import dayjs, {Dayjs} from 'dayjs';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {IMaskInput} from "react-imask";
+import {useNavigate, useParams} from 'react-router-dom';
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
-import { Loading } from '../../../shared/components/loading/Loading';
-import { Message } from '../../../shared/components/message/Message';
+import {Loading} from '../../../shared/components/loading/Loading';
+import {Message} from '../../../shared/components/message/Message';
 import useAuthStore from '../../../shared/store/authStore';
-import { CustomProps, Event } from './types';
+import {CustomProps, Event} from './types';
 
 const EventUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -218,6 +218,9 @@ const EventUpdate: React.FC = () => {
     }
 
     useEffect(() => {
+        if(!user?.role.permissions.filter(permission => permission.name === "event-update").length > 0) {
+            navigate('/admin/dashboard');
+        }
         if (isEditMode) {
             const fetchEvent = async () => {
                 try {

@@ -1,4 +1,4 @@
-import { AddCircleOutlineOutlined, Close, Search } from '@mui/icons-material';
+import {AddCircleOutlineOutlined, Close, Search} from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import {
   Button,
@@ -17,14 +17,14 @@ import {
   TableRow,
   Typography
 } from "@mui/material";
-import { AxiosResponse } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { baseApi } from '../../../lib/api';
+import {AxiosResponse} from "axios";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
 import useAuthStore from '../../../shared/store/authStore';
-import { Paginate } from '../../../shared/types';
-import { Event } from './types';
+import {Paginate} from '../../../shared/types';
+import {Event} from './types';
 
 
 function EventList() {
@@ -68,6 +68,9 @@ function EventList() {
   }, [navigate, search]);
 
   useEffect(() => {
+    if(!user?.role.permissions.filter(permission => permission.name === "event-view").length > 0) {
+        navigate('/admin/dashboard');
+    }
     fetchEvents();
   }, [fetchEvents]);
 
@@ -133,19 +136,23 @@ function EventList() {
               borderRadius: '10px',
             }}
           />
-          <Button
-            variant='contained'
-            color='success'
-            component={Link}
-            to="new"
-            endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
-            sx={{
-              padding: '10px',
-              borderRadius: '10px',
-            }}
-          >
-            <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
-          </Button>
+          {
+            user?.role.permissions.filter(permission => permission.name === "event-create").length > 0 ? 
+              <Button
+                variant='contained'
+                color='success'
+                component={Link}
+                to="new"
+                endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
+                sx={{
+                  padding: '10px',
+                  borderRadius: '10px',
+                }}
+              >
+                <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
+              </Button> :
+              <></>
+          }
         </Grid>
       </Grid>
 
@@ -171,7 +178,11 @@ function EventList() {
                   <TableCell>{event.description}</TableCell>
                   <TableCell>{formatDate(event.event_date, true)}</TableCell>
                   <TableCell>
-                    <IconButton component={Link} to={`${event.id}`}><EditIcon color="warning" /></IconButton>
+                    {
+                      user?.role.permissions.filter(permission => permission.name === "event-update").length > 0 ?
+                        <IconButton component={Link} to={`${event.id}`}><EditIcon color="warning"/></IconButton> :
+                        <></>
+                    }
                   </TableCell>
                 </TableRow>
               ))}

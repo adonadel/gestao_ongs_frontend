@@ -171,6 +171,10 @@ const AnimalUpdate: React.FC = () => {
     }
 
     useEffect(() => {
+        if(!user?.role.permissions.filter(permission => permission.name === "animal-update").length > 0) {
+            navigate('/admin/dashboard');
+        }
+        
         if (isEditMode) {
             const fetchAnimal = async () => {
                 try {

@@ -1,18 +1,18 @@
-import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField } from '@mui/material';
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { AxiosResponse } from 'axios';
+import {Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField} from '@mui/material';
+import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {AxiosResponse} from 'axios';
 import dayjs from 'dayjs';
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { baseApi } from '../../../lib/api';
+import React, {useEffect, useRef, useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {baseApi} from '../../../lib/api';
 import AutoComplete from "../../../shared/components/autoComplete/AutoComplete.tsx";
 import FullLoader from '../../../shared/components/loading/FullLoader.tsx';
-import { Loading } from '../../../shared/components/loading/Loading';
-import { Message } from '../../../shared/components/message/Message';
+import {Loading} from '../../../shared/components/loading/Loading';
+import {Message} from '../../../shared/components/message/Message';
 import useAuthStore from '../../../shared/store/authStore.ts';
-import { Financial } from './types';
+import {Financial} from './types';
 
 const FinancialUpdate: React.FC = () => {
 	const navigate = useNavigate();
@@ -42,6 +42,9 @@ const FinancialUpdate: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState(null);
 
 	useEffect(() => {
+    if(!user?.role.permissions.filter(permission => permission.name === "finance-update").length > 0) {
+        navigate('/admin/dashboard');
+    }
 		if (isEditMode) {
 			const fetchFinancial = async () => {
 				try {

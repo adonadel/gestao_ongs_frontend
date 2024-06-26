@@ -1,4 +1,4 @@
-import { AddCircleOutlineOutlined, ArrowDownward, ArrowUpward, AttachMoney, Close, Search } from '@mui/icons-material';
+import {AddCircleOutlineOutlined, ArrowDownward, ArrowUpward, AttachMoney, Close, Search} from '@mui/icons-material';
 import {
   Button,
   Container,
@@ -16,14 +16,14 @@ import {
   TableRow,
   Typography
 } from "@mui/material";
-import { AxiosResponse } from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { baseApi } from '../../../lib/api';
+import {AxiosResponse} from "axios";
+import {useCallback, useEffect, useRef, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
 import useAuthStore from "../../../shared/store/authStore";
-import { Paginate } from "../../../shared/types";
-import { Financial } from "./types";
+import {Paginate} from "../../../shared/types";
+import {Financial} from "./types";
 
 const IncomeIcon = () => {
   return (
@@ -84,6 +84,9 @@ function FinancialList() {
   }, [search, navigate]);
 
   useEffect(() => {
+    if(!user?.role.permissions.filter(permission => permission.name === "finance-view").length > 0) {
+        navigate('/admin/dashboard');
+    }
     fetchFinancials();
   }, [fetchFinancials]);
 
@@ -156,19 +159,23 @@ function FinancialList() {
               borderRadius: '10px',
             }}
           />
-          <Button
-            variant='contained'
-            color='success'
-            component={Link}
-            to="new"
-            endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
-            sx={{
-              padding: '10px',
-              borderRadius: '10px',
-            }}
-          >
-            <Typography fontSize="inherit" marginBottom={'0'} sx={{ textTransform: 'none' }}>Novo</Typography>
-          </Button>
+          {
+            user?.role.permissions.filter(permission => permission.name === "finance-create").length > 0 ?
+              <Button
+                variant='contained'
+                color='success'
+                component={Link}
+                to="new"
+                endIcon={<AddCircleOutlineOutlined fontSize="inherit" />}
+                sx={{
+                  padding: '10px',
+                  borderRadius: '10px',
+                }}
+              >
+                  <Typography fontSize="inherit" marginBottom={'0'} sx={{textTransform: 'none'}}>Novo</Typography>
+              </Button> :
+              <></>
+          }
         </Grid>
       </Grid>
 

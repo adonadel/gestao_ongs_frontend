@@ -1,17 +1,33 @@
-import { AddPhotoAlternateOutlined, Search, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Avatar, Box, Button, Divider, FormControl, Grid, IconButton, InputAdornment, InputBaseComponentProps, InputLabel, MenuItem, Select, TextField, Typography, styled } from '@mui/material';
-import axios, { AxiosResponse } from 'axios';
-import React, { useEffect, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { baseApi } from '../../../lib/api';
+import {AddPhotoAlternateOutlined, Search, Visibility, VisibilityOff} from '@mui/icons-material';
+import {
+    Avatar,
+    Box,
+    Button,
+    Divider,
+    FormControl,
+    Grid,
+    IconButton,
+    InputAdornment,
+    InputBaseComponentProps,
+    InputLabel,
+    MenuItem,
+    Select,
+    styled,
+    TextField,
+    Typography
+} from '@mui/material';
+import axios, {AxiosResponse} from 'axios';
+import React, {useEffect, useRef, useState} from 'react';
+import {Controller, useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {baseApi} from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
-import { Loading } from '../../../shared/components/loading/Loading';
-import { Message } from '../../../shared/components/message/Message';
+import {Loading} from '../../../shared/components/loading/Loading';
+import {Message} from '../../../shared/components/message/Message';
 import useAuthStore from '../../../shared/store/authStore';
-import { TextMaskCep, TextMaskCpfCnpj, TextMaskTelephone } from '../../../shared/utils/masks';
-import { isValidCNPJ, isValidCPF } from '../../../shared/utils/validate';
-import { Role, User, UserType } from './types';
+import {TextMaskCep, TextMaskCpfCnpj, TextMaskTelephone} from '../../../shared/utils/masks';
+import {isValidCNPJ, isValidCPF} from '../../../shared/utils/validate';
+import {Role, User, UserType} from './types';
 
 const UserUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -184,6 +200,10 @@ const UserUpdate: React.FC = () => {
     }, [])
 
     useEffect(() => {
+        if(!user?.role.permissions.filter(permission => permission.name === "user-update").length > 0) {
+            navigate('/admin/dashboard');
+        }
+        
         if (isEditMode) {
             const fetchUser = async () => {
                 try {
