@@ -241,14 +241,20 @@ const AnimalUpdate: React.FC = () => {
     return (
         <>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Grid container spacing={2} sx={{
-                    border: 'solid 0.5px',
-                    borderColor: 'primary.light',
-                    boxShadow: '0px 4px 4px rgba(55, 55, 55, 0.25)',
-                    padding: '20px',
-                    borderRadius: '10px'
-                }}>
-
+                <Grid 
+                    container
+                    spacing={2}
+                    sm={12}
+                    md={8}
+                    lg={6}
+                    sx={{
+                        border: 'solid 0.5px',
+                        borderColor: 'primary.light',
+                        boxShadow: '0px 4px 4px rgba(55, 55, 55, 0.25)',
+                        padding: '20px',
+                        borderRadius: '10px'
+                    }}
+                >
                     <Grid item xs={12}>
 
                         <TextField
