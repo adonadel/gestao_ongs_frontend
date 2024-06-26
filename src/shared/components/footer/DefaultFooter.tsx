@@ -1,7 +1,17 @@
-import { AppBar, Toolbar, Typography, Grid, Avatar, Box, Button, Divider, Container } from "@mui/material"
-import { Link } from "react-router-dom"
+import {AppBar, Avatar, Box, Button, Container, Divider, Grid, Toolbar, Typography} from "@mui/material"
+import {Link} from "react-router-dom"
 import useAuthStore from "../../store/authStore";
-import { AccountCircle, CalendarMonth, Favorite, Home, Key, Login, PersonAdd, Search, VolunteerActivism } from "@mui/icons-material";
+import {
+  AccountCircle,
+  CalendarMonth,
+  Favorite,
+  Home,
+  Key,
+  Login,
+  PersonAdd,
+  Search,
+  VolunteerActivism
+} from "@mui/icons-material";
 
 
 export const DefaultFooter = () => {
@@ -164,7 +174,7 @@ export const DefaultFooter = () => {
                                     </>
                                 )}
                                 {userData && (
-                                    <Button size="small" startIcon={<AccountCircle color="secondary" />} color="inherit" variant="text" component={Link} sx={styleButton} to="/profile">
+                                    <Button size="small" startIcon={<AccountCircle color="secondary" />} color="inherit" variant="text" component={Link} sx={styleButton} to={userData.type === 'EXTERNAL' ? '/external' : '/admin/user'}>
                                         Meu perfil
                                     </Button>
                                 )}
