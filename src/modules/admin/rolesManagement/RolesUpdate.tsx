@@ -1,4 +1,4 @@
-import { Button, Stack, TextField } from '@mui/material';
+import { Button, Grid, Stack, TextField } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -142,13 +142,20 @@ const RolesUpdate: React.FC = () => {
                         />
                         {permissions.length > 0 && <PermissionsList permissions={permissions} permissionsToSave={permissionsToSave}
                             setPermissionsToSave={setPermissionsToSave} />}
-                        <Button type='button' variant='contained' color="primary" onClick={() => navigate(-1)}>
+                    </Stack>
+
+                    <Grid item xs={12} sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                    }}>
+                        <Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
                             Voltar
                         </Button>
-                        <Button type='submit' variant='contained' color="primary">
+                        <Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
                             {isEditMode ? 'Salvar' : 'Criar'}
                         </Button>
-                    </Stack>
+                    </Grid>
                 </form>
             </>
         );

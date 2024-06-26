@@ -71,14 +71,15 @@ const LineChart: React.FC = ({chartTitle, footerType, seriesData}) => {
       });
 
       const option = {
-        title: {
-          text: chartTitle,
-        },
         tooltip: {
           trigger: 'axis',
         },
         legend: {
           data: legendData,
+          icon: 'roundRect',
+          textStyle: {
+            fontSize: 14
+          },
         },
         grid: {
           left: '3%',

@@ -1,12 +1,12 @@
-import {Button, Grid, TextField} from '@mui/material';
-import React, {useEffect, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {baseApi} from '../../../lib/api';
+import { Button, Grid, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from '../../../lib/api';
 import AutoComplete from "../../../shared/components/autoComplete/AutoComplete.tsx";
-import {Loading} from '../../../shared/components/loading/Loading';
-import {Message} from '../../../shared/components/message/Message';
-import {Adoption} from './types';
+import { Loading } from '../../../shared/components/loading/Loading';
+import { Message } from '../../../shared/components/message/Message';
+import { Adoption } from './types';
 
 const AdoptionsUpdate: React.FC = () => {
 	const navigate = useNavigate();
@@ -131,8 +131,15 @@ const AdoptionsUpdate: React.FC = () => {
 							}}
 						/>
 					</Grid>
-					<Grid item xs={12} sx={{ marginTop: '2rem' }}>
-						<Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading}>
+					<Grid item xs={12} sx={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: '0.5rem'
+					}}>
+						<Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
+							Voltar
+						</Button>
+						<Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
 							{isEditMode ? 'Salvar' : 'Criar'}
 						</Button>
 					</Grid>
