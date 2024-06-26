@@ -629,8 +629,15 @@ const EventUpdate: React.FC = () => {
                         )
                     }
 
-                    <Grid item xs={12} sx={{ marginTop: '2rem' }}>
-                        <Button type='submit' variant='contained' color="success" fullWidth size='large' disabled={isLoading || image === '' || dateError === 'minDate'}>
+                    <Grid item xs={12} sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem'
+                    }}>
+                        <Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
+                            Voltar
+                        </Button>
+                        <Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
                             {isEditMode ? 'Salvar' : 'Criar'}
                         </Button>
                     </Grid>
