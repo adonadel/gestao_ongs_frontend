@@ -1,4 +1,4 @@
-import { Button, Grid, TextField } from '@mui/material';
+import { Button, Divider, Grid, Paper, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -75,89 +75,84 @@ const AdoptionsUpdate: React.FC = () => {
 
 	return (
 		<>
-			<form onSubmit={handleSubmit(onSubmit)} noValidate>
-				<TextField
-					type="hidden"
-					{...register('user_id')}
-					sx={{ display: 'none' }}
-				/>
-				<TextField
-					type="hidden"
-					{...register('animal_id')}
-					sx={{ display: 'none' }}
-				/>
-				<Grid
-					item
-					container
-					spacing={2}
-					sm={12}
-					md={8}
-					lg={6}
-					sx={{
-						border: 'solid 0.5px',
-						borderColor: 'primary.light',
-						boxShadow: '0px 4px 4px rgba(55, 55, 55, 0.25)',
-						padding: '20px',
-						borderRadius: '10px'
-					}}>
-					<Grid item xs={12}>
-						<TextField
-							label="Descrição"
-							multiline minRows={4} maxRows={6}
-							type="text"
-							{...register('description')}
-							defaultValue={isEditMode ? adoption?.description : ''}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<AutoComplete
-							origin='users'
-							objectToGetName='person'
-							objectToGetId=''
-							labelForAutoComplete='Usuário'
-							onChange={(id) => {
-								setSelectedUserId(id);
-							}}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<AutoComplete
-							origin='animals'
-							objectToGetName=''
-							objectToGetId=''
-							labelForAutoComplete='Animal'
-							onChange={(id) => {
-								setSelectedAnimalId(id);
-							}}
-						/>
-					</Grid>
-					<Grid item xs={12} sx={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: '0.5rem'
-					}}>
-						<Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
-							Voltar
-						</Button>
-						<Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
-							{isEditMode ? 'Salvar' : 'Criar'}
-						</Button>
-					</Grid>
-
-					{
-						isLoading && (
-							<Loading />
-						)
-					}
-
-					<Message
-						message={textMessage}
-						type={typeMessage}
-						open={openMessage}
-						onClose={handleClose}
+			<Typography variant="h3" fontSize={'2rem'} marginTop='20px' fontWeight={'medium'}>{isEditMode ? 'Editar' : 'Criar'} adoção</Typography>
+			<Paper elevation={3} sx={{ padding: '40px', borderRadius: '20px', marginTop: '10px', maxWidth: '650px' }}>
+				<form onSubmit={handleSubmit(onSubmit)} noValidate>
+					<TextField
+						type="hidden"
+						{...register('user_id')}
+						sx={{ display: 'none' }}
 					/>
-				</Grid>
-			</form>
+					<TextField
+						type="hidden"
+						{...register('animal_id')}
+						sx={{ display: 'none' }}
+					/>
+					<Grid container alignItems="center" spacing={2}>
+						<Grid item xs={12}>
+							<TextField
+								label="Descrição"
+								multiline minRows={4} maxRows={6}
+								type="text"
+								{...register('description')}
+								defaultValue={isEditMode ? adoption?.description : ''}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<AutoComplete
+								origin='users'
+								objectToGetName='person'
+								objectToGetId=''
+								labelForAutoComplete='Usuário'
+								onChange={(id) => {
+									setSelectedUserId(id);
+								}}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<AutoComplete
+								origin='animals'
+								objectToGetName=''
+								objectToGetId=''
+								labelForAutoComplete='Animal'
+								onChange={(id) => {
+									setSelectedAnimalId(id);
+								}}
+							/>
+						</Grid>
+
+						<Grid item xs={12}>
+							<Divider />
+						</Grid>
+
+						<Grid item xs={12} sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: '0.5rem'
+						}}>
+							<Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
+								Voltar
+							</Button>
+							<Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
+								{isEditMode ? 'Salvar' : 'Criar'}
+							</Button>
+						</Grid>
+
+						{
+							isLoading && (
+								<Loading />
+							)
+						}
+
+						<Message
+							message={textMessage}
+							type={typeMessage}
+							open={openMessage}
+							onClose={handleClose}
+						/>
+					</Grid>
+				</form>
+			</Paper>
 		</>
 	);
 };

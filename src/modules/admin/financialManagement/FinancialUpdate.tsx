@@ -1,18 +1,18 @@
-import {Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField} from '@mui/material';
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {AxiosResponse} from 'axios';
+import { Button, Divider, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
-import React, {useEffect, useRef, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {baseApi} from '../../../lib/api';
+import React, { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from '../../../lib/api';
 import AutoComplete from "../../../shared/components/autoComplete/AutoComplete.tsx";
 import FullLoader from '../../../shared/components/loading/FullLoader.tsx';
-import {Loading} from '../../../shared/components/loading/Loading';
-import {Message} from '../../../shared/components/message/Message';
+import { Loading } from '../../../shared/components/loading/Loading';
+import { Message } from '../../../shared/components/message/Message';
 import useAuthStore from '../../../shared/store/authStore.ts';
-import {Financial} from './types';
+import { Financial } from './types';
 
 const FinancialUpdate: React.FC = () => {
 	const navigate = useNavigate();
@@ -42,9 +42,9 @@ const FinancialUpdate: React.FC = () => {
 	const [selectedDate, setSelectedDate] = useState(null);
 
 	useEffect(() => {
-    if(!user?.role.permissions.filter(permission => permission.name === "finance-update").length > 0) {
-        navigate('/admin/dashboard');
-    }
+		if (!user?.role.permissions.filter(permission => permission.name === "finance-update").length > 0) {
+			navigate('/admin/dashboard');
+		}
 		if (isEditMode) {
 			const fetchFinancial = async () => {
 				try {
@@ -162,154 +162,146 @@ const FinancialUpdate: React.FC = () => {
 
 	return (
 		<>
-			<form onSubmit={handleSubmit(onSubmit)} noValidate>
-				<TextField
-					type="hidden"
-					{...register('user_id')}
-					sx={{ display: 'none' }}
-				/>
-				<TextField
-					type="hidden"
-					{...register('animal_id')}
-					sx={{ display: 'none' }}
-				/>
-				<TextField
-					type="hidden"
-					{...register('value')}
-					sx={{ display: 'none' }}
-				/>
-				<Grid
-					item
-					container
-					spacing={2}
-					sm={12}
-					md={8}
-					lg={6}
-					sx={{
-						border: 'solid 0.5px',
-						borderColor: 'primary.light',
-						boxShadow: '0px 4px 4px rgba(55, 55, 55, 0.25)',
-						padding: '20px',
-						borderRadius: '10px'
-					}}>
-
-
-					<Grid item xs={12}>
-						<FormControl fullWidth>
-							<InputLabel id="type-label">Tipo da finança</InputLabel>
-							<Select
-								labelId="type-label"
-								label="Tipo da finança"
-								id="type"
-								{...register('type', { required: 'Tipo é necessário' })}
-								defaultValue={isEditMode ? finance?.type : ''}
-							>
-								<MenuItem value="" disabled>
-									Selecione o tipo de finança
-								</MenuItem>
-								<MenuItem value="EXPENSE">Despesa</MenuItem>
-								<MenuItem value="INCOME">Entrada</MenuItem>
-							</Select>
-						</FormControl>
-					</Grid>
-					<Grid item xs={12}>
-						<TextField
-							label="Descrição"
-							multiline minRows={4} maxRows={6}
-							type="text"
-							{...register('description')}
-							defaultValue={isEditMode ? finance?.description : ''}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<FormControl fullWidth>
-							<TextField
-								id="outlined-adornment-amount"
-								label="Valor"
-								InputProps={{
-									startAdornment: <InputAdornment position="start">R$</InputAdornment>, // Add currency symbol as endAdornment
-								}}
-								value={formattedMoney}
-								onChange={(e) => setFormattedMoney(e.target.value)}
-							/>
-						</FormControl>
-					</Grid>
-					<Grid item xs={12}>
-						<AutoComplete
-							origin='users'
-							objectToGetName='person'
-							objectToGetId=''
-							labelForAutoComplete='Usuário'
-							onChange={(id) => {
-								setSelectedUserId(id);
-							}}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<AutoComplete
-							origin='animals'
-							objectToGetName=''
-							objectToGetId=''
-							labelForAutoComplete='Animal'
-							onChange={(id) => {
-								setSelectedAnimalId(id);
-							}}
-						/>
-					</Grid>
-					<Grid item xs={12}>
-						<LocalizationProvider dateAdapter={AdapterDayjs} >
-							<DatePicker
-								label='Data da finança'
-								value={selectedDate}
-								format='DD/MM/YYYY'
-								onChange={(date) => {
-									if (date) {
-										const formattedDate = date.format('DD/MM/YYYY');
-										setSelectedDate(date);
-										setValue('date', formattedDate);
-									} else {
-										setSelectedDate(null);
-									}
-								}}
-								slotProps={{
-									textField: {
-										...register('date'),
-										error: dateError && dateError === 'minDate' ? true : undefined,
-										helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
-									}
-								}}
-								minDate={dayjs(new Date())}
-							/>
-						</LocalizationProvider>
-					</Grid>
-
-					<Grid item xs={12} sx={{
-						display: 'flex',
-						alignItems: 'center',
-						gap: '0.5rem'
-					}}>
-						<Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
-							Voltar
-						</Button>
-						<Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
-							{isEditMode ? 'Salvar' : 'Criar'}
-						</Button>
-					</Grid>
-
-					{
-						isLoading && (
-							<Loading />
-						)
-					}
-
-					<Message
-						message={textMessage}
-						type={typeMessage}
-						open={openMessage}
-						onClose={handleClose}
+			<Typography variant="h3" fontSize={'2rem'} marginTop='20px' fontWeight={'medium'}>{isEditMode ? 'Editar' : 'Criar'} finança</Typography>
+			<Paper elevation={3} sx={{ padding: '40px', borderRadius: '20px', marginTop: '10px', maxWidth: '650px' }}>
+				<form onSubmit={handleSubmit(onSubmit)} noValidate>
+					<TextField
+						type="hidden"
+						{...register('user_id')}
+						sx={{ display: 'none' }}
 					/>
-				</Grid>
-			</form>
+					<TextField
+						type="hidden"
+						{...register('animal_id')}
+						sx={{ display: 'none' }}
+					/>
+					<TextField
+						type="hidden"
+						{...register('value')}
+						sx={{ display: 'none' }}
+					/>
+					<Grid container alignItems="center" spacing={2}>
+						<Grid item xs={12}>
+							<FormControl fullWidth>
+								<InputLabel id="type-label">Tipo da finança</InputLabel>
+								<Select
+									labelId="type-label"
+									label="Tipo da finança"
+									id="type"
+									{...register('type', { required: 'Tipo é necessário' })}
+									defaultValue={isEditMode ? finance?.type : ''}
+								>
+									<MenuItem value="" disabled>
+										Selecione o tipo de finança
+									</MenuItem>
+									<MenuItem value="EXPENSE">Despesa</MenuItem>
+									<MenuItem value="INCOME">Entrada</MenuItem>
+								</Select>
+							</FormControl>
+						</Grid>
+						<Grid item xs={12}>
+							<TextField
+								label="Descrição"
+								multiline minRows={4} maxRows={6}
+								type="text"
+								{...register('description')}
+								defaultValue={isEditMode ? finance?.description : ''}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<FormControl fullWidth>
+								<TextField
+									id="outlined-adornment-amount"
+									label="Valor"
+									InputProps={{
+										startAdornment: <InputAdornment position="start">R$</InputAdornment>, // Add currency symbol as endAdornment
+									}}
+									value={formattedMoney}
+									onChange={(e) => setFormattedMoney(e.target.value)}
+								/>
+							</FormControl>
+						</Grid>
+						<Grid item xs={12}>
+							<AutoComplete
+								origin='users'
+								objectToGetName='person'
+								objectToGetId=''
+								labelForAutoComplete='Usuário'
+								onChange={(id) => {
+									setSelectedUserId(id);
+								}}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<AutoComplete
+								origin='animals'
+								objectToGetName=''
+								objectToGetId=''
+								labelForAutoComplete='Animal'
+								onChange={(id) => {
+									setSelectedAnimalId(id);
+								}}
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<LocalizationProvider dateAdapter={AdapterDayjs} >
+								<DatePicker
+									label='Data da finança'
+									value={selectedDate}
+									format='DD/MM/YYYY'
+									onChange={(date) => {
+										if (date) {
+											const formattedDate = date.format('DD/MM/YYYY');
+											setSelectedDate(date);
+											setValue('date', formattedDate);
+										} else {
+											setSelectedDate(null);
+										}
+									}}
+									slotProps={{
+										textField: {
+											...register('date'),
+											error: dateError && dateError === 'minDate' ? true : undefined,
+											helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
+										}
+									}}
+									minDate={dayjs(new Date())}
+								/>
+							</LocalizationProvider>
+						</Grid>
+
+						<Grid item xs={12}>
+							<Divider />
+						</Grid>
+
+						<Grid item xs={12} sx={{
+							display: 'flex',
+							alignItems: 'center',
+							gap: '0.5rem'
+						}}>
+							<Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
+								Voltar
+							</Button>
+							<Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
+								{isEditMode ? 'Salvar' : 'Criar'}
+							</Button>
+						</Grid>
+
+						{
+							isLoading && (
+								<Loading />
+							)
+						}
+
+						<Message
+							message={textMessage}
+							type={typeMessage}
+							open={openMessage}
+							onClose={handleClose}
+						/>
+					</Grid>
+				</form>
+			</Paper>
 		</>
 	);
 };

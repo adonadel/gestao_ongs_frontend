@@ -1,4 +1,4 @@
-import {AddPhotoAlternateOutlined, Delete, Search} from '@mui/icons-material';
+import { AddPhotoAlternateOutlined, Delete, Search } from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -7,24 +7,25 @@ import {
     Grid,
     IconButton,
     InputBaseComponentProps,
-    styled,
+    Paper,
     TextField,
-    Typography
+    Typography,
+    styled
 } from '@mui/material';
-import {DatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import axios, {AxiosResponse} from "axios";
-import dayjs, {Dayjs} from 'dayjs';
-import React, {useEffect, useRef, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {IMaskInput} from "react-imask";
-import {useNavigate, useParams} from 'react-router-dom';
-import {baseApi} from '../../../lib/api';
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import axios, { AxiosResponse } from "axios";
+import dayjs, { Dayjs } from 'dayjs';
+import React, { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { IMaskInput } from "react-imask";
+import { useNavigate, useParams } from 'react-router-dom';
+import { baseApi } from '../../../lib/api';
 import FullLoader from '../../../shared/components/loading/FullLoader';
-import {Loading} from '../../../shared/components/loading/Loading';
-import {Message} from '../../../shared/components/message/Message';
+import { Loading } from '../../../shared/components/loading/Loading';
+import { Message } from '../../../shared/components/message/Message';
 import useAuthStore from '../../../shared/store/authStore';
-import {CustomProps, Event} from './types';
+import { CustomProps, Event } from './types';
 
 const EventUpdate: React.FC = () => {
     const navigate = useNavigate();
@@ -218,7 +219,7 @@ const EventUpdate: React.FC = () => {
     }
 
     useEffect(() => {
-        if(!user?.role.permissions.filter(permission => permission.name === "event-update").length > 0) {
+        if (!user?.role.permissions.filter(permission => permission.name === "event-update").length > 0) {
             navigate('/admin/dashboard');
         }
         if (isEditMode) {
@@ -311,354 +312,347 @@ const EventUpdate: React.FC = () => {
 
     return (
         <>
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <TextField
-                    type="hidden"
-                    {...register('address_id')}
-                    defaultValue={isEditMode ? event?.address_id : ''}
-                    sx={{ display: 'none' }}
-                />
-                <Grid
-                    item
-                    container
-                    spacing={2}
-                    sm={12}
-                    md={8}
-                    lg={6}
-                    sx={{
-                        border: 'solid 0.5px',
-                        borderColor: 'primary.light',
-                        boxShadow: '0px 4px 4px rgba(55, 55, 55, 0.25)',
-                        padding: '20px',
-                        borderRadius: '10px'
-                    }}>
+            <Typography variant="h3" fontSize={'2rem'} marginTop='20px' fontWeight={'medium'}>{isEditMode ? 'Editar' : 'Criar'} evento</Typography>
+            <Paper elevation={3} sx={{ padding: '40px', borderRadius: '20px', marginTop: '10px', maxWidth: '650px' }}>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
+                    <TextField
+                        type="hidden"
+                        {...register('address_id')}
+                        defaultValue={isEditMode ? event?.address_id : ''}
+                        sx={{ display: 'none' }}
+                    />
+                    <Grid container alignItems="center" spacing={2} >
+                        <Grid
+                            item xs={12}
+                            sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                            }}
+                        >
+                            <Box
+                                position='relative'
+                                onClick={openImagePicker}
+                                sx={{
+                                    width: 'fit-content',
+                                    cursor: 'pointer',
+                                    '&:hover .hoverBox': {
+                                        visibility: 'visible',
+                                    }
 
-                    <Grid
-                        item xs={12}
-                        sx={{
+                                }}
+                            >
+
+                                <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
+
+                                <Box className="hoverBox"
+                                    sx={{
+                                        display: 'flex',
+                                        visibility: 'hidden',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        position: 'absolute',
+                                        top: '0',
+                                        left: '0',
+                                        width: '100%',
+                                        height: '100%',
+                                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                                        backdropFilter: 'blur(5px)',
+                                        borderRadius: '50%',
+                                    }}
+                                >
+
+                                    <AddPhotoAlternateOutlined
+                                        sx={
+                                            {
+                                                display: 'block',
+                                                color: 'white',
+                                                width: '50%',
+                                                zIndex: 1
+                                            }
+                                        }
+                                    />
+                                </Box>
+                            </Box>
+
+                            <TextField
+                                label='Nome'
+                                type='text'
+                                {...register('name')}
+                                defaultValue={isEditMode ? event?.name : ''}
+                                variant='outlined'
+                                fullWidth
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Descrição"
+                                multiline minRows={4} maxRows={6}
+                                type="text"
+                                {...register('description')}
+                                defaultValue={isEditMode ? event?.description : ''}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label='Local'
+                                type="text"
+                                {...register('location')}
+                                defaultValue={isEditMode ? event?.location : ''}
+                                variant='outlined'
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} >
+                                <DatePicker
+                                    label='Data do Evento'
+                                    value={selectedDate}
+                                    format='DD/MM/YYYY'
+                                    onChange={(date) => {
+                                        if (date) {
+                                            const formattedDate = date.format('DD/MM/YYYY');
+                                            setSelectedDate(date);
+                                            setValue('event_date', formattedDate);
+                                        } else {
+                                            setSelectedDate(null);
+                                        }
+                                    }}
+                                    slotProps={{
+                                        textField: {
+                                            ...register('event_date'),
+                                            error: dateError && dateError === 'minDate' ? true : undefined,
+                                            helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
+                                        }
+                                    }}
+                                    minDate={dayjs(new Date())}
+                                    disablePast={true}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid
+                            item xs={12}
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '1rem',
+                            }}
+                        >
+                            <Box
+                                position='relative'
+                                sx={{
+                                    width: '6rem',
+                                    height: '6rem',
+                                    cursor: 'pointer',
+                                    '&:hover .hoverBox': {
+                                        visibility: 'visible',
+                                    }
+
+                                }}
+                            >
+
+                                <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
+
+                                {(image !== '' || srcImage !== '') && <Avatar
+                                    alt="Imagem"
+                                    src={srcImage !== '' ? `${srcImage}` : ''}
+                                    variant='rounded'
+                                    sx={{
+                                        position: 'absolute',
+                                        width: '100%',
+                                        height: '100%',
+                                        zIndex: '1',
+                                    }}
+
+                                />}
+                                {srcImage !== '' && !isLoading && <IconButton
+                                    color="error"
+                                    onClick={() => handleDeleteImage(image)}
+                                    sx={{
+                                        position: 'absolute',
+                                        bottom: '0',
+                                        zIndex: '999',
+                                        right: '0',
+                                    }}>
+                                    <Delete sx={{
+                                        fontSize: '0.8rem',
+                                        backgroundColor: 'white',
+                                        borderRadius: '50%',
+                                        padding: '0.2rem',
+
+                                    }} />
+                                </IconButton>}
+                                <Box
+                                    onClick={openImagePicker}
+                                    sx={{
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        position: 'absolute',
+                                        top: '0',
+                                        left: '0',
+                                        width: '100%',
+                                        height: '100%',
+                                        backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                                        backdropFilter: 'blur(5px)',
+                                        borderRadius: '0.5rem',
+                                    }}
+                                >
+
+                                    <AddPhotoAlternateOutlined
+                                        sx={
+                                            {
+                                                display: 'block',
+                                                color: 'white',
+                                                width: '50%',
+                                                zIndex: 1
+                                            }
+                                        }
+                                    />
+                                </Box>
+
+
+                            </Box>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography>Endereço</Typography>
+                        </Grid>
+                        <Grid item xs={12} sx={{
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                        }}
-                    >
-                        <Box
-                            position='relative'
-                            onClick={openImagePicker}
-                            sx={{
-                                width: 'fit-content',
-                                cursor: 'pointer',
-                                '&:hover .hoverBox': {
-                                    visibility: 'visible',
-                                }
+                            gap: '0.5rem',
 
-                            }}
-                        >
-
-                            <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
-
-                            <Box className="hoverBox"
-                                sx={{
-                                    display: 'flex',
-                                    visibility: 'hidden',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    position: 'absolute',
-                                    top: '0',
-                                    left: '0',
-                                    width: '100%',
-                                    height: '100%',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                                    backdropFilter: 'blur(5px)',
-                                    borderRadius: '50%',
+                        }}>
+                            <TextField
+                                label='CEP'
+                                type='text'
+                                id='inputCep'
+                                {...register('address.zip')}
+                                defaultValue={isEditMode ? event?.address?.zip : ''}
+                                variant='outlined'
+                                InputProps={{
+                                    inputComponent: TextMaskCep as unknown as React.ElementType<InputBaseComponentProps>,
                                 }}
-                            >
-
-                                <AddPhotoAlternateOutlined
-                                    sx={
-                                        {
-                                            display: 'block',
-                                            color: 'white',
-                                            width: '50%',
-                                            zIndex: 1
-                                        }
-                                    }
-                                />
-                            </Box>
-                        </Box>
-
-                        <TextField
-                            label='Nome'
-                            type='text'
-                            {...register('name')}
-                            defaultValue={isEditMode ? event?.name : ''}
-                            variant='outlined'
-                            fullWidth
-                        />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="Descrição"
-                            multiline minRows={4} maxRows={6}
-                            type="text"
-                            {...register('description')}
-                            defaultValue={isEditMode ? event?.description : ''}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label='Local'
-                            type="text"
-                            {...register('location')}
-                            defaultValue={isEditMode ? event?.location : ''}
-                            variant='outlined'
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs} >
-                            <DatePicker
-                                label='Data do Evento'
-                                value={selectedDate}
-                                format='DD/MM/YYYY'
-                                onChange={(date) => {
-                                    if (date) {
-                                        const formattedDate = date.format('DD/MM/YYYY');
-                                        setSelectedDate(date);
-                                        setValue('event_date', formattedDate);
-                                    } else {
-                                        setSelectedDate(null);
-                                    }
-                                }}
-                                slotProps={{
-                                    textField: {
-                                        ...register('event_date'),
-                                        error: dateError && dateError === 'minDate' ? true : undefined,
-                                        helperText: dateError && dateError === 'minDate' ? 'Informe uma data maior ou igual à hoje' : ''
-                                    }
-                                }}
-                                minDate={dayjs(new Date())}
-                                disablePast={true}
+                                fullWidth
+                                onBlur={searchCEP}
                             />
-                        </LocalizationProvider>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
+                            <IconButton
+                                onClick={searchCEP}
+                                sx={{
+                                    border: '1px solid',
+                                    borderColor: 'primary.dark',
+                                    borderRadius: '4px',
+                                }}>
+                                <Search />
+                            </IconButton>
+                        </Grid>
+                        {
+                            (cepSearched || isEditMode) && (
+                                <>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            label='Estado'
+                                            disabled
+                                            type='text'
+                                            {...register('address.state')}
+                                            defaultValue={isEditMode ? event?.address?.state : ''}
+                                            variant='outlined'
+                                            fullWidth />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            label='Cidade'
+                                            disabled
+                                            type='text'
+                                            {...register('address.city')}
+                                            defaultValue={isEditMode ? event?.address?.city : ''}
+                                            variant='outlined'
+                                            fullWidth />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            label='Bairro'
+                                            type='text'
+                                            {...register('address.neighborhood')}
+                                            defaultValue={isEditMode ? event?.address?.neighborhood : ''}
+                                            variant='outlined'
+                                            fullWidth />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            label='Rua'
+                                            type='text'
+                                            {...register('address.street')}
+                                            defaultValue={isEditMode ? event?.address?.street : ''}
+                                            variant='outlined'
+                                            fullWidth />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            label='Complemento'
+                                            type='text'
+                                            {...register('address.complement')}
+                                            defaultValue={isEditMode ? event?.address?.complement : ''}
+                                            variant='outlined'
+                                            fullWidth />
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <TextField
+                                            label='Número da residência'
+                                            type='text'
+                                            {...register('address.number')}
+                                            defaultValue={isEditMode ? event?.address?.number : ''}
+                                            variant='outlined'
+                                            fullWidth />
+                                    </Grid>
+                                </>
+                            )
+                        }
 
-                    <Grid
-                        item xs={12}
-                        sx={{
+                        <Grid item xs={12}>
+                            <Divider />
+                        </Grid>
+
+                        <Grid item xs={12} sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '1rem',
-                        }}
-                    >
-                        <Box
-                            position='relative'
-                            sx={{
-                                width: '6rem',
-                                height: '6rem',
-                                cursor: 'pointer',
-                                '&:hover .hoverBox': {
-                                    visibility: 'visible',
-                                }
+                            gap: '0.5rem'
+                        }}>
+                            <Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
+                                Voltar
+                            </Button>
+                            <Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
+                                {isEditMode ? 'Salvar' : 'Criar'}
+                            </Button>
+                        </Grid>
 
-                            }}
-                        >
+                        {
+                            isLoading && (
+                                <Loading />
+                            )
+                        }
 
-                            <VisuallyHiddenInput id="inputImagePicker" accept='image/*' type="file" onChange={postImage} />
-
-                            {(image !== '' || srcImage !== '') && <Avatar
-                                alt="Imagem"
-                                src={srcImage !== '' ? `${srcImage}` : ''}
-                                variant='rounded'
-                                sx={{
-                                    position: 'absolute',
-                                    width: '100%',
-                                    height: '100%',
-                                    zIndex: '1',
-                                }}
-
-                            />}
-                            {srcImage !== '' && !isLoading && <IconButton
-                                color="error"
-                                onClick={() => handleDeleteImage(image)}
-                                sx={{
-                                    position: 'absolute',
-                                    bottom: '0',
-                                    zIndex: '999',
-                                    right: '0',
-                                }}>
-                                <Delete sx={{
-                                    fontSize: '0.8rem',
-                                    backgroundColor: 'white',
-                                    borderRadius: '50%',
-                                    padding: '0.2rem',
-
-                                }} />
-                            </IconButton>}
-                            <Box
-                                onClick={openImagePicker}
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    position: 'absolute',
-                                    top: '0',
-                                    left: '0',
-                                    width: '100%',
-                                    height: '100%',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                                    backdropFilter: 'blur(5px)',
-                                    borderRadius: '0.5rem',
-                                }}
-                            >
-
-                                <AddPhotoAlternateOutlined
-                                    sx={
-                                        {
-                                            display: 'block',
-                                            color: 'white',
-                                            width: '50%',
-                                            zIndex: 1
-                                        }
-                                    }
-                                />
-                            </Box>
-
-
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Divider />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Typography>Endereço</Typography>
-                    </Grid>
-                    <Grid item xs={12} sx={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-
-                    }}>
-                        <TextField
-                            label='CEP'
-                            type='text'
-                            id='inputCep'
-                            {...register('address.zip')}
-                            defaultValue={isEditMode ? event?.address?.zip : ''}
-                            variant='outlined'
-                            InputProps={{
-                                inputComponent: TextMaskCep as unknown as React.ElementType<InputBaseComponentProps>,
-                            }}
-                            fullWidth
-                            onBlur={searchCEP}
+                        <Message
+                            message={textMessage}
+                            type={typeMessage}
+                            open={openMessage}
+                            onClose={handleClose}
                         />
-                        <IconButton
-                            onClick={searchCEP}
-                            sx={{
-                                border: '1px solid',
-                                borderColor: 'primary.dark',
-                                borderRadius: '4px',
-                            }}>
-                            <Search />
-                        </IconButton>
                     </Grid>
-                    {
-                        (cepSearched || isEditMode) && (
-                            <>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Estado'
-                                        disabled
-                                        type='text'
-                                        {...register('address.state')}
-                                        defaultValue={isEditMode ? event?.address?.state : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Cidade'
-                                        disabled
-                                        type='text'
-                                        {...register('address.city')}
-                                        defaultValue={isEditMode ? event?.address?.city : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Bairro'
-                                        type='text'
-                                        {...register('address.neighborhood')}
-                                        defaultValue={isEditMode ? event?.address?.neighborhood : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Rua'
-                                        type='text'
-                                        {...register('address.street')}
-                                        defaultValue={isEditMode ? event?.address?.street : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Complemento'
-                                        type='text'
-                                        {...register('address.complement')}
-                                        defaultValue={isEditMode ? event?.address?.complement : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <TextField
-                                        label='Número da residência'
-                                        type='text'
-                                        {...register('address.number')}
-                                        defaultValue={isEditMode ? event?.address?.number : ''}
-                                        variant='outlined'
-                                        fullWidth />
-                                </Grid>
-                            </>
-                        )
-                    }
-
-                    <Grid item xs={12} sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem'
-                    }}>
-                        <Button type='button' size='large' variant='contained' color="primary" onClick={() => navigate(-1)} sx={{ width: '20%' }} disabled={isLoading}>
-                            Voltar
-                        </Button>
-                        <Button type='submit' size='large' variant='contained' color="success" sx={{ width: '80%' }} disabled={isLoading}>
-                            {isEditMode ? 'Salvar' : 'Criar'}
-                        </Button>
-                    </Grid>
-
-                    {
-                        isLoading && (
-                            <Loading />
-                        )
-                    }
-
-                    <Message
-                        message={textMessage}
-                        type={typeMessage}
-                        open={openMessage}
-                        onClose={handleClose}
-                    />
-                </Grid>
-            </form>
+                </form>
+            </Paper>
         </>
     );
 };

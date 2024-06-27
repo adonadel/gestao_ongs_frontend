@@ -1,10 +1,10 @@
 import LoginIcon from '@mui/icons-material/Login';
-import { Avatar, Typography } from '@mui/material';
+import { Avatar, Box, Button, Typography } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { styled } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { User } from '../../../modules/admin/usersManagement/types';
 import useAuthStore from '../../store/authStore';
 
@@ -38,14 +38,24 @@ const AppBar = styled(MuiAppBar, {
 
 const IsLogged = ({ user }: { user: User | null }) => {
     const userType = user?.type;
+    const navigate = useNavigate();
+
+    const onClick = () => {
+        navigate(userType === 'INTERNAL' ? "/admin/user" : "/external")
+    }
 
     return (
         user ? (
-            <IconButton component={Link} to={userType === 'INTERNAL' ? "/admin/user" : "/external"} sx={{ marginLeft: 'auto' }}>
-                <Typography sx={{ fontSize: '1rem', marginRight: '16px', color: 'common.black' }}>Minha conta</Typography> <Avatar src={`https://drive.google.com/thumbnail?id=${user?.person.profile_picture?.filename_id}`} />
-            </IconButton>
+            <Button
+                variant='text'
+                onClick={onClick}
+                endIcon={<Avatar src={`https://drive.google.com/thumbnail?id=${user?.person.profile_picture?.filename_id}`} />}
+                sx={{ textTransform: 'none', color: 'common.black' }}
+            >
+                <Typography sx={{ fontSize: '1rem', marginRight: '16px', color: 'common.black' }}>Minha conta</Typography>
+            </Button>
         ) : (
-            <IconButton component={Link} to="/login" sx={{ marginLeft: 'auto' }}>
+            <IconButton component={Link} to="/login" sx={{ marginLeft: 'auto', backgroundColor: 'transparent' }}>
                 <LoginIcon />
             </IconButton>
         )
@@ -58,25 +68,29 @@ const DefaultHeader = (props: IHeaderProps) => {
     return (
         <>
             <AppBar position="sticky" open={props.open} >
-                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Toolbar>
                     {!props.open && (
-                        <Typography
-                            component={Link}
-                            to='/'
-                            sx={{
-                                fontSize: '1.5625rem',
-                                fontWeight: 600,
-                                color: 'secondary.main',
-                                textDecoration: 'none',
-                            }}
-                        >
-                            EBAA Patinhas
-                        </Typography>
+                        <Box sx={{ flexGrow: 1 }}>
+                            <Typography
+                                component={Link}
+                                to='/'
+                                sx={{
+                                    fontSize: '1.5625rem',
+                                    fontWeight: 600,
+                                    color: 'secondary.main',
+                                    textDecoration: 'none',
+                                }}
+                            >
+                                EBAA Patinhas
+                            </Typography>
+                        </Box>
                     )}
-                    <IsLogged user={user} />
+                    <Box sx={{ flexGrow: 1 }} />
+                    <Box>
+                        <IsLogged user={user} />
+                    </Box>
                 </Toolbar>
             </AppBar>
-
         </>
     );
 };
