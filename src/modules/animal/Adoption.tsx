@@ -55,18 +55,27 @@ export const Adoption = () => {
 
     const postAdoption = async () => {
         try {
-            baseApi.post(`/api/adoptions`, {
+            const response = baseApi.post(`/api/adoptions`, {
                 user_id: userData?.id,
                 animal_id: id,
             });
+
+            if ((await response).status !== 201) {
+                throw new Error('Ocorreu um erro ao enviar a solicitação de adoção!');                                
+            }
+
             setTextMessage('Solicitação enviada!');
             setTypeMessage('success');
             setOpenMessage(true);
-        } catch (error) {
-            console.log(error);
-            setTextMessage('Ocorreu um erro ao enviar a solicitação de adoção!');
+        } catch (e) {            
+
+            setTextMessage('Ocorreu um erro ao enviar a solicitação de adoção!');            
             setTypeMessage('error');
-            setOpenMessage(true);
+            setOpenMessage(true);    
+            
+            setTimeout(() => {
+                navigate('/');
+            }, 3000);        
         }
     }
 
