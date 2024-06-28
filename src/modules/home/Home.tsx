@@ -11,7 +11,7 @@ const Home: React.FC = () => {
     return (
         <>
             <HeaderBanner></HeaderBanner>
-            <Container maxWidth="lg">
+            <Container maxWidth="xl">
 
                 <Grid container spacing={4} justifyContent={'center'} alignItems={'strech'}>
                     <Grid item xs={12} sm={8} md={4} lg={3}>
