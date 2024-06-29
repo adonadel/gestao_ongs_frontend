@@ -92,10 +92,10 @@ export const GridAnimalsForAdoption = () => {
     return (
         <Grid container>
             <Grid item xs={12}>
-
+            
                 <Box display={'flex'} alignItems={'center'} gap={2}>
                     <TagTitle backgroundColor="#FABEC025" icon={Favorite} iconColor="#ff4222" />
-                    <Typography variant="h2" color="secondary.dark" fontWeight={600}  sx={{
+                    <Typography id="adoption" variant="h2" color="secondary.dark" fontWeight={600}  sx={{
                         fontSize: { xs: '1.2rem', sm: '1.5rem' }
                     }}>
                         Adote um pet

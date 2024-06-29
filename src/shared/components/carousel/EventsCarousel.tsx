@@ -105,7 +105,7 @@ export const EventsCarousel = () => {
 
     return (
         <>
-            <Typography variant="h2" color="secondary.dark" fontWeight={600} display={'flex'} alignItems={'center'} gap={2} sx={{
+            <Typography id="events" variant="h2" color="secondary.dark" fontWeight={600} display={'flex'} alignItems={'center'} gap={2} sx={{
                 fontSize: { xs: '1.2rem', sm: '1.5rem' }
             }}>
                 <TagTitle backgroundColor="#15b6b125" icon={EventAvailable} iconColor="secondary.light" />

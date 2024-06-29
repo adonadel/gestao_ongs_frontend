@@ -110,6 +110,11 @@ export const Transparency = () => {
       useEffect(() => {
         fetchDashboardData();
       }, []);
+      
+      useEffect(() => {
+          window.scrollTo(0, 0);
+      }, []);
+    
 
     return (
         <>

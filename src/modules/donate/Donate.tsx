@@ -110,6 +110,10 @@ export const Donate = () => {
         }
 
     };
+    
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     useEffect(() => {
         const cleaned = otherValue.replace(/[^0-9\,]/g, '');
