@@ -1,7 +1,7 @@
-import { ChevronLeft } from "@mui/icons-material";
-import { Container, Grid, Typography, Button, Box } from "@mui/material";
+import {ChevronLeft} from "@mui/icons-material";
+import {Box, Button, Container, Grid, Typography} from "@mui/material";
 
-function ErrorPage() {
+function Success() {
   return (
     <Container>
       <Grid container justifyContent={"center"}>
@@ -14,26 +14,25 @@ function ErrorPage() {
             alignItems: "center",
             gap: "1rem",
             marginTop: "4rem"
-
           }}>
             
             <Typography variant="body1" color="initial" sx={{
               fontSize: "1rem",
               fontWeight: "400",
               marginBottom: "1rem"
-            }}>Erro 404</Typography>
+            }}>Doação confirmada!</Typography>
 
-            <img src="/404_lost.svg" alt="Imagem de um cachorro sozinho" style={{
+            <img src="/congratulation-donate.svg" alt="Imagem de agradecimento da doação" style={{
               width: "100%",
-              maxWidth: "250px",
+              maxWidth: "400px",
               margin: "0 auto",
               display: "block"
             }} />
             <Typography variant="h2" color="initial" sx={{
-              fontSize: { xs: "1rem", md: "1.5rem" },
+              fontSize: {xs: "1rem", md: "1.2rem"},
               fontWeight: "400",
               marginBottom: "1rem"
-            }}>Ops! Parece que você se perdeu</Typography>
+            }}>Obrigado! Agradeçemos sua ajuda!</Typography>
 
             <Button href="/" size="large" variant="outlined" color="secondary" startIcon={<ChevronLeft />}>
               Voltar ao início
@@ -49,4 +48,4 @@ function ErrorPage() {
   )
 }
 
-export default ErrorPage;
+export default Success;
