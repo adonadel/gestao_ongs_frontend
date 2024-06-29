@@ -81,7 +81,7 @@ const DefaultHeader = (props: IHeaderProps) => {
                                     textDecoration: 'none',
                                 }}
                             >
-                                EBAA Patinhas
+                                Patinhas Carentes
                             </Typography>
                         </Box>
                     )}
