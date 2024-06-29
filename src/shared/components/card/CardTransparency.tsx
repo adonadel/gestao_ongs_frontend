@@ -19,7 +19,7 @@ export const CardTransparency = () => {
         textAlign: 'center'
       }}>
       <Typography variant="h2" color="secondary.main" fontWeight={'700'} fontSize={'1.2rem'}>TRANSPARÊNCIA</Typography>
-      <img src="public/card/card-transparency.svg" alt="" style={{
+      <img src="/card/card-transparency.svg" alt="" style={{
         objectFit: 'cover',
         maxWidth: '280px',
         maxHeight: '100px'
