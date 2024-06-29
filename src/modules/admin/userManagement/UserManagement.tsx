@@ -22,6 +22,9 @@ export const UserManagement = () => {
     const { userMe } = useAuthStore((state) => ({
         userMe: state.setUserData,
     }));
+    const { logout } = useAuthStore((state) => ({ 
+        logout: state.setLogout
+    }));
     const { register, handleSubmit, setValue, formState } = useForm<User>();
     const [cepSearched, setCepSearched] = useState<boolean>(false);
     const isTokenRefreshed = useRef(false);
@@ -58,7 +61,8 @@ export const UserManagement = () => {
         try {
             const response = await baseApi.put(`/api/users/external/${userData.id}`, data);
             userMe(response.data);
-            navigate('/admin/dashboard');
+            logout();
+            navigate('/login');
         } catch (error) {
             if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
                 console.log("Refreshing token...");

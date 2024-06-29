@@ -49,9 +49,9 @@ function Dashboard() {
         <>
           <Grid container justifyContent="space-between" alignItems="center" marginBottom={"1rem"}>
             <Grid item>
-              <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'} marginBottom={'1rem'}>Relação de entradas e saídas</Typography>
+              <Typography variant="h3" fontSize={'1.5rem'} fontWeight={700}  marginBottom={'1rem'}>Relação de entradas e saídas</Typography>
             </Grid>
-            <Grid xs={2} item>
+            <Grid item>
               <FormControl fullWidth>
                 <InputLabel id="especie-label">Período</InputLabel>
                 <Select
@@ -77,7 +77,7 @@ function Dashboard() {
               </Grid>
             ) : (
               seriesData[0].data.length !== 0 && (
-                <Grid item xs={12} sm={12} md={6} lg={6}>
+                <Grid item xs={12}>
                   <LineChart
                     footerType={dashboardType}
                     seriesData={seriesData}
@@ -85,46 +85,47 @@ function Dashboard() {
                 </Grid>
               )
             )}
-            <Grid item xs={12} sm={12} md={6} lg={6} flexDirection={{ sm: 'row', md: 'column', xl: 'row' }} display='flex' gap='5px' justifyContent='center'>
-              <Grid item>
-                <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }} >
-                  <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'} color={'#15B6B1'}>
-                    Caixa atual
-                  </Typography>
-                  <Typography variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} color={'#15B6B1'}>
-                    {formatMoney(parseFloat(totalFinances?.total))}
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item>
-                <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }}>
-                  <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    Total arrecadado
-                  </Typography>
-                  <Typography variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
-                    {formatMoney(parseFloat(totalFinances?.totalIncome))}
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item>
-                <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }}>
-                  <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
-                    Total gasto
-                  </Typography>
-                  <Typography variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
-                    {formatMoney(parseFloat(totalFinances?.totalExpense))}
-                  </Typography>
-                </Paper>
-              </Grid>
-            </Grid>
           </Grid>
 
           <Grid container spacing={2}>
             <Grid item style={{ marginTop: '4rem' }} xs={12}>
-              <Typography variant="h3" fontSize={'1rem'} fontWeight={'medium'} marginBottom={'1rem'}>Relação de animais</Typography>
+              <Typography variant="h3" fontSize={'1.5rem'} fontWeight={700} marginBottom={'1rem'}>Financeiro</Typography>
             </Grid>
-            <Grid item xs={4}>
-              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }} >
+            <Grid item>
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }} >
+                <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'} color={'#15B6B1'}>
+                  Caixa atual
+                </Typography>
+                <Typography variant="h3" fontSize={'1.3rem'} fontWeight={'bold'} color={'#15B6B1'}>
+                  {formatMoney(parseFloat(totalFinances?.total))}
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item>
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }}>
+                <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                  Total arrecadado
+                </Typography>
+                <Typography variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
+                  {formatMoney(parseFloat(totalFinances?.totalIncome))}
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item>
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }}>
+                <Typography variant="h3" fontSize={'1rem'} fontWeight={'bold'} marginBottom={'1rem'}>
+                  Total gasto
+                </Typography>
+                <Typography variant="h3" fontSize={'1.3rem'} fontWeight={'bold'}>
+                  {formatMoney(parseFloat(totalFinances?.totalExpense))}
+                </Typography>
+              </Paper>
+            </Grid>
+            <Grid item style={{ marginTop: '4rem' }} xs={12}>
+              <Typography variant="h3" fontSize={'1.5rem'} fontWeight={700}  marginBottom={'1rem'}>Relação de animais</Typography>
+            </Grid>
+            <Grid item >
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }} >
                 <Typography
                   variant="h3"
                   fontSize={'1rem'}
@@ -145,8 +146,8 @@ function Dashboard() {
               </Paper>
             </Grid>
 
-            <Grid item xs={4} >
-              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }} >
+            <Grid item  >
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }} >
                 <Typography
                   variant="h3"
                   fontSize={'1rem'}
@@ -166,8 +167,8 @@ function Dashboard() {
               </Paper>
             </Grid>
 
-            <Grid item xs={4} >
-              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }} >
+            <Grid item  >
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }} >
                 <Typography
                   variant="h3"
                   fontSize={'1rem'}
@@ -187,8 +188,8 @@ function Dashboard() {
               </Paper>
             </Grid>
 
-            <Grid item xs={4} >
-              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }} >
+            <Grid item  >
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }} >
                 <Typography
                   variant="h3"
                   fontSize={'1rem'}
@@ -208,8 +209,8 @@ function Dashboard() {
               </Paper>
             </Grid>
 
-            <Grid item xs={4} >
-              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }} >
+            <Grid item  >
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }} >
                 <Typography
                   variant="h3"
                   fontSize={'1rem'}
@@ -229,8 +230,8 @@ function Dashboard() {
               </Paper>
             </Grid>
 
-            <Grid item xs={4} >
-              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px' }} >
+            <Grid item  >
+              <Paper elevation={3} sx={{ padding: 4, borderRadius: '12px',width: '200px' }} >
                 <Typography
                   variant="h3"
                   fontSize={'1rem'}

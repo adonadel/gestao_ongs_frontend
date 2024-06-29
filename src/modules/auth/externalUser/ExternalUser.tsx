@@ -28,6 +28,9 @@ export const ExternalUser = () => {
     const [isLoading, setIsLoading] = useState(false);
     const apiCepUrl = import.meta.env.VITE_API_CEP;
     const navigate = useNavigate();
+    const { logout } = useAuthStore((state) => ({ 
+        logout: state.setLogout
+    }));
 
     const searchCEP = async () => {
         const cep = (document.getElementById('inputCep') as HTMLInputElement).value;
@@ -58,7 +61,8 @@ export const ExternalUser = () => {
         try {
             const response: AxiosResponse = await baseApi.put(`/api/users/external/${userData.id}`, data);
             userMe(response);
-            navigate('/');
+            logout();
+            navigate('/login');
         } catch (error) {
             if (error?.response?.status === 401 && !!user && !isTokenRefreshed.current) {
                 console.log("Refreshing token...");

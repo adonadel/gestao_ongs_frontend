@@ -178,7 +178,7 @@ export const DefaultDrawer = (props: IDrawerProps) => {
                                 color: 'secondary.main'
                             }}
                         >
-                            EBAA
+                            Patinhas Carentes
                         </Typography>
                     </DrawerHeader>
                     <List >
