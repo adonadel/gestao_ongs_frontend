@@ -278,7 +278,6 @@ const UserUpdate: React.FC = () => {
         return false;
     };
 
-
     if (isEditMode && !user || !roles.length) {
         return <FullLoader />;
     }
@@ -385,7 +384,7 @@ const UserUpdate: React.FC = () => {
                                 name="person.cpf_cnpj"
                                 control={control}
                                 rules={{
-                                    required: "CPF/CNPJ obrigatorios",
+                                    required: "CPF/CNPJ obrigatório",
                                     validate: value => isValidCPFOrCNPJ(value) || "CPF/CNPJ inválido"
                                 }}
                                 render={({ field }) => (
